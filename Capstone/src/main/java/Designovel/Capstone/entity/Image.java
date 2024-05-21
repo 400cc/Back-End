@@ -1,8 +1,10 @@
 package Designovel.Capstone.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "image")
 public class Image {
 

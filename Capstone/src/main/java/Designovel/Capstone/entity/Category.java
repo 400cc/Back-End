@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.Set;
 
 @Entity
+@Data
 @Table(name = "category")
 public class Category {
     @Id

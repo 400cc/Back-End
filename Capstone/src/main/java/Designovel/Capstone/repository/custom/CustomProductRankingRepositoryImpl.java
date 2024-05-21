@@ -2,6 +2,7 @@ package Designovel.Capstone.repository.custom;
 
 import Designovel.Capstone.domain.ProductFilterDTO;
 import Designovel.Capstone.entity.ProductRanking;
+import Designovel.Capstone.entity.QImage;
 import Designovel.Capstone.entity.QProduct;
 import Designovel.Capstone.entity.QProductRanking;
 import com.querydsl.core.BooleanBuilder;
@@ -20,7 +21,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
     public List<ProductRanking> findAllWithFilters(ProductFilterDTO filter) {
         QProductRanking productRanking = QProductRanking.productRanking;
         QProduct product = QProduct.product; // 변경된 필드 이름 반영
-
+        QImage image = QImage.image;
         BooleanBuilder builder = new BooleanBuilder();
 
         if (filter.getBrand() != null && !filter.getBrand().isEmpty()) {
@@ -41,6 +42,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
 
         return jpaQueryFactory.selectFrom(productRanking)
                 .where(builder)
+                .join(product.images, image)
                 .fetch();
 
     }

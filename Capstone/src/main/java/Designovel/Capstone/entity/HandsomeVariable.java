@@ -1,7 +1,10 @@
 package Designovel.Capstone.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 @Entity
+@Data
 @Table(name = "handsome_variable")
 public class HandsomeVariable {
 

@@ -2,8 +2,10 @@ package Designovel.Capstone.entity;
 
 import Designovel.Capstone.entity.id.CategoryProductId;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "category_product")
 public class CategoryProduct {
 
