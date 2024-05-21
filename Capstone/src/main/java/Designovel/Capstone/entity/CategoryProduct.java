@@ -4,6 +4,7 @@ import Designovel.Capstone.entity.id.CategoryProductId;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "category_product")
 public class CategoryProduct {
 
     @EmbeddedId
