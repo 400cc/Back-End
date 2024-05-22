@@ -1,6 +1,7 @@
 package Designovel.Capstone.entity;
 
 import Designovel.Capstone.entity.id.CategoryProductId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,6 +18,7 @@ public class CategoryProduct {
             @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false),
             @JoinColumn(name = "mall_type", referencedColumnName = "mall_type", insertable = false, updatable = false)
     })
+    @JsonIgnore
     private Product product;
 
     @ManyToOne

@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class ProductFilterDTO {
-    private List<String> category;
+    private List<Integer> category;
     private List<String> brand;
     private Date startDate;
     private Date endDate;

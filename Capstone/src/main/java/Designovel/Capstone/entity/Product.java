@@ -4,6 +4,7 @@ import Designovel.Capstone.entity.id.ProductId;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,5 +16,8 @@ public class Product {
     private ProductId id;
 
     @OneToMany(mappedBy = "product")
-    private Set<Image> images;
+    private List<Image> images;
+
+    @OneToMany(mappedBy = "product")
+    private List<CategoryProduct> categoryProducts;
 }

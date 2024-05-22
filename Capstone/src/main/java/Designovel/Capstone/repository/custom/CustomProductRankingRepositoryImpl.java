@@ -1,11 +1,10 @@
 package Designovel.Capstone.repository.custom;
 
 import Designovel.Capstone.domain.ProductFilterDTO;
-import Designovel.Capstone.entity.ProductRanking;
-import Designovel.Capstone.entity.QImage;
-import Designovel.Capstone.entity.QProduct;
-import Designovel.Capstone.entity.QProductRanking;
+import Designovel.Capstone.entity.*;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -20,8 +19,11 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
     @Override
     public List<ProductRanking> findAllWithFilters(ProductFilterDTO filter) {
         QProductRanking productRanking = QProductRanking.productRanking;
-        QProduct product = QProduct.product; // 변경된 필드 이름 반영
+        QCategory category = QCategory.category;
+        QCategoryClosure categoryClosure = QCategoryClosure.categoryClosure;
+        QCategoryProduct categoryProduct = QCategoryProduct.categoryProduct;
         QImage image = QImage.image;
+        QProduct product = QProduct.product;
         BooleanBuilder builder = new BooleanBuilder();
 
         if (filter.getBrand() != null && !filter.getBrand().isEmpty()) {
@@ -40,9 +42,22 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
             builder.and(productRanking.product.id.mallType.eq(filter.getSite()));
         }
 
+        if (filter.getCategory() != null && !filter.getCategory().isEmpty()) {
+            builder.and(
+                    JPAExpressions.selectOne()
+                            .from(categoryProduct)
+                            .join(categoryProduct.category, category)
+                            .join(categoryClosure).on(categoryClosure.id.descendantId.eq(category.categoryId))
+                            .where(categoryClosure.id.ancestorId.in(filter.getCategory()) //
+                                    .and(categoryProduct.category.eq(category))
+                                    .and(categoryProduct.product.eq(productRanking.product)))
+                            .exists()
+            );
+
+        }
+
         return jpaQueryFactory.selectFrom(productRanking)
                 .where(builder)
-                .join(product.images, image)
                 .fetch();
 
     }
