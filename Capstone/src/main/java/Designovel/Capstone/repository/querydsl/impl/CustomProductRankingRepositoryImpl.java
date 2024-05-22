@@ -1,9 +1,9 @@
-package Designovel.Capstone.repository.custom;
+package Designovel.Capstone.repository.querydsl.impl;
 
 import Designovel.Capstone.domain.ProductFilterDTO;
 import Designovel.Capstone.entity.*;
+import Designovel.Capstone.repository.querydsl.CustomProductRankingRepository;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,6 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
         QCategory category = QCategory.category;
         QCategoryClosure categoryClosure = QCategoryClosure.categoryClosure;
         QCategoryProduct categoryProduct = QCategoryProduct.categoryProduct;
-        QImage image = QImage.image;
-        QProduct product = QProduct.product;
         BooleanBuilder builder = new BooleanBuilder();
 
         if (filter.getBrand() != null && !filter.getBrand().isEmpty()) {
@@ -61,6 +59,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .fetch();
 
     }
+
 }
 
 

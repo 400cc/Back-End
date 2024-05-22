@@ -1,16 +1,16 @@
 package Designovel.Capstone.controller;
 
 import Designovel.Capstone.domain.ProductFilterDTO;
+import Designovel.Capstone.entity.Category;
 import Designovel.Capstone.entity.ProductRanking;
+import Designovel.Capstone.service.CategoryService;
 import Designovel.Capstone.service.ProductRankingService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,11 +21,17 @@ import java.util.List;
 public class ProductFilterController {
 
     private final ProductRankingService productRankingService;
+    private final CategoryService categoryService;
 
     @GetMapping("/filter")
     public ResponseEntity<List<ProductRanking>> getProductRankings(@ModelAttribute ProductFilterDTO filter) {
         List<ProductRanking> productRankings = productRankingService.getProductRankings(filter);
         return ResponseEntity.ok(productRankings);
+    }
+
+    @GetMapping("/category")
+    public ResponseEntity<Object> getCategories(@RequestParam String mallType) {
+        return ResponseEntity.ok(categoryService.getCategoryTree(mallType));
     }
 
 }

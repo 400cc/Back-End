@@ -22,5 +22,4 @@ public class CategoryProductId implements Serializable {
     @Column(name = "mall_type")
     private String mallType;
 
-    // constructors, getters, setters, hashCode, equals
 }

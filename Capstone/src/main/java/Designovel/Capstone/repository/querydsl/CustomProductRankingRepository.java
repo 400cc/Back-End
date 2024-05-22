@@ -1,7 +1,6 @@
-package Designovel.Capstone.repository.custom;
+package Designovel.Capstone.repository.querydsl;
 
 import Designovel.Capstone.domain.ProductFilterDTO;
-import Designovel.Capstone.entity.Product;
 import Designovel.Capstone.entity.ProductRanking;
 
 import java.util.List;
