@@ -16,8 +16,8 @@ public class Image {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "product_id", referencedColumnName = "product_id"),
-            @JoinColumn(name = "mall_type", referencedColumnName = "mall_type")
+            @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false),
+            @JoinColumn(name = "mall_type", referencedColumnName = "mall_type", insertable = false, updatable = false)
     })
     @JsonIgnore
     private Product product;

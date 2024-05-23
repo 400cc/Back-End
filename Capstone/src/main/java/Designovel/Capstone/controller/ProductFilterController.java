@@ -1,6 +1,7 @@
 package Designovel.Capstone.controller;
 
 import Designovel.Capstone.domain.ProductFilterDTO;
+import Designovel.Capstone.domain.ProductRankingAvgDTO;
 import Designovel.Capstone.entity.Category;
 import Designovel.Capstone.entity.ProductRanking;
 import Designovel.Capstone.service.CategoryService;
@@ -24,8 +25,8 @@ public class ProductFilterController {
     private final CategoryService categoryService;
 
     @GetMapping("/filter")
-    public ResponseEntity<List<ProductRanking>> getProductRankings(@ModelAttribute ProductFilterDTO filter) {
-        List<ProductRanking> productRankings = productRankingService.getProductRankings(filter);
+    public ResponseEntity<List<ProductRankingAvgDTO>> getProductRankings(@ModelAttribute ProductFilterDTO filter) {
+        List<ProductRankingAvgDTO> productRankings = productRankingService.getProductRankingAverages(filter);
         return ResponseEntity.ok(productRankings);
     }
 

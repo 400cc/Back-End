@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +17,37 @@ import java.util.Map;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryClosureRepository categoryClosureRepository;
+
+    private static List<CategoryNode> findRootNodes(List<CategoryClosure> closures, Map<Integer, CategoryNode> nodeMap) {
+        Set<Integer> descendantNodeIds = new HashSet<>();
+        List<CategoryNode> roots = new ArrayList<>();
+
+        for (CategoryClosure closure : closures) {
+            //depth가 1인것의 descendant들은 무조건 Root노드가 아님
+            if (closure.getDepth() == 1) {
+                descendantNodeIds.add(closure.getDescendantId().getCategoryId());
+            }
+        }
+        for (CategoryNode node : nodeMap.values()) {
+            // node의 ID가 자손 ID 집합에 포함되지 않으면 최상위 노드
+            if (!descendantNodeIds.contains(node.getCategoryId())) {
+                roots.add(node);
+            }
+        }
+        return roots;
+    }
+
+    public void addChildNodeToParentNode(List<CategoryClosure> closures, Map<Integer, CategoryNode> nodeMap) {
+
+        for (CategoryClosure closure : closures) {
+            CategoryNode parent = nodeMap.get(closure.getAncestorId().getCategoryId());
+            CategoryNode child = nodeMap.get(closure.getDescendantId().getCategoryId());
+
+            if (!parent.equals(child) && closure.getDepth() == 1) {
+                parent.getChildren().add(child);
+            }
+        }
+    }
 
     public List<CategoryNode> getCategoryTree(String mallType) {
         List<Category> categories = categoryRepository.findByMallType(mallType);
@@ -36,31 +64,7 @@ public class CategoryService {
         }
 
         // closures를 사용하여 계층 구조 빌드
-        for (CategoryClosure closure : closures) {
-            CategoryNode parent = nodeMap.get(closure.getAncestorId().getCategoryId());
-            CategoryNode child = nodeMap.get(closure.getDescendantId().getCategoryId());
-
-            if (!parent.equals(child)) {
-                parent.getChildren().add(child);
-            }
-        }
-
-        // 루트 노드 찾기
-        List<CategoryNode> roots = new ArrayList<>();
-        for (CategoryNode node : nodeMap.values()) {
-            boolean isRoot = true;
-            for (CategoryClosure closure : closures) {
-                if (closure.getDescendantId().getCategoryId().equals(node.getCategoryId())
-                        && closure.getDepth() == 1) {
-                    isRoot = false;
-                    break;
-                }
-            }
-            if (isRoot) {
-                roots.add(node);
-            }
-        }
-
-        return roots;
+        addChildNodeToParentNode(closures, nodeMap);
+        return findRootNodes(closures, nodeMap);
     }
 }
