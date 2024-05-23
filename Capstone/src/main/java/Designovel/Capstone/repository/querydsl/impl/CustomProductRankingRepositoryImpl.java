@@ -27,6 +27,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
         QCategory category = QCategory.category;
         QCategoryClosure categoryClosure = QCategoryClosure.categoryClosure;
         QCategoryProduct categoryProduct = QCategoryProduct.categoryProduct;
+        QImage image = QImage.image;
         BooleanBuilder builder = new BooleanBuilder();
 
         if (filter.getBrand() != null) {
@@ -62,27 +63,22 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
 //                .where(builder)
 //                .fetch();
 
-        List<Tuple> results = jpaQueryFactory.select(
-                        productRanking.product.id.productId,
+        return jpaQueryFactory.select(
+                        productRanking.product,
                         productRanking.brand,
-                        productRanking.product.id.mallType,
                         productRanking.discountedPrice.avg(),
                         productRanking.fixedPrice.avg(),
                         productRanking.rankScore.sum(),
-                        productRanking.monetaryUnit,
-                        productRanking.product.categoryProducts,
-                        image
+                        productRanking.monetaryUnit
                 )
                 .from(productRanking)
                 .where(builder)
-                .leftJoin(productRanking.product.images, image)
+                .leftJoin(productRanking.product.images, image).on(image.sequence.eq(0))
                 .groupBy(productRanking.product.id.productId,
                         productRanking.brand,
                         productRanking.product.id.mallType,
                         productRanking.monetaryUnit)
                 .fetch();
-
-        return results;
     }
 
 }

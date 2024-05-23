@@ -2,8 +2,10 @@ package Designovel.Capstone.service;
 
 import Designovel.Capstone.domain.ProductFilterDTO;
 import Designovel.Capstone.domain.ProductRankingAvgDTO;
+import Designovel.Capstone.entity.Category;
 import Designovel.Capstone.entity.CategoryProduct;
 import Designovel.Capstone.entity.Image;
+import Designovel.Capstone.entity.Product;
 import Designovel.Capstone.repository.ProductRankingRepository;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static Designovel.Capstone.entity.QProductRanking.productRanking;
+import static Designovel.Capstone.entity.QProduct.product;
 
 @Service
 @RequiredArgsConstructor
@@ -35,20 +39,26 @@ public class ProductRankingService {
         List<ProductRankingAvgDTO> averageDTOList = new ArrayList<>();
 
         for (Tuple tuple : results) {
-            String productId = tuple.get(productRanking.product.id.productId);
+            Product product = tuple.get(productRanking.product);
             String brand = tuple.get(productRanking.brand);
-            String mallType = tuple.get(productRanking.product.id.mallType);
-            CategoryProduct category = (CategoryProduct) tuple.get(productRanking.product.categoryProducts);
             Double averageDiscountedPrice = tuple.get(productRanking.discountedPrice.avg());
             Double averageFixedPrice = tuple.get(productRanking.fixedPrice.avg());
             Double exposureIndex = Double.valueOf(tuple.get(productRanking.rankScore.sum()));
             String monetaryUnit = tuple.get(productRanking.monetaryUnit);
-            Image images = (Image) tuple.get(productRanking.product.images);
-
             ProductRankingAvgDTO dto = new ProductRankingAvgDTO(
-                    productId, brand, mallType, category, averageDiscountedPrice, averageFixedPrice, exposureIndex, monetaryUnit, images);
+                    product, brand, averageDiscountedPrice, averageFixedPrice, exposureIndex, monetaryUnit);
 
             averageDTOList.add(dto);
+        }
+        for (Tuple result : results) {
+            Product product = result.get(productRanking.product);
+            if (product != null) {
+                product.setImages(
+                        product.getImages().stream()
+                                .filter(img -> img.getSequence() == 0)
+                                .collect(Collectors.toList())
+                );
+            }
         }
 
         return averageDTOList;
