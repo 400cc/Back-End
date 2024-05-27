@@ -12,6 +12,8 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,45 +32,8 @@ import static Designovel.Capstone.entity.QProductRanking.productRanking;
 public class CustomProductRankingRepositoryImpl implements CustomProductRankingRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-
     @Override
-    public Map<String, ProductRankingAvgDTO> findAllWithFilters(ProductFilterDTO filter) {
-        BooleanBuilder builder = buildProductRankingFilter(filter);
-
-        List<Tuple> rankScoreResult = getExposureIndexFromProductRanking(builder);
-
-        Map<String, ProductRankingAvgDTO> resultMap = new HashMap<>();
-        for (Tuple tuple : rankScoreResult) {
-            Product product = tuple.get(productRanking.product);
-            String brand = tuple.get(productRanking.brand);
-            Float exposureIndex = tuple.get(productRanking.rankScore.sum());
-
-            String key = product.getId().getProductId() + "_" +
-                    product.getId().getMallType() + "_" +
-                    tuple.get(categoryProduct.category.name);
-            ProductRankingAvgDTO productRankingAvgDTO = new ProductRankingAvgDTO(product, brand, exposureIndex);
-            resultMap.put(key, productRankingAvgDTO);
-        }
-
-        List<Tuple> priceResult = getPriceFromProductRanking(builder, filter.getEndDate());
-
-
-        for (Tuple tuple : priceResult) {
-            Product product = tuple.get(productRanking.product);
-            String key = product.getId().getProductId() + "_" +
-                    product.getId().getMallType() + "_" +
-                    tuple.get(categoryProduct.category.name);
-            resultMap.get(key).setDiscountedPrice(tuple.get(productRanking.discountedPrice));
-            resultMap.get(key).setFixedPrice(tuple.get(productRanking.fixedPrice));
-            resultMap.get(key).setMonetaryUnit(tuple.get(productRanking.monetaryUnit));
-            resultMap.get(key).setCategory(tuple.get(categoryProduct.category));
-        }
-
-        return resultMap;
-    }
-
-    @Override
-    public List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, Date endDate) {
+    public List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, Date endDate, Pageable pageable) {
         QProductRanking subProductRanking = new QProductRanking("subProductRanking");
 
         BooleanBuilder subQueryConditions = new BooleanBuilder();
@@ -100,6 +65,8 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                         categoryProduct.category.name,
                         productRanking.discountedPrice,
                         productRanking.fixedPrice)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 
@@ -141,7 +108,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
     }
 
     @Override
-    public List<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder) {
+    public List<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable) {
         return jpaQueryFactory.select(
                         productRanking.product,
                         productRanking.brand,
@@ -155,6 +122,8 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .groupBy(productRanking.product.id.productId,
                         productRanking.product.id.mallType,
                         categoryProduct.category.name)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 
