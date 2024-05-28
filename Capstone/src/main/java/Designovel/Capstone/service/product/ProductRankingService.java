@@ -1,11 +1,12 @@
-package Designovel.Capstone.service;
+package Designovel.Capstone.service.product;
 
 import Designovel.Capstone.domain.DupeExposureIndex;
+import Designovel.Capstone.domain.ProductDetailDTO;
 import Designovel.Capstone.domain.ProductFilterDTO;
-import Designovel.Capstone.domain.ProductRankingAvgDTO;
+import Designovel.Capstone.domain.ProductRankingDTO;
 import Designovel.Capstone.entity.Category;
 import Designovel.Capstone.entity.Product;
-import Designovel.Capstone.repository.ProductRankingRepository;
+import Designovel.Capstone.repository.product.ProductRankingRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
@@ -15,12 +16,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static Designovel.Capstone.entity.QCategoryProduct.categoryProduct;
 import static Designovel.Capstone.entity.QProductRanking.productRanking;
@@ -32,7 +35,7 @@ public class ProductRankingService {
 
     private final ProductRankingRepository productRankingRepository;
 
-    public Page<ProductRankingAvgDTO> getProductRankingAverages(ProductFilterDTO filter, int page) {
+    public Page<ProductRankingDTO> getProducRankingByFilter(ProductFilterDTO filter, int page) {
         int size = 20; // 페이지당 항목 수 고정
         Pageable pageable = PageRequest.of(page, size);
         BooleanBuilder builder = productRankingRepository.buildProductRankingFilter(filter);
@@ -43,18 +46,18 @@ public class ProductRankingService {
         long total = productRankingQueryResult.getTotal();
 
         //응답 객체 생성
-        Map<String, ProductRankingAvgDTO> productRankingMap = createProductRankingMap(exposureIndexQueryResult);
+        Map<String, ProductRankingDTO> productRankingMap = createProductRankingMap(exposureIndexQueryResult);
 
         //제일 최신 가격(현재가, 할인가) 가져오기
         List<Tuple> priceQueryResult = productRankingRepository.getPriceFromProductRanking(builder, filter.getEndDate(), pageable);
         updateProductPrices(productRankingMap, priceQueryResult);
 
-        List<ProductRankingAvgDTO> resultList = new ArrayList<>(productRankingMap.values());
+        List<ProductRankingDTO> resultList = new ArrayList<>(productRankingMap.values());
         return new PageImpl<>(resultList, pageable, total);
     }
 
-    private Map<String, ProductRankingAvgDTO> createProductRankingMap(List<Tuple> rankScoreResult) {
-        Map<String, ProductRankingAvgDTO> resultMap = new HashMap<>();
+    private Map<String, ProductRankingDTO> createProductRankingMap(List<Tuple> rankScoreResult) {
+        Map<String, ProductRankingDTO> resultMap = new HashMap<>();
         for (Tuple tuple : rankScoreResult) {
             Product product = tuple.get(categoryProduct.product);
             String brand = tuple.get(productRanking.brand);
@@ -62,27 +65,27 @@ public class ProductRankingService {
             Category category = tuple.get(categoryProduct.category);
             String key = generateProductKey(product);
 
-            if(resultMap.containsKey(key)) {
-                DupeExposureIndex dupeExposureIndex = new DupeExposureIndex(product, brand, exposureIndex, category);
+            if (resultMap.containsKey(key)) {
+                DupeExposureIndex dupeExposureIndex = new DupeExposureIndex(product, exposureIndex, category);
                 resultMap.get(key).getDupeExposureIndexList().add(dupeExposureIndex);
             } else {
-                ProductRankingAvgDTO productRankingAvgDTO = new ProductRankingAvgDTO(product, brand, exposureIndex);
-                resultMap.put(key, productRankingAvgDTO);
+                ProductRankingDTO productRankingDTO = new ProductRankingDTO(product, brand, exposureIndex);
+                resultMap.put(key, productRankingDTO);
             }
         }
         return resultMap;
     }
 
-    private void updateProductPrices(Map<String, ProductRankingAvgDTO> resultMap, List<Tuple> priceResult) {
+    private void updateProductPrices(Map<String, ProductRankingDTO> resultMap, List<Tuple> priceResult) {
         for (Tuple tuple : priceResult) {
             Product product = tuple.get(categoryProduct.product);
             String key = generateProductKey(product);
-            ProductRankingAvgDTO productRankingAvgDTO = resultMap.get(key);
-            if (productRankingAvgDTO != null && productRankingAvgDTO.getDiscountedPrice() == null) {
-                productRankingAvgDTO.setDiscountedPrice(tuple.get(productRanking.discountedPrice));
-                productRankingAvgDTO.setFixedPrice(tuple.get(productRanking.fixedPrice));
-                productRankingAvgDTO.setMonetaryUnit(tuple.get(productRanking.monetaryUnit));
-                productRankingAvgDTO.setCategory(tuple.get(categoryProduct.category));
+            ProductRankingDTO productRankingDTO = resultMap.get(key);
+            if (productRankingDTO != null && productRankingDTO.getDiscountedPrice() == null) {
+                productRankingDTO.setDiscountedPrice(tuple.get(productRanking.discountedPrice));
+                productRankingDTO.setFixedPrice(tuple.get(productRanking.fixedPrice));
+                productRankingDTO.setMonetaryUnit(tuple.get(productRanking.monetaryUnit));
+                productRankingDTO.setCategory(tuple.get(categoryProduct.category));
             }
         }
     }
@@ -93,5 +96,19 @@ public class ProductRankingService {
 
     public List<String> getBrands(String mallType) {
         return productRankingRepository.findDistinctBrand(mallType);
+    }
+
+
+    public ResponseEntity<ProductDetailDTO> getMusinsaProductDetail(String productId) {
+        List<Object[]> rankScore = productRankingRepository.findRankScoreByProduct(productId, "MUSINSA");
+        Pageable pageable = PageRequest.of(0, 1);
+        ProductDetailDTO productDetailDTO = productRankingRepository.findPriceInfoByProduct(productId, "MUSINSA", pageable).getContent().get(0);
+        productDetailDTO.setProductId(productId);
+        productDetailDTO.setMallType("MUSINSA");
+
+        List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(productId, "MUSINSA", ((Number) data[1]).floatValue(), (Category) data[0]))
+                .collect(Collectors.toList());
+        productDetailDTO.setDupeExposureIndexList(exposureIndexList);
+        return ResponseEntity.ok(productDetailDTO);
     }
 }

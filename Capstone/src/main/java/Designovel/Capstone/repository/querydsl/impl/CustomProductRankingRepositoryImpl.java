@@ -109,7 +109,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {
             // 카테고리 필터링 로직
             builder.and(
-                    productRanking.categoryProduct.product.id.productId.in(
+                    productRanking.categoryProduct.id.productId.in(
                             JPAExpressions.select(categoryProduct.id.productId)
                                     .from(categoryProduct)
                                     .join(categoryProduct.category, category)

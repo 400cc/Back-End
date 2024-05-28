@@ -1,4 +1,4 @@
-package Designovel.Capstone.repository;
+package Designovel.Capstone.repository.variable;
 
 import Designovel.Capstone.entity.WConceptVariable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -9,14 +9,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static org.eclipse.jdt.internal.compiler.problem.ProblemSeverities.Optional;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductRankingAvgDTO {
+public class ProductRankingDTO {
     private String productId;
     private String mallType;
     private String brand;
@@ -28,7 +25,7 @@ public class ProductRankingAvgDTO {
     private Category category;
     private List<DupeExposureIndex> dupeExposureIndexList;
 
-    public ProductRankingAvgDTO(Product product, String brand, Float exposureIndex) {
+    public ProductRankingDTO(Product product, String brand, Float exposureIndex) {
         this.productId = product.getId().getProductId();
         this.mallType = product.getId().getMallType();
         this.image = java.util.Optional.ofNullable(product.getImages())

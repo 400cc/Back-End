@@ -1,10 +1,10 @@
-package Designovel.Capstone.service;
+package Designovel.Capstone.service.category;
 
 import Designovel.Capstone.domain.CategoryNode;
 import Designovel.Capstone.entity.Category;
 import Designovel.Capstone.entity.CategoryClosure;
-import Designovel.Capstone.repository.CategoryClosureRepository;
-import Designovel.Capstone.repository.CategoryRepository;
+import Designovel.Capstone.repository.category.CategoryClosureRepository;
+import Designovel.Capstone.repository.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

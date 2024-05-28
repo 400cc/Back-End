@@ -1,4 +1,4 @@
-package Designovel.Capstone.repository;
+package Designovel.Capstone.repository.image;
 
 import Designovel.Capstone.entity.Image;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package Designovel.Capstone.repository;
+package Designovel.Capstone.repository.category;
 
 import Designovel.Capstone.entity.CategoryClosure;
 import Designovel.Capstone.entity.id.CategoryClosureId;

@@ -1,4 +1,4 @@
-package Designovel.Capstone.repository;
+package Designovel.Capstone.repository.product;
 
 import Designovel.Capstone.entity.Product;
 import Designovel.Capstone.entity.id.ProductId;
