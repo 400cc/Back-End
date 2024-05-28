@@ -1,11 +1,17 @@
 package Designovel.Capstone.domain;
 
-import Designovel.Capstone.entity.*;
+import Designovel.Capstone.entity.Category;
+import Designovel.Capstone.entity.Image;
+import Designovel.Capstone.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static org.eclipse.jdt.internal.compiler.problem.ProblemSeverities.Optional;
 
 @Data
 @AllArgsConstructor
@@ -20,15 +26,18 @@ public class ProductRankingAvgDTO {
     private String monetaryUnit;
     private Image image;
     private Category category;
+    private List<DupeExposureIndex> dupeExposureIndexList;
 
     public ProductRankingAvgDTO(Product product, String brand, Float exposureIndex) {
         this.productId = product.getId().getProductId();
         this.mallType = product.getId().getMallType();
-        this.image = product.getImages() != null && !product.getImages().isEmpty()
-                ? product.getImages().get(0)
-                : null;
+        this.image = java.util.Optional.ofNullable(product.getImages())
+                .filter(images -> !images.isEmpty())
+                .map(images -> images.get(0))
+                .orElse(null);
         this.brand = brand;
         this.exposureIndex = exposureIndex;
+        this.dupeExposureIndexList = new ArrayList<>();
     }
 
 }

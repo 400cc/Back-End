@@ -1,7 +1,9 @@
 package Designovel.Capstone.service;
 
+import Designovel.Capstone.domain.DupeExposureIndex;
 import Designovel.Capstone.domain.ProductFilterDTO;
 import Designovel.Capstone.domain.ProductRankingAvgDTO;
+import Designovel.Capstone.entity.Category;
 import Designovel.Capstone.entity.Product;
 import Designovel.Capstone.repository.ProductRankingRepository;
 import com.querydsl.core.BooleanBuilder;
@@ -57,10 +59,16 @@ public class ProductRankingService {
             Product product = tuple.get(categoryProduct.product);
             String brand = tuple.get(productRanking.brand);
             Float exposureIndex = tuple.get(productRanking.rankScore.sum());
+            Category category = tuple.get(categoryProduct.category);
+            String key = generateProductKey(product);
 
-            String key = generateProductKey(product, tuple.get(categoryProduct.category.name));
-            ProductRankingAvgDTO productRankingAvgDTO = new ProductRankingAvgDTO(product, brand, exposureIndex);
-            resultMap.put(key, productRankingAvgDTO);
+            if(resultMap.containsKey(key)) {
+                DupeExposureIndex dupeExposureIndex = new DupeExposureIndex(product, brand, exposureIndex, category);
+                resultMap.get(key).getDupeExposureIndexList().add(dupeExposureIndex);
+            } else {
+                ProductRankingAvgDTO productRankingAvgDTO = new ProductRankingAvgDTO(product, brand, exposureIndex);
+                resultMap.put(key, productRankingAvgDTO);
+            }
         }
         return resultMap;
     }
@@ -68,9 +76,9 @@ public class ProductRankingService {
     private void updateProductPrices(Map<String, ProductRankingAvgDTO> resultMap, List<Tuple> priceResult) {
         for (Tuple tuple : priceResult) {
             Product product = tuple.get(categoryProduct.product);
-            String key = generateProductKey(product, tuple.get(categoryProduct.category.name));
+            String key = generateProductKey(product);
             ProductRankingAvgDTO productRankingAvgDTO = resultMap.get(key);
-            if (productRankingAvgDTO != null) {
+            if (productRankingAvgDTO != null && productRankingAvgDTO.getDiscountedPrice() == null) {
                 productRankingAvgDTO.setDiscountedPrice(tuple.get(productRanking.discountedPrice));
                 productRankingAvgDTO.setFixedPrice(tuple.get(productRanking.fixedPrice));
                 productRankingAvgDTO.setMonetaryUnit(tuple.get(productRanking.monetaryUnit));
@@ -79,8 +87,8 @@ public class ProductRankingService {
         }
     }
 
-    private String generateProductKey(Product product, String categoryName) {
-        return product.getId().getProductId() + "_" + product.getId().getMallType() + "_" + categoryName;
+    private String generateProductKey(Product product) {
+        return product.getId().getProductId() + "_" + product.getId().getMallType();
     }
 
     public List<String> getBrands(String mallType) {

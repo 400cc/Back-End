@@ -19,7 +19,6 @@ import java.util.List;
 import static Designovel.Capstone.entity.QCategory.category;
 import static Designovel.Capstone.entity.QCategoryClosure.categoryClosure;
 import static Designovel.Capstone.entity.QCategoryProduct.categoryProduct;
-import static Designovel.Capstone.entity.QProduct.product;
 import static Designovel.Capstone.entity.QProductRanking.productRanking;
 
 
@@ -52,7 +51,6 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                         productRanking.fixedPrice,
                         productRanking.discountedPrice,
                         productRanking.monetaryUnit,
-                        categoryProduct.category.name,
                         categoryProduct.category
                 )
                 .from(productRanking)
@@ -60,7 +58,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .where(builder.and(productRanking.crawledDate.eq(latestCrawledDateSubQuery)))
                 .groupBy(categoryProduct.product.id.productId,
                         categoryProduct.product.id.mallType,
-                        categoryProduct.category.name,
+                        categoryProduct.category,
                         productRanking.discountedPrice,
                         productRanking.fixedPrice)
                 .offset(pageable.getOffset())
@@ -75,7 +73,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                         categoryProduct.product,
                         productRanking.brand,
                         productRanking.rankScore.sum(),
-                        categoryProduct.category.name
+                        categoryProduct.category
                 )
                 .from(productRanking)
                 .leftJoin(productRanking.categoryProduct, categoryProduct)
