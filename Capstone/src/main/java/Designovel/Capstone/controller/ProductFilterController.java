@@ -9,7 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -29,6 +36,13 @@ public class ProductFilterController {
     @GetMapping("/category")
     public ResponseEntity<Object> getCategories(@RequestParam String mallType) {
         return ResponseEntity.ok(categoryService.getCategoryTree(mallType));
+    }
+
+    @GetMapping("/brand")
+    public ResponseEntity<Object> getBrands(@RequestParam String mallType) {
+        Map<String, List<String>> distinctBrandMap = new HashMap<>();
+        distinctBrandMap.put("brand", productRankingService.getBrands(mallType));
+        return ResponseEntity.ok(distinctBrandMap);
     }
 
 }

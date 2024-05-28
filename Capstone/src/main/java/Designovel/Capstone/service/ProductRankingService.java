@@ -83,4 +83,7 @@ public class ProductRankingService {
         return product.getId().getProductId() + "_" + product.getId().getMallType() + "_" + categoryName;
     }
 
+    public List<String> getBrands(String mallType) {
+        return productRankingRepository.findDistinctBrand(mallType);
+    }
 }
