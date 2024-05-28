@@ -1,5 +1,6 @@
 package Designovel.Capstone.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,9 +19,11 @@ public class ProductRanking {
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "product_id", referencedColumnName = "product_id"),
+            @JoinColumn(name = "category_id", referencedColumnName = "category_id"),
             @JoinColumn(name = "mall_type", referencedColumnName = "mall_type")
     })
-    private Product product;
+    @JsonIgnore
+    private CategoryProduct categoryProduct;
 
     @Column(name = "brand")
     private String brand;

@@ -9,13 +9,12 @@ import lombok.Data;
 public class MusinsaReview {
 
     @Id
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "mall_type", referencedColumnName = "mall_type", insertable = false, updatable = false),
-            @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false),
-            @JoinColumn(name = "review_id", referencedColumnName = "review_id", insertable = false, updatable = false)
-    })
+    @OneToOne
+    @JoinColumn(name = "review_id")
     private ReviewProduct reviewProduct;
+
+    @Column(name = "org_review_id")
+    private String orgReviewId;
 
     private Integer rate;
     private String reviewType;

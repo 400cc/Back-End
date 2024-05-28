@@ -5,6 +5,7 @@ import Designovel.Capstone.domain.ProductRankingAvgDTO;
 import Designovel.Capstone.entity.Product;
 import Designovel.Capstone.repository.ProductRankingRepository;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,39 +30,45 @@ public class ProductRankingService {
 
     private final ProductRankingRepository productRankingRepository;
 
-
-    //    public Map<String, ProductRankingAvgDTO> getProductRankingAverages(ProductFilterDTO filter) {
-//        Map<String, ProductRankingAvgDTO> results = productRankingRepository.findAllWithFilters(filter);
-//        return results;
-//    }
     public Page<ProductRankingAvgDTO> getProductRankingAverages(ProductFilterDTO filter, int page) {
         int size = 20; // 페이지당 항목 수 고정
         Pageable pageable = PageRequest.of(page, size);
         BooleanBuilder builder = productRankingRepository.buildProductRankingFilter(filter);
 
-        List<Tuple> rankScoreResult = productRankingRepository.getExposureIndexFromProductRanking(builder, pageable);
+        //노출 지수 가져오기
+        QueryResults<Tuple> productRankingQueryResult = productRankingRepository.getExposureIndexFromProductRanking(builder, pageable);
+        List<Tuple> exposureIndexQueryResult = productRankingQueryResult.getResults();
+        long total = productRankingQueryResult.getTotal();
 
+        //응답 객체 생성
+        Map<String, ProductRankingAvgDTO> productRankingMap = createProductRankingMap(exposureIndexQueryResult);
+
+        //제일 최신 가격(현재가, 할인가) 가져오기
+        List<Tuple> priceQueryResult = productRankingRepository.getPriceFromProductRanking(builder, filter.getEndDate(), pageable);
+        updateProductPrices(productRankingMap, priceQueryResult);
+
+        List<ProductRankingAvgDTO> resultList = new ArrayList<>(productRankingMap.values());
+        return new PageImpl<>(resultList, pageable, total);
+    }
+
+    private Map<String, ProductRankingAvgDTO> createProductRankingMap(List<Tuple> rankScoreResult) {
         Map<String, ProductRankingAvgDTO> resultMap = new HashMap<>();
         for (Tuple tuple : rankScoreResult) {
-            Product product = tuple.get(productRanking.product);
+            Product product = tuple.get(categoryProduct.product);
             String brand = tuple.get(productRanking.brand);
             Float exposureIndex = tuple.get(productRanking.rankScore.sum());
 
-            String key = product.getId().getProductId() + "_" +
-                    product.getId().getMallType() + "_" +
-                    tuple.get(categoryProduct.category.name);
+            String key = generateProductKey(product, tuple.get(categoryProduct.category.name));
             ProductRankingAvgDTO productRankingAvgDTO = new ProductRankingAvgDTO(product, brand, exposureIndex);
             resultMap.put(key, productRankingAvgDTO);
         }
+        return resultMap;
+    }
 
-        List<Tuple> priceResult = productRankingRepository.getPriceFromProductRanking(builder, filter.getEndDate(), pageable);
-
-
+    private void updateProductPrices(Map<String, ProductRankingAvgDTO> resultMap, List<Tuple> priceResult) {
         for (Tuple tuple : priceResult) {
-            Product product = tuple.get(productRanking.product);
-            String key = product.getId().getProductId() + "_" +
-                    product.getId().getMallType() + "_" +
-                    tuple.get(categoryProduct.category.name);
+            Product product = tuple.get(categoryProduct.product);
+            String key = generateProductKey(product, tuple.get(categoryProduct.category.name));
             ProductRankingAvgDTO productRankingAvgDTO = resultMap.get(key);
             if (productRankingAvgDTO != null) {
                 productRankingAvgDTO.setDiscountedPrice(tuple.get(productRanking.discountedPrice));
@@ -70,10 +77,10 @@ public class ProductRankingService {
                 productRankingAvgDTO.setCategory(tuple.get(categoryProduct.category));
             }
         }
-
-        List<ProductRankingAvgDTO> resultList = new ArrayList<>(resultMap.values());
-
-        return new PageImpl<>(resultList);
-
     }
+
+    private String generateProductKey(Product product, String categoryName) {
+        return product.getId().getProductId() + "_" + product.getId().getMallType() + "_" + categoryName;
+    }
+
 }

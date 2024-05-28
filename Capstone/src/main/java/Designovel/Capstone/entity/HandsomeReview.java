@@ -12,14 +12,12 @@ public class HandsomeReview {
 
 
     @Id
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "mall_type", referencedColumnName = "mall_type", insertable = false, updatable = false),
-            @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false),
-            @JoinColumn(name = "review_id", referencedColumnName = "review_id", insertable = false, updatable = false)
-    })
+    @OneToOne
+    @JoinColumn(name = "review_id")
     private ReviewProduct reviewProduct;
 
+    @Column(name = "org_review_id")
+    private String orgReviewId;
     private Integer rating;
     private Date writtenDate;
     private String userId;

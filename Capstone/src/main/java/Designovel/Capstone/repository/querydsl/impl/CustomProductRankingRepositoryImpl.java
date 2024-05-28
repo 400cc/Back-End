@@ -1,24 +1,20 @@
 package Designovel.Capstone.repository.querydsl.impl;
 
 import Designovel.Capstone.domain.ProductFilterDTO;
-import Designovel.Capstone.domain.ProductRankingAvgDTO;
-import Designovel.Capstone.entity.Product;
 import Designovel.Capstone.entity.QProductRanking;
 import Designovel.Capstone.repository.querydsl.CustomProductRankingRepository;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static Designovel.Capstone.entity.QCategory.category;
 import static Designovel.Capstone.entity.QCategoryClosure.categoryClosure;
@@ -32,24 +28,27 @@ import static Designovel.Capstone.entity.QProductRanking.productRanking;
 public class CustomProductRankingRepositoryImpl implements CustomProductRankingRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    @Override
-    public List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, Date endDate, Pageable pageable) {
-        QProductRanking subProductRanking = new QProductRanking("subProductRanking");
 
+    private JPQLQuery<Date> createLatestCrawledDateSubQuery(QProductRanking subProductRanking, Date endDate) {
         BooleanBuilder subQueryConditions = new BooleanBuilder();
-        subQueryConditions.and(subProductRanking.product.id.productId.eq(productRanking.product.id.productId))
-                .and(subProductRanking.product.id.mallType.eq(productRanking.product.id.mallType))
-                .and(subProductRanking.product.categoryProducts.any().category.eq(categoryProduct.category));
+        subQueryConditions.and(subProductRanking.categoryProduct.id.eq(productRanking.categoryProduct.id));
 
         if (endDate != null) {
             subQueryConditions.and(subProductRanking.crawledDate.loe(endDate));
         }
-        JPQLQuery<Date> latestCrawledDateSubQuery = JPAExpressions
-                .select(subProductRanking.crawledDate.max())
+
+        return JPAExpressions.select(subProductRanking.crawledDate.max())
                 .from(subProductRanking)
                 .where(subQueryConditions);
+    }
+
+    @Override
+    public List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, Date endDate, Pageable pageable) {
+        QProductRanking subProductRanking = new QProductRanking("subProductRanking");
+        JPQLQuery<Date> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(subProductRanking, endDate);
+
         return jpaQueryFactory.select(
-                        productRanking.product,
+                        categoryProduct.product,
                         productRanking.fixedPrice,
                         productRanking.discountedPrice,
                         productRanking.monetaryUnit,
@@ -57,11 +56,10 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                         categoryProduct.category
                 )
                 .from(productRanking)
-                .leftJoin(productRanking.product, product)
-                .leftJoin(product.categoryProducts, categoryProduct)
+                .leftJoin(productRanking.categoryProduct, categoryProduct)
                 .where(builder.and(productRanking.crawledDate.eq(latestCrawledDateSubQuery)))
-                .groupBy(productRanking.product.id.productId,
-                        productRanking.product.id.mallType,
+                .groupBy(categoryProduct.product.id.productId,
+                        categoryProduct.product.id.mallType,
                         categoryProduct.category.name,
                         productRanking.discountedPrice,
                         productRanking.fixedPrice)
@@ -70,6 +68,25 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .fetch();
     }
 
+
+    @Override
+    public QueryResults<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable) {
+        return jpaQueryFactory.select(
+                        categoryProduct.product,
+                        productRanking.brand,
+                        productRanking.rankScore.sum(),
+                        categoryProduct.category.name
+                )
+                .from(productRanking)
+                .leftJoin(productRanking.categoryProduct, categoryProduct)
+                .where(builder)
+                .groupBy(categoryProduct.product.id.productId,
+                        categoryProduct.product.id.mallType,
+                        categoryProduct.category.name)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+    }
 
     @Override
     public BooleanBuilder buildProductRankingFilter(ProductFilterDTO filterDTO) {
@@ -88,13 +105,13 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
         }
 
         if (filterDTO.getMallType() != null) {
-            builder.and(productRanking.product.id.mallType.eq(filterDTO.getMallType()));
+            builder.and(productRanking.categoryProduct.id.mallType.eq(filterDTO.getMallType()));
         }
 
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {
             // 카테고리 필터링 로직
             builder.and(
-                    productRanking.product.id.productId.in(
+                    productRanking.categoryProduct.product.id.productId.in(
                             JPAExpressions.select(categoryProduct.id.productId)
                                     .from(categoryProduct)
                                     .join(categoryProduct.category, category)
@@ -107,25 +124,6 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
         return builder;
     }
 
-    @Override
-    public List<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable) {
-        return jpaQueryFactory.select(
-                        productRanking.product,
-                        productRanking.brand,
-                        productRanking.rankScore.sum(),
-                        categoryProduct.category.name
-                )
-                .from(productRanking)
-                .leftJoin(productRanking.product, product)
-                .leftJoin(product.categoryProducts, categoryProduct)
-                .where(builder)
-                .groupBy(productRanking.product.id.productId,
-                        productRanking.product.id.mallType,
-                        categoryProduct.category.name)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-    }
 
 }
 
