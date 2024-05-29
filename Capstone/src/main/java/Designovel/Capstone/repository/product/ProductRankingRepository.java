@@ -1,6 +1,6 @@
 package Designovel.Capstone.repository.product;
 
-import Designovel.Capstone.domain.ProductDetailDTO;
+import Designovel.Capstone.domain.ProductBasicDetailDTO;
 import Designovel.Capstone.entity.ProductRanking;
 import Designovel.Capstone.repository.querydsl.CustomProductRankingRepository;
 import org.springframework.data.domain.Page;
@@ -18,12 +18,15 @@ public interface ProductRankingRepository extends JpaRepository<ProductRanking, 
     @Query("select distinct p.brand from ProductRanking p where p.categoryProduct.product.id.mallType = :mallType")
     List<String> findDistinctBrand(@Param("mallType") String mallType);
 
-    @Query("select p.categoryProduct.category, sum(p.rankScore) from ProductRanking p " +
-            "where p.categoryProduct.product.id.productId = :productId and p.categoryProduct.product.id.mallType = :mallType group by p.categoryProduct.product, p.categoryProduct.category")
+    @Query("select p.categoryProduct.category, sum(p.rankScore) " +
+            "from ProductRanking p " +
+            "where p.categoryProduct.product.id.productId = :productId and p.categoryProduct.product.id.mallType = :mallType " +
+            "group by p.categoryProduct.product, p.categoryProduct.category")
     List<Object[]> findRankScoreByProduct(@Param("productId") String productId, @Param("mallType") String mallType);
 
-    @Query("select new Designovel.Capstone.domain.ProductDetailDTO(p.brand, p.discountedPrice, p.fixedPrice, p.monetaryUnit, p.crawledDate) from ProductRanking p " +
+    @Query("select new Designovel.Capstone.domain.ProductBasicDetailDTO(p.brand, p.discountedPrice, p.fixedPrice, p.monetaryUnit, p.crawledDate, p.categoryProduct.product.id) " +
+            "from ProductRanking p " +
             "where p.categoryProduct.product.id.productId =:productId and p.categoryProduct.product.id.mallType =:mallType " +
             "order by p.crawledDate desc")
-    Page<ProductDetailDTO> findPriceInfoByProduct(@Param("productId") String productId, @Param("mallType") String mallType, Pageable pageable);
+    Page<ProductBasicDetailDTO> findPriceInfoByProduct(@Param("productId") String productId, @Param("mallType") String mallType, Pageable pageable);
 }

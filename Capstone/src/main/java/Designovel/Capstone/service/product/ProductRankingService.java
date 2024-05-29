@@ -1,7 +1,7 @@
 package Designovel.Capstone.service.product;
 
 import Designovel.Capstone.domain.DupeExposureIndex;
-import Designovel.Capstone.domain.ProductDetailDTO;
+import Designovel.Capstone.domain.ProductBasicDetailDTO;
 import Designovel.Capstone.domain.ProductFilterDTO;
 import Designovel.Capstone.domain.ProductRankingDTO;
 import Designovel.Capstone.entity.Category;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class ProductRankingService {
 
     private final ProductRankingRepository productRankingRepository;
 
-    public Page<ProductRankingDTO> getProducRankingByFilter(ProductFilterDTO filter, int page) {
+    public Page<ProductRankingDTO> getProductRankingByFilter(ProductFilterDTO filter, int page) {
         int size = 20; // 페이지당 항목 수 고정
         Pageable pageable = PageRequest.of(page, size);
         BooleanBuilder builder = productRankingRepository.buildProductRankingFilter(filter);
@@ -99,16 +98,14 @@ public class ProductRankingService {
     }
 
 
-    public ResponseEntity<ProductDetailDTO> getMusinsaProductDetail(String productId) {
-        List<Object[]> rankScore = productRankingRepository.findRankScoreByProduct(productId, "MUSINSA");
+    public ProductBasicDetailDTO getProductBasicDetail(String productId, String mallType) {
+        List<Object[]> rankScore = productRankingRepository.findRankScoreByProduct(productId, mallType);
         Pageable pageable = PageRequest.of(0, 1);
-        ProductDetailDTO productDetailDTO = productRankingRepository.findPriceInfoByProduct(productId, "MUSINSA", pageable).getContent().get(0);
-        productDetailDTO.setProductId(productId);
-        productDetailDTO.setMallType("MUSINSA");
+        ProductBasicDetailDTO productBasicDetailDTO = productRankingRepository.findPriceInfoByProduct(productId, mallType, pageable).getContent().get(0);
 
-        List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(productId, "MUSINSA", ((Number) data[1]).floatValue(), (Category) data[0]))
+        List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(productId, mallType, ((Number) data[1]).floatValue(), (Category) data[0]))
                 .collect(Collectors.toList());
-        productDetailDTO.setDupeExposureIndexList(exposureIndexList);
-        return ResponseEntity.ok(productDetailDTO);
+        productBasicDetailDTO.setDupeExposureIndexList(exposureIndexList);
+        return productBasicDetailDTO;
     }
 }

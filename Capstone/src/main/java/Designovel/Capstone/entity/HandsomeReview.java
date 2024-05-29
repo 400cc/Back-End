@@ -10,7 +10,6 @@ import java.util.Date;
 @Table(name = "handsome_review")
 public class HandsomeReview {
 
-
     @Id
     @OneToOne
     @JoinColumn(name = "review_id")
