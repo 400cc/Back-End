@@ -35,10 +35,9 @@ public class ProductDetailController {
     private final HandsomeReviewService handsomeReviewService;
     private final WConceptVariableService wConceptVariableService;
     private final WConceptReviewService wConceptReviewService;
-
     private final MusinsaReviewService musinsaReviewService;
 
-    @GetMapping("/detail/MUSINSA/{productId}")
+    @GetMapping("/MUSINSA/{productId}")
     public ResponseEntity<Map<String, Object>> getMusinsaProductDetail(@PathVariable("productId") String productId) {
         Map<String, Object> response = new HashMap<>();
         ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, MUSINSA.getType());
@@ -48,14 +47,14 @@ public class ProductDetailController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/detail/MUSINSA/review/{productId}")
+    @GetMapping("/MUSINSA/review/{productId}")
     public ResponseEntity<Page<MusinsaReview>> getMusinsaProductDetailReview(@PathVariable("productId") String productId,
                                                                              @RequestParam int page) {
         Page<MusinsaReview> musinsaReviewPage = musinsaReviewService.findByProductId(productId, page);
         return ResponseEntity.ok(musinsaReviewPage);
     }
 
-    @GetMapping("/detail/HANDSOME/{productId}")
+    @GetMapping("/HANDSOME/{productId}")
     public ResponseEntity<Object> getHandsomeProductDetail(@PathVariable("productId") String productId) {
         Map<String, Object> response = new HashMap<>();
         ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, HANDSOME.getType());
@@ -65,14 +64,14 @@ public class ProductDetailController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/detail/HANDSOME/review/{productId}")
+    @GetMapping("/HANDSOME/review/{productId}")
     public ResponseEntity<Page<HandsomeReview>> getHandsomeProductDetailReview(@PathVariable("productId") String productId,
                                                                                @RequestParam int page) {
         Page<HandsomeReview> handsomeReviewPage = handsomeReviewService.findByProductId(productId, page);
         return ResponseEntity.ok(handsomeReviewPage);
     }
 
-    @GetMapping("/detail/WCONCEPT/{productId}")
+    @GetMapping("/WCONCEPT/{productId}")
     public ResponseEntity<Object> getWConceptProductDetail(@PathVariable("productId") String productId) {
         Map<String, Object> response = new HashMap<>();
         ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, WCONCEPT.getType());
@@ -82,7 +81,7 @@ public class ProductDetailController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/detail/WCONCEPT/review/{productId}")
+    @GetMapping("/WCONCEPT/review/{productId}")
     public ResponseEntity<Page<WConceptReview>> getWConceptProductDetailReview(@PathVariable("productId") String productId,
                                                                                @RequestParam int page) {
         Page<WConceptReview> wConceptReviewPage = wConceptReviewService.findByProductId(productId, page);

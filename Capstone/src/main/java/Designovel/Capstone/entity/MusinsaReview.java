@@ -1,5 +1,6 @@
 package Designovel.Capstone.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,10 +10,15 @@ import lombok.Data;
 public class MusinsaReview {
 
     @Id
-    @OneToOne
-    @JoinColumn(name = "review_id")
-    private ReviewProduct reviewProduct;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_id")
+    private int reviewId;
 
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "review_id")
+    @JsonIgnore
+    private ReviewProduct reviewProduct;
     @Column(name = "product_id", nullable = false)
     private String productId;
 
