@@ -1,5 +1,6 @@
 package Designovel.Capstone.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class WConceptReview {
     @OneToOne
     @MapsId
     @JoinColumn(name = "review_id")
+    @JsonIgnore
     private ReviewProduct reviewProduct;
 
     @Column(name = "product_id", nullable = false)

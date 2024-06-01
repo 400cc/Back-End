@@ -1,8 +1,11 @@
 package Designovel.Capstone.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "wconcept_variable")
 public class WConceptVariable {
 
@@ -15,6 +18,7 @@ public class WConceptVariable {
             @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false),
             @JoinColumn(name = "mall_type", referencedColumnName = "mall_type", insertable = false, updatable = false)
     })
+    @JsonIgnore
     private Product product;
 
     private String productName;

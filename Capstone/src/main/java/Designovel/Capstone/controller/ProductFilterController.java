@@ -3,14 +3,12 @@ package Designovel.Capstone.controller;
 import Designovel.Capstone.domain.ProductBasicDetailDTO;
 import Designovel.Capstone.domain.ProductFilterDTO;
 import Designovel.Capstone.domain.ProductRankingDTO;
-import Designovel.Capstone.entity.HandsomeReview;
-import Designovel.Capstone.entity.HandsomeVariable;
-import Designovel.Capstone.entity.MusinsaVariable;
-import Designovel.Capstone.entity.WConceptVariable;
+import Designovel.Capstone.entity.*;
 import Designovel.Capstone.service.category.CategoryService;
 import Designovel.Capstone.service.product.ProductRankingService;
 import Designovel.Capstone.service.product.ProductService;
 import Designovel.Capstone.service.review.HandsomeReviewService;
+import Designovel.Capstone.service.review.WConceptReviewService;
 import Designovel.Capstone.service.variable.HandsomeVariableService;
 import Designovel.Capstone.service.variable.MusinsaVariableService;
 import Designovel.Capstone.service.variable.WConceptVariableService;
@@ -41,6 +39,7 @@ public class ProductFilterController {
     private final HandsomeVariableService handsomeVariableService;
     private final HandsomeReviewService handsomeReviewService;
     private final WConceptVariableService wConceptVariableService;
+    private final WConceptReviewService wConceptReviewService;
 
     @GetMapping
     public ResponseEntity<Page<ProductRankingDTO>> getProductRankings(@ModelAttribute ProductFilterDTO filter, int page) {
@@ -97,4 +96,10 @@ public class ProductFilterController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/detail/WCONCEPT/review/{productId}")
+    public ResponseEntity<Page<WConceptReview>> getWConceptProductDetailReview(@PathVariable("productId") String productId,
+                                                                               @RequestParam int page) {
+        Page<WConceptReview> wConceptReviewPage = wConceptReviewService.findByProductId(productId, page);
+        return ResponseEntity.ok(wConceptReviewPage);
+    }
 }
