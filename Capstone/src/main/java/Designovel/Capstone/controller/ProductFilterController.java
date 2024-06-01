@@ -28,18 +28,12 @@ import static Designovel.Capstone.entity.enumType.MallType.*;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/style")
+@RequestMapping("/style/filter")
 public class ProductFilterController {
 
     private final ProductRankingService productRankingService;
     private final CategoryService categoryService;
 
-    private final ProductService productService;
-    private final MusinsaVariableService musinsaVariableService;
-    private final HandsomeVariableService handsomeVariableService;
-    private final HandsomeReviewService handsomeReviewService;
-    private final WConceptVariableService wConceptVariableService;
-    private final WConceptReviewService wConceptReviewService;
 
     @GetMapping
     public ResponseEntity<Page<ProductRankingDTO>> getProductRankings(@ModelAttribute ProductFilterDTO filter, int page) {
@@ -47,59 +41,17 @@ public class ProductFilterController {
         return ResponseEntity.ok(productRankings);
     }
 
-    @GetMapping("/filter/category/{mallType}")
+    @GetMapping("/category/{mallType}")
     public ResponseEntity<Object> getCategories(@PathVariable("mallType") String mallType) {
         return ResponseEntity.ok(categoryService.getCategoryTree(mallType));
     }
 
-    @GetMapping("/filter/brand/{mallType}")
+    @GetMapping("/brand/{mallType}")
     public ResponseEntity<Object> getBrands(@PathVariable("mallType") String mallType) {
         Map<String, List<String>> distinctBrandMap = new HashMap<>();
         distinctBrandMap.put("brand", productRankingService.getBrands(mallType));
         return ResponseEntity.ok(distinctBrandMap);
     }
 
-    @GetMapping("/detail/MUSINSA/{productId}")
-    public ResponseEntity<Map<String, Object>> getMusinsaProductDetail(@PathVariable("productId") String productId) {
-        Map<String, Object> response = new HashMap<>();
-        ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, MUSINSA.getType());
-        MusinsaVariable musinsaVariable = musinsaVariableService.getMusinsaVariable(productId);
-        response.put("basicDetail", productBasicDetail);
-        response.put("variable", musinsaVariable);
-        return ResponseEntity.ok(response);
-    }
 
-    @GetMapping("/detail/HANDSOME/{productId}")
-    public ResponseEntity<Object> getHandsomeProductDetail(@PathVariable("productId") String productId) {
-        Map<String, Object> response = new HashMap<>();
-        ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, HANDSOME.getType());
-        HandsomeVariable handsomeVariable = handsomeVariableService.getHandsomeVariableByProductId(productId);
-        response.put("basicDetail", productBasicDetail);
-        response.put("variable", handsomeVariable);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/detail/HANDSOME/review/{productId}")
-    public ResponseEntity<Page<HandsomeReview>> getHandsomeProductDetailReview(@PathVariable("productId") String productId,
-                                                                               @RequestParam int page) {
-        Page<HandsomeReview> handsomeReviewPage = handsomeReviewService.findByProductId(productId, page);
-        return ResponseEntity.ok(handsomeReviewPage);
-    }
-
-    @GetMapping("/detail/WCONCEPT/{productId}")
-    public ResponseEntity<Object> getWConceptProductDetail(@PathVariable("productId") String productId) {
-        Map<String, Object> response = new HashMap<>();
-        ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, WCONCEPT.getType());
-        WConceptVariable wConceptVariable = wConceptVariableService.getWConceptVariableByProductId(productId);
-        response.put("basicDetail", productBasicDetail);
-        response.put("variable", wConceptVariable);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/detail/WCONCEPT/review/{productId}")
-    public ResponseEntity<Page<WConceptReview>> getWConceptProductDetailReview(@PathVariable("productId") String productId,
-                                                                               @RequestParam int page) {
-        Page<WConceptReview> wConceptReviewPage = wConceptReviewService.findByProductId(productId, page);
-        return ResponseEntity.ok(wConceptReviewPage);
-    }
 }

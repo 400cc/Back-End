@@ -21,8 +21,11 @@ public class WConceptVariable {
     @JsonIgnore
     private Product product;
 
+    @Column(name = "product_name")
     private String productName;
+    @Column(name = "likes")
     private Integer likes;
+    @Column(name = "sold_out")
     private Boolean soldOut;
 
 }
