@@ -1,5 +1,6 @@
 package Designovel.Capstone.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ public class HandsomeVariable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "variable_id")
     private Integer variableId;
 
     @ManyToOne
@@ -17,11 +19,14 @@ public class HandsomeVariable {
             @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false),
             @JoinColumn(name = "mall_type", referencedColumnName = "mall_type", insertable = false, updatable = false)
     })
+    @JsonIgnore
     private Product product;
 
-
+    @Column(name = "product_info")
     private String productInfo;
+    @Column(name = "fitting_info")
     private String fittingInfo;
+    @Column(name = "additional_info")
     private String additionalInfo;
 
 }

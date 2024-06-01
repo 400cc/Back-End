@@ -24,7 +24,7 @@ public class ProductBasicDetailDTO {
     private Date crawledDate;
     private List<Image> imageList = new ArrayList<>();
     private Map<String, Object> skuAttribute = new HashMap<>();
-    private List<DupeExposureIndex> dupeExposureIndexList = new ArrayList<>();
+    private List<DupeExposureIndex> exposureIndexList = new ArrayList<>();
 
     public ProductBasicDetailDTO(String brand, int discountedPrice, int fixedPrice, String monetaryUnit, Date crawledDate, ProductId productId) {
         this.brand = brand;

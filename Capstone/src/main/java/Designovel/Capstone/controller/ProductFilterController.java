@@ -1,32 +1,30 @@
 package Designovel.Capstone.controller;
 
-import Designovel.Capstone.domain.MusinsaVariableDTO;
 import Designovel.Capstone.domain.ProductBasicDetailDTO;
 import Designovel.Capstone.domain.ProductFilterDTO;
 import Designovel.Capstone.domain.ProductRankingDTO;
+import Designovel.Capstone.entity.HandsomeReview;
+import Designovel.Capstone.entity.HandsomeVariable;
 import Designovel.Capstone.entity.MusinsaVariable;
-import Designovel.Capstone.entity.enumType.MallType;
 import Designovel.Capstone.service.category.CategoryService;
-import Designovel.Capstone.service.image.ImageService;
 import Designovel.Capstone.service.product.ProductRankingService;
 import Designovel.Capstone.service.product.ProductService;
-import Designovel.Capstone.service.product.SKUAttributeService;
+import Designovel.Capstone.service.review.HandsomeReviewService;
+import Designovel.Capstone.service.variable.HandsomeVariableService;
 import Designovel.Capstone.service.variable.MusinsaVariableService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static Designovel.Capstone.entity.enumType.MallType.*;
+import static Designovel.Capstone.entity.enumType.MallType.HANDSOME;
+import static Designovel.Capstone.entity.enumType.MallType.MUSINSA;
 
 @Slf4j
 @Controller
@@ -39,6 +37,8 @@ public class ProductFilterController {
 
     private final ProductService productService;
     private final MusinsaVariableService musinsaVariableService;
+    private final HandsomeVariableService handsomeVariableService;
+    private final HandsomeReviewService handsomeReviewService;
 
     @GetMapping
     public ResponseEntity<Page<ProductRankingDTO>> getProductRankings(@ModelAttribute ProductFilterDTO filter, int page) {
@@ -68,12 +68,25 @@ public class ProductFilterController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/detail/HANDSOME/{productId}")
+    public ResponseEntity<Object> getHandsomeProductDetail(@PathVariable("productId") String productId) {
+        Map<String, Object> response = new HashMap<>();
+        ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, HANDSOME.getType());
+        HandsomeVariable handsomeVariable = handsomeVariableService.getHandsomeVariableByProductId(productId);
+        response.put("basicDetail", productBasicDetail);
+        response.put("variable", handsomeVariable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/detail/HANDSOME/review/{productId}")
+    public ResponseEntity<Page<HandsomeReview>> getHandsomeProductDetailReview(@PathVariable("productId") String productId,
+                                                                               @RequestParam int page) {
+        Page<HandsomeReview> handsomeReviewPage = handsomeReviewService.findByProductId(productId, page);
+        return ResponseEntity.ok(handsomeReviewPage);
+    }
 //    @GetMapping("/detail/WCONCEPT/{productId}")
 //    public ResponseEntity<Object> getWConceptProductDetail(@PathVariable("productId") String productId) {
 //
 //    }
-//    @GetMapping("/detail/HANDSOME/{productId}")
-//    public ResponseEntity<Object> getHandsomeProductDetail(@PathVariable("productId") String productId) {
-//
-//    }
+
 }

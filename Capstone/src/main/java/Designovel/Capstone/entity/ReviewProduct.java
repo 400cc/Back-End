@@ -2,10 +2,12 @@ package Designovel.Capstone.entity;
 
 import Designovel.Capstone.entity.id.ReviewProductId;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Date;
 
 @Entity
+@Data
 @Table(name = "review_product", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"org_review_id", "mall_type"})
 })

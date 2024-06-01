@@ -98,14 +98,14 @@ public class ProductRankingService {
     }
 
 
-    public ProductBasicDetailDTO getProductBasicDetail(String productId, String mallType) {
+    public ProductBasicDetailDTO getExposureIndexAndPriceInfo(String productId, String mallType) {
         List<Object[]> rankScore = productRankingRepository.findRankScoreByProduct(productId, mallType);
         Pageable pageable = PageRequest.of(0, 1);
         ProductBasicDetailDTO productBasicDetailDTO = productRankingRepository.findPriceInfoByProduct(productId, mallType, pageable).getContent().get(0);
 
         List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(productId, mallType, ((Number) data[1]).floatValue(), (Category) data[0]))
                 .collect(Collectors.toList());
-        productBasicDetailDTO.setDupeExposureIndexList(exposureIndexList);
+        productBasicDetailDTO.setExposureIndexList(exposureIndexList);
         return productBasicDetailDTO;
     }
 }
