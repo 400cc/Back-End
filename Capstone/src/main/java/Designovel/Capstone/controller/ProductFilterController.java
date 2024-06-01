@@ -6,12 +6,14 @@ import Designovel.Capstone.domain.ProductRankingDTO;
 import Designovel.Capstone.entity.HandsomeReview;
 import Designovel.Capstone.entity.HandsomeVariable;
 import Designovel.Capstone.entity.MusinsaVariable;
+import Designovel.Capstone.entity.WConceptVariable;
 import Designovel.Capstone.service.category.CategoryService;
 import Designovel.Capstone.service.product.ProductRankingService;
 import Designovel.Capstone.service.product.ProductService;
 import Designovel.Capstone.service.review.HandsomeReviewService;
 import Designovel.Capstone.service.variable.HandsomeVariableService;
 import Designovel.Capstone.service.variable.MusinsaVariableService;
+import Designovel.Capstone.service.variable.WConceptVariableService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,8 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static Designovel.Capstone.entity.enumType.MallType.HANDSOME;
-import static Designovel.Capstone.entity.enumType.MallType.MUSINSA;
+import static Designovel.Capstone.entity.enumType.MallType.*;
 
 @Slf4j
 @Controller
@@ -39,6 +40,7 @@ public class ProductFilterController {
     private final MusinsaVariableService musinsaVariableService;
     private final HandsomeVariableService handsomeVariableService;
     private final HandsomeReviewService handsomeReviewService;
+    private final WConceptVariableService wConceptVariableService;
 
     @GetMapping
     public ResponseEntity<Page<ProductRankingDTO>> getProductRankings(@ModelAttribute ProductFilterDTO filter, int page) {
@@ -84,9 +86,15 @@ public class ProductFilterController {
         Page<HandsomeReview> handsomeReviewPage = handsomeReviewService.findByProductId(productId, page);
         return ResponseEntity.ok(handsomeReviewPage);
     }
-//    @GetMapping("/detail/WCONCEPT/{productId}")
-//    public ResponseEntity<Object> getWConceptProductDetail(@PathVariable("productId") String productId) {
-//
-//    }
+
+    @GetMapping("/detail/WCONCEPT/{productId}")
+    public ResponseEntity<Object> getWConceptProductDetail(@PathVariable("productId") String productId) {
+        Map<String, Object> response = new HashMap<>();
+        ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, WCONCEPT.getType());
+        WConceptVariable wConceptVariable = wConceptVariableService.getWConceptVariableByProductId(productId);
+        response.put("basicDetail", productBasicDetail);
+        response.put("variable", wConceptVariable);
+        return ResponseEntity.ok(response);
+    }
 
 }
