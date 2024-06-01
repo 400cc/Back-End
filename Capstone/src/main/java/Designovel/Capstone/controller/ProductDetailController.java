@@ -9,15 +9,13 @@ import Designovel.Capstone.service.review.WConceptReviewService;
 import Designovel.Capstone.service.variable.HandsomeVariableService;
 import Designovel.Capstone.service.variable.MusinsaVariableService;
 import Designovel.Capstone.service.variable.WConceptVariableService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +23,9 @@ import java.util.Map;
 import static Designovel.Capstone.entity.enumType.MallType.*;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
+@Tag(name = "상품 상세", description = "상품 상세 정보 API")
 @RequestMapping("/style/detail")
 public class ProductDetailController {
     private final ProductService productService;
@@ -37,6 +36,7 @@ public class ProductDetailController {
     private final WConceptReviewService wConceptReviewService;
     private final MusinsaReviewService musinsaReviewService;
 
+    @Operation(summary = "무신사 상품 상세 정보 조회", description = "특정 무신사 상품의 상세 정보(리뷰 제외) 조회")
     @GetMapping("/MUSINSA/{productId}")
     public ResponseEntity<Map<String, Object>> getMusinsaProductDetail(@PathVariable("productId") String productId) {
         Map<String, Object> response = new HashMap<>();
@@ -47,6 +47,7 @@ public class ProductDetailController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "무신사 상품 리뷰 조회", description = "특정 무신사 상품의 리뷰를 조회(페이지)")
     @GetMapping("/MUSINSA/review/{productId}")
     public ResponseEntity<Page<MusinsaReview>> getMusinsaProductDetailReview(@PathVariable("productId") String productId,
                                                                              @RequestParam int page) {
@@ -54,6 +55,7 @@ public class ProductDetailController {
         return ResponseEntity.ok(musinsaReviewPage);
     }
 
+    @Operation(summary = "한섬 상품 상세 정보 조회", description = "특정 한섬 상품의 상세 정보(리뷰 제외) 조회")
     @GetMapping("/HANDSOME/{productId}")
     public ResponseEntity<Object> getHandsomeProductDetail(@PathVariable("productId") String productId) {
         Map<String, Object> response = new HashMap<>();
@@ -64,6 +66,7 @@ public class ProductDetailController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "한섬 상품 리뷰 조회", description = "특정 한섬 상품의 리뷰를 조회(페이지)")
     @GetMapping("/HANDSOME/review/{productId}")
     public ResponseEntity<Page<HandsomeReview>> getHandsomeProductDetailReview(@PathVariable("productId") String productId,
                                                                                @RequestParam int page) {
@@ -71,6 +74,7 @@ public class ProductDetailController {
         return ResponseEntity.ok(handsomeReviewPage);
     }
 
+    @Operation(summary = "W컨셉 상품 상세 정보 조회", description = "특정 W컨셉 상품의 상세 정보(리뷰 제외) 조회")
     @GetMapping("/WCONCEPT/{productId}")
     public ResponseEntity<Object> getWConceptProductDetail(@PathVariable("productId") String productId) {
         Map<String, Object> response = new HashMap<>();
@@ -81,6 +85,7 @@ public class ProductDetailController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "W컨셉 상품 리뷰 조회", description = "특정 W컨셉 상품의 리뷰를 조회(페이지)")
     @GetMapping("/WCONCEPT/review/{productId}")
     public ResponseEntity<Page<WConceptReview>> getWConceptProductDetailReview(@PathVariable("productId") String productId,
                                                                                @RequestParam int page) {
