@@ -19,4 +19,5 @@ public class ProductService {
         imageService.setProductDetailImage(productBasicDetail);
         return productBasicDetail;
     }
+
 }

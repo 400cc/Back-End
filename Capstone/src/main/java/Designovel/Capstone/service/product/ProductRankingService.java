@@ -1,9 +1,6 @@
 package Designovel.Capstone.service.product;
 
-import Designovel.Capstone.domain.DupeExposureIndex;
-import Designovel.Capstone.domain.ProductBasicDetailDTO;
-import Designovel.Capstone.domain.ProductFilterDTO;
-import Designovel.Capstone.domain.ProductRankingDTO;
+import Designovel.Capstone.domain.*;
 import Designovel.Capstone.entity.Category;
 import Designovel.Capstone.entity.Product;
 import Designovel.Capstone.repository.product.ProductRankingRepository;
@@ -107,5 +104,10 @@ public class ProductRankingService {
                 .collect(Collectors.toList());
         productBasicDetailDTO.setExposureIndexList(exposureIndexList);
         return productBasicDetailDTO;
+    }
+
+    public List<TopBrandDTO> getTop10BrandsByMallType(String mallType) {
+        Pageable pageable = PageRequest.of(0, 10);
+        return productRankingRepository.findTop10BrandByExposureIndex(mallType, pageable).getContent();
     }
 }
