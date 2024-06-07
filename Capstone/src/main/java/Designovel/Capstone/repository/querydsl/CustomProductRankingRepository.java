@@ -14,4 +14,5 @@ public interface CustomProductRankingRepository {
     BooleanBuilder buildProductRankingFilter(ProductFilterDTO filterDTO);
     QueryResults<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable);
     List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, Date endDate, Pageable pageable);
+    List<Tuple> getTop10BrandOrderByExposureIndex(BooleanBuilder builder, Pageable pageable);
 }

@@ -81,10 +81,30 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .groupBy(categoryProduct.product.id.productId,
                         categoryProduct.product.id.mallType,
                         categoryProduct.category.name)
+                .orderBy(productRanking.rankScore.sum().desc()) //노출지수 기준 내림차순 정렬
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
     }
+
+    @Override
+    public List<Tuple> getTop10BrandOrderByExposureIndex(BooleanBuilder builder, Pageable pageable) {
+        return jpaQueryFactory.select(
+                        productRanking.brand,
+                        productRanking.rankScore.sum(),
+                        categoryProduct.product.id.mallType
+                )
+                .from(productRanking)
+                .leftJoin(productRanking.categoryProduct, categoryProduct)
+                .where(builder)
+                .groupBy(productRanking.brand,
+                        categoryProduct.product.id.mallType)
+                .orderBy(productRanking.rankScore.sum().desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
 
     @Override
     public BooleanBuilder buildProductRankingFilter(ProductFilterDTO filterDTO) {

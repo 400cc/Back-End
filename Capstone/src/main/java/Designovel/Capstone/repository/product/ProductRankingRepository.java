@@ -31,10 +31,22 @@ public interface ProductRankingRepository extends JpaRepository<ProductRanking, 
             "order by p.crawledDate desc")
     Page<ProductBasicDetailDTO> findPriceInfoByProduct(@Param("productId") String productId, @Param("mallType") String mallType, Pageable pageable);
 
-    @Query("select new Designovel.Capstone.domain.TopBrandDTO(p.brand, sum(p.rankScore), p.categoryProduct.id.mallType) " +
+    @Query("select p, " +
+            "case " +
+            "    when p.fixedPrice < 10000 then '0-10k' " +
+            "    when p.fixedPrice >= 10000 and p.fixedPrice < 20000 then '10k-20k' " +
+            "    when p.fixedPrice >= 20000 and p.fixedPrice < 30000 then '20k-30k' " +
+            "    when p.fixedPrice >= 30000 and p.fixedPrice < 40000 then '30k-40k' " +
+            "    else '40k+' " +
+            "end as priceRange " +
             "from ProductRanking p " +
-            "where p.categoryProduct.id.mallType = :mallType " +
-            "group by p.categoryProduct.id.mallType, p.brand " +
-            "order by sum(p.rankScore) desc")
-    Page<TopBrandDTO> findTop10BrandByExposureIndex(@Param("mallType") String mallType, Pageable pageable);
+            "where p.crawledDate in (" +
+            "    select max(pr.crawledDate) " +
+            "    from ProductRanking pr " +
+            "    where pr.categoryProduct.id.productId = p.categoryProduct.id.productId " +
+            "    and pr.categoryProduct.id.mallType = :mallType " +
+            "    group by pr.categoryProduct.id" +
+            ") " +
+            "and p.categoryProduct.id.mallType = :mallType")
+    List<Object[]> findAllProductsGroupedByPriceRange(@Param("mallType") String mallType);
 }

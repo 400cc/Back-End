@@ -3,6 +3,7 @@ package Designovel.Capstone.service.product;
 import Designovel.Capstone.domain.*;
 import Designovel.Capstone.entity.Category;
 import Designovel.Capstone.entity.Product;
+import Designovel.Capstone.entity.ProductRanking;
 import Designovel.Capstone.repository.product.ProductRankingRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
@@ -106,8 +107,34 @@ public class ProductRankingService {
         return productBasicDetailDTO;
     }
 
-    public List<TopBrandDTO> getTop10BrandsByMallType(String mallType) {
+    public List<TopBrandDTO> getTop10BrandsByMallType(ProductFilterDTO filter) {
         Pageable pageable = PageRequest.of(0, 10);
-        return productRankingRepository.findTop10BrandByExposureIndex(mallType, pageable).getContent();
+        BooleanBuilder builder = productRankingRepository.buildProductRankingFilter(filter);
+        List<Tuple> top10BrandOrderByExposureIndex = productRankingRepository.getTop10BrandOrderByExposureIndex(builder, pageable);
+
+
+        return top10BrandOrderByExposureIndex.stream()
+                .map(tuple -> TopBrandDTO.builder()
+                        .brand(tuple.get(productRanking.brand))
+                        .exposureIndexSum(tuple.get(productRanking.rankScore.sum()))
+                        .mallType(tuple.get(categoryProduct.product.id.mallType))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, List<ProductRanking>> getProductListByPriceRanges(String mallType) {
+        List<Object[]> results = productRankingRepository.findAllProductsGroupedByPriceRange(mallType);
+        Map<String, List<ProductRanking>> productsByPriceRange = new HashMap<>();
+
+        for (Object[] result : results) {
+            ProductRanking productRanking = (ProductRanking) result[0];
+            String priceRange = (String) result[1];
+
+            productsByPriceRange
+                    .computeIfAbsent(priceRange, k -> new ArrayList<>())
+                    .add(productRanking);
+        }
+
+        return productsByPriceRange;
     }
 }

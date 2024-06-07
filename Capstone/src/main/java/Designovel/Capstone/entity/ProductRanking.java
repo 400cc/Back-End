@@ -22,7 +22,6 @@ public class ProductRanking {
             @JoinColumn(name = "category_id", referencedColumnName = "category_id"),
             @JoinColumn(name = "mall_type", referencedColumnName = "mall_type")
     })
-    @JsonIgnore
     private CategoryProduct categoryProduct;
 
     @Column(name = "brand")
