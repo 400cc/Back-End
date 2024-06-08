@@ -27,7 +27,7 @@ public class ProductRankingDTO {
 
     public ProductRankingDTO(Product product, String brand, Float exposureIndex) {
         this.productId = product.getId().getProductId();
-        this.mallType = product.getId().getMallType();
+        this.mallType = product.getId().getMallTypeId();
         this.image = java.util.Optional.ofNullable(product.getImages())
                 .filter(images -> !images.isEmpty())
                 .map(images -> images.get(0))

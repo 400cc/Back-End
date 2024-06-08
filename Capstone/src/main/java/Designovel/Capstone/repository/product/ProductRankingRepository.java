@@ -16,20 +16,20 @@ import java.util.List;
 @Repository
 public interface ProductRankingRepository extends JpaRepository<ProductRanking, Integer>, CustomProductRankingRepository {
 
-    @Query("select distinct p.brand from ProductRanking p where p.categoryProduct.product.id.mallType = :mallType")
-    List<String> findDistinctBrand(@Param("mallType") String mallType);
+    @Query("select distinct p.brand from ProductRanking p where p.categoryProduct.product.id.mallTypeId = :mallTypeId")
+    List<String> findDistinctBrand(@Param("mallTypeId") String mallTypeId);
 
     @Query("select p.categoryProduct.category, sum(p.rankScore) " +
             "from ProductRanking p " +
-            "where p.categoryProduct.product.id.productId = :productId and p.categoryProduct.product.id.mallType = :mallType " +
+            "where p.categoryProduct.product.id.productId = :productId and p.categoryProduct.product.id.mallTypeId = :mallTypeId " +
             "group by p.categoryProduct.product, p.categoryProduct.category")
-    List<Object[]> findRankScoreByProduct(@Param("productId") String productId, @Param("mallType") String mallType);
+    List<Object[]> findRankScoreByProduct(@Param("productId") String productId, @Param("mallTypeId") String mallTypeId);
 
     @Query("select new Designovel.Capstone.domain.ProductBasicDetailDTO(p.brand, p.discountedPrice, p.fixedPrice, p.monetaryUnit, p.crawledDate, p.categoryProduct.product.id) " +
             "from ProductRanking p " +
-            "where p.categoryProduct.product.id.productId =:productId and p.categoryProduct.product.id.mallType =:mallType " +
+            "where p.categoryProduct.product.id.productId =:productId and p.categoryProduct.product.id.mallTypeId =:mallTypeId " +
             "order by p.crawledDate desc")
-    Page<ProductBasicDetailDTO> findPriceInfoByProduct(@Param("productId") String productId, @Param("mallType") String mallType, Pageable pageable);
+    Page<ProductBasicDetailDTO> findPriceInfoByProduct(@Param("productId") String productId, @Param("mallTypeId") String mallTypeId, Pageable pageable);
 
     @Query("select p, " +
             "case " +
@@ -44,9 +44,9 @@ public interface ProductRankingRepository extends JpaRepository<ProductRanking, 
             "    select max(pr.crawledDate) " +
             "    from ProductRanking pr " +
             "    where pr.categoryProduct.id.productId = p.categoryProduct.id.productId " +
-            "    and pr.categoryProduct.id.mallType = :mallType " +
+            "    and pr.categoryProduct.id.mallTypeId = :mallTypeId " +
             "    group by pr.categoryProduct.id" +
             ") " +
-            "and p.categoryProduct.id.mallType = :mallType")
-    List<Object[]> findAllProductsGroupedByPriceRange(@Param("mallType") String mallType);
+            "and p.categoryProduct.id.mallTypeId = :mallTypeId")
+    List<Object[]> findAllProductsGroupedByPriceRange(@Param("mallTypeId") String mallTypeId);
 }

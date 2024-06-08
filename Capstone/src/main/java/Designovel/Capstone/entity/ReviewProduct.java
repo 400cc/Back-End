@@ -26,7 +26,7 @@ public class ReviewProduct {
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false),
-            @JoinColumn(name = "mall_type", referencedColumnName = "mall_type", insertable = false, updatable = false)
+            @JoinColumn(name = "mall_type_id", referencedColumnName = "mall_type_id", insertable = false, updatable = false)
     })
     private Product product;
 

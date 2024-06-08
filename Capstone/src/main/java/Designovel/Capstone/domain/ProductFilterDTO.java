@@ -18,6 +18,6 @@ public class ProductFilterDTO {
     private Date startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
-    private String mallType;
+    private String mallTypeId;
 
 }

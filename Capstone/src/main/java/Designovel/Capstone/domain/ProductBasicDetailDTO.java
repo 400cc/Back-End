@@ -33,7 +33,7 @@ public class ProductBasicDetailDTO {
         this.monetaryUnit = monetaryUnit;
         this.crawledDate = crawledDate;
         this.productId = productId.getProductId();
-        this.mallType = productId.getMallType();
+        this.mallType = productId.getMallTypeId();
     }
 
 }

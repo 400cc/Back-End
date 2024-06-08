@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface CategoryClosureRepository extends JpaRepository<CategoryClosure, CategoryClosureId> {
 
-    List<CategoryClosure> findByMallType(String mallType);
+    List<CategoryClosure> findByMallType_MallTypeId(String mallType);
 }

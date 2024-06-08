@@ -39,9 +39,9 @@ public class HomeController {
     }
 
     @Operation(summary = "쇼핑몰 별 가격대 상품 조회", description = "해당 쇼핑몰의 가격대별 상품 반환")
-    @GetMapping("/price/{mallType}")
-    public ResponseEntity<Map<String, List<ProductRanking>>> getProductListByPriceRanges(@PathVariable("mallType") String mallType) {
-        Map<String, List<ProductRanking>> productListByPriceRanges = productRankingService.getProductListByPriceRanges(mallType);
+    @GetMapping("/price/{mallTypeId}")
+    public ResponseEntity<Map<String, List<ProductRanking>>> getProductListByPriceRanges(@PathVariable("mallTypeId") String mallTypeId) {
+        Map<String, List<ProductRanking>> productListByPriceRanges = productRankingService.getProductListByPriceRanges(mallTypeId);
         return ResponseEntity.ok(productListByPriceRanges);
     }
 

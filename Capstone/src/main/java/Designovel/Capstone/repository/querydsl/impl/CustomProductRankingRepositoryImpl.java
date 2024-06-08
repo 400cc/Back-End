@@ -2,6 +2,7 @@ package Designovel.Capstone.repository.querydsl.impl;
 
 import Designovel.Capstone.domain.ProductFilterDTO;
 import Designovel.Capstone.entity.QProductRanking;
+import Designovel.Capstone.entity.id.ProductId;
 import Designovel.Capstone.repository.querydsl.CustomProductRankingRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
@@ -28,23 +29,20 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
     private final JPAQueryFactory jpaQueryFactory;
 
 
-    private JPQLQuery<Date> createLatestCrawledDateSubQuery(QProductRanking subProductRanking, Date endDate) {
+    private JPQLQuery<Date> createLatestCrawledDateSubQuery(QProductRanking subProductRanking) {
         BooleanBuilder subQueryConditions = new BooleanBuilder();
         subQueryConditions.and(subProductRanking.categoryProduct.id.eq(productRanking.categoryProduct.id));
-
-        if (endDate != null) {
-            subQueryConditions.and(subProductRanking.crawledDate.loe(endDate));
-        }
 
         return JPAExpressions.select(subProductRanking.crawledDate.max())
                 .from(subProductRanking)
                 .where(subQueryConditions);
     }
 
+
     @Override
-    public List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, Date endDate, Pageable pageable) {
+    public List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, List<ProductId> productIdList) {
         QProductRanking subProductRanking = new QProductRanking("subProductRanking");
-        JPQLQuery<Date> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(subProductRanking, endDate);
+        JPQLQuery<Date> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(subProductRanking);
 
         return jpaQueryFactory.select(
                         categoryProduct.product,
@@ -55,14 +53,11 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 )
                 .from(productRanking)
                 .leftJoin(productRanking.categoryProduct, categoryProduct)
-                .where(builder.and(productRanking.crawledDate.eq(latestCrawledDateSubQuery)))
+                .where(builder.and(productRanking.crawledDate.eq(latestCrawledDateSubQuery))
+                        .and(categoryProduct.product.id.in(productIdList)))
                 .groupBy(categoryProduct.product.id.productId,
-                        categoryProduct.product.id.mallType,
-                        categoryProduct.category,
-                        productRanking.discountedPrice,
-                        productRanking.fixedPrice)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                        categoryProduct.product.id.mallTypeId,
+                        categoryProduct.category)
                 .fetch();
     }
 
@@ -79,9 +74,8 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .leftJoin(productRanking.categoryProduct, categoryProduct)
                 .where(builder)
                 .groupBy(categoryProduct.product.id.productId,
-                        categoryProduct.product.id.mallType,
+                        categoryProduct.product.id.mallTypeId,
                         categoryProduct.category.name)
-                .orderBy(productRanking.rankScore.sum().desc()) //노출지수 기준 내림차순 정렬
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
@@ -92,13 +86,13 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
         return jpaQueryFactory.select(
                         productRanking.brand,
                         productRanking.rankScore.sum(),
-                        categoryProduct.product.id.mallType
+                        categoryProduct.product.id.mallTypeId
                 )
                 .from(productRanking)
                 .leftJoin(productRanking.categoryProduct, categoryProduct)
                 .where(builder)
                 .groupBy(productRanking.brand,
-                        categoryProduct.product.id.mallType)
+                        categoryProduct.product.id.mallTypeId)
                 .orderBy(productRanking.rankScore.sum().desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -122,8 +116,8 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
             builder.and(productRanking.crawledDate.loe(filterDTO.getEndDate()));
         }
 
-        if (filterDTO.getMallType() != null) {
-            builder.and(productRanking.categoryProduct.id.mallType.eq(filterDTO.getMallType()));
+        if (filterDTO.getMallTypeId() != null) {
+            builder.and(productRanking.categoryProduct.id.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
 
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {

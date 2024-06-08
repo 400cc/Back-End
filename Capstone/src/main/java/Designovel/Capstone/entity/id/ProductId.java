@@ -16,7 +16,7 @@ public class ProductId implements Serializable {
     @Column(name = "product_id")
     private String productId;
 
-    @Column(name = "mall_type")
-    private String mallType;
+    @Column(name = "mall_type_id")
+    private String mallTypeId;
 
 }

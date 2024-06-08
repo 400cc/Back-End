@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -15,6 +14,9 @@ public class Product {
 
     @EmbeddedId
     private ProductId id;
+    @ManyToOne
+    @JoinColumn(name = "mall_type_id", insertable = false, updatable = false)
+    private MallType mallType;
 
     @OneToMany(mappedBy = "product")
     @ToString.Exclude

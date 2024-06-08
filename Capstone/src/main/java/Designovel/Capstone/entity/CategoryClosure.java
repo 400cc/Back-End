@@ -24,8 +24,9 @@ public class CategoryClosure {
     @JoinColumn(name = "descendant_id",referencedColumnName = "categoryId", insertable = false, updatable = false)
     private Category descendantId;
 
-    @Column(name = "mall_type")
-    private String mallType;
+    @ManyToOne
+    @JoinColumn(name = "mall_type_id", referencedColumnName = "mall_type_id", insertable = false, updatable = false)
+    private MallType mallType;
 
     @Column(name = "depth")
     private Integer depth;

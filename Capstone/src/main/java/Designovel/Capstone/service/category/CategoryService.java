@@ -49,9 +49,9 @@ public class CategoryService {
         }
     }
 
-    public List<CategoryNode> getCategoryTree(String mallType) {
-        List<Category> categories = categoryRepository.findByMallType(mallType);
-        List<CategoryClosure> closures = categoryClosureRepository.findByMallType(mallType);
+    public List<CategoryNode> getCategoryTree(String mallTypeId) {
+        List<Category> categories = categoryRepository.findByMallType_MallTypeId(mallTypeId);
+        List<CategoryClosure> closures = categoryClosureRepository.findByMallType_MallTypeId(mallTypeId);
         return buildCategoryTree(categories, closures);
     }
 

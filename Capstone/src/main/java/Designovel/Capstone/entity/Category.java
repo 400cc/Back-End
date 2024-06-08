@@ -1,9 +1,7 @@
 package Designovel.Capstone.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.Set;
+import lombok.Data;
 
 @Entity
 @Data
@@ -16,8 +14,9 @@ public class Category {
     @Column(nullable = false)
     private String orgCategoryId;
 
-    @Column(nullable = false)
-    private String mallType;
+    @ManyToOne
+    @JoinColumn(name = "mall_type_id", referencedColumnName = "mall_type_id", insertable = false, updatable = false)
+    private MallType mallType;
 
     private String name;
 

@@ -20,7 +20,7 @@ public class ProductRanking {
     @JoinColumns({
             @JoinColumn(name = "product_id", referencedColumnName = "product_id"),
             @JoinColumn(name = "category_id", referencedColumnName = "category_id"),
-            @JoinColumn(name = "mall_type", referencedColumnName = "mall_type")
+            @JoinColumn(name = "mall_type_id", referencedColumnName = "mall_type_id")
     })
     private CategoryProduct categoryProduct;
 

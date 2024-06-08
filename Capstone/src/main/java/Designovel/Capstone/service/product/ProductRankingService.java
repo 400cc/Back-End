@@ -4,6 +4,7 @@ import Designovel.Capstone.domain.*;
 import Designovel.Capstone.entity.Category;
 import Designovel.Capstone.entity.Product;
 import Designovel.Capstone.entity.ProductRanking;
+import Designovel.Capstone.entity.id.ProductId;
 import Designovel.Capstone.repository.product.ProductRankingRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
@@ -45,8 +46,12 @@ public class ProductRankingService {
         //응답 객체 생성
         Map<String, ProductRankingDTO> productRankingMap = createProductRankingMap(exposureIndexQueryResult);
 
+        List<ProductId> productIds = exposureIndexQueryResult.stream()
+                .map(tuple -> tuple.get(categoryProduct.product).getId())
+                .collect(Collectors.toList());
+
         //제일 최신 가격(현재가, 할인가) 가져오기
-        List<Tuple> priceQueryResult = productRankingRepository.getPriceFromProductRanking(builder, filter.getEndDate(), pageable);
+        List<Tuple> priceQueryResult = productRankingRepository.getPriceFromProductRanking(builder, productIds);
         updateProductPrices(productRankingMap, priceQueryResult);
 
         List<ProductRankingDTO> resultList = new ArrayList<>(productRankingMap.values());
@@ -61,7 +66,6 @@ public class ProductRankingService {
             Float exposureIndex = tuple.get(productRanking.rankScore.sum());
             Category category = tuple.get(categoryProduct.category);
             String key = generateProductKey(product);
-
             if (resultMap.containsKey(key)) {
                 DupeExposureIndex dupeExposureIndex = new DupeExposureIndex(product, exposureIndex, category);
                 resultMap.get(key).getDupeExposureIndexList().add(dupeExposureIndex);
@@ -78,17 +82,19 @@ public class ProductRankingService {
             Product product = tuple.get(categoryProduct.product);
             String key = generateProductKey(product);
             ProductRankingDTO productRankingDTO = resultMap.get(key);
+
             if (productRankingDTO != null && productRankingDTO.getDiscountedPrice() == null) {
                 productRankingDTO.setDiscountedPrice(tuple.get(productRanking.discountedPrice));
                 productRankingDTO.setFixedPrice(tuple.get(productRanking.fixedPrice));
                 productRankingDTO.setMonetaryUnit(tuple.get(productRanking.monetaryUnit));
                 productRankingDTO.setCategory(tuple.get(categoryProduct.category));
+
             }
         }
     }
 
     private String generateProductKey(Product product) {
-        return product.getId().getProductId() + "_" + product.getId().getMallType();
+        return product.getId().getProductId() + "_" + product.getId().getMallTypeId();
     }
 
     public List<String> getBrands(String mallType) {
@@ -117,7 +123,7 @@ public class ProductRankingService {
                 .map(tuple -> TopBrandDTO.builder()
                         .brand(tuple.get(productRanking.brand))
                         .exposureIndexSum(tuple.get(productRanking.rankScore.sum()))
-                        .mallType(tuple.get(categoryProduct.product.id.mallType))
+                        .mallType(tuple.get(categoryProduct.product.id.mallTypeId.stringValue()))
                         .build())
                 .collect(Collectors.toList());
     }

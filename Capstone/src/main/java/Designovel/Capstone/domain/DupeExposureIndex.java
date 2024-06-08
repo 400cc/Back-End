@@ -16,7 +16,7 @@ public class DupeExposureIndex {
 
     public DupeExposureIndex(Product product, Float exposureIndex, Category category) {
         this.productId = product.getId().getProductId();
-        this.mallType = product.getId().getMallType();
+        this.mallType = product.getId().getMallTypeId();
         this.exposureIndex = exposureIndex;
         this.category = category;
     }
