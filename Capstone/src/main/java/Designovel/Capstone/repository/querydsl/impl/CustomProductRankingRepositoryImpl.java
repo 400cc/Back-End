@@ -100,12 +100,11 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
 
             switch (sortBy) {
                 case "brand":
-                    orderSpecifier = new OrderSpecifier<>(order, entityPath.getString(sortBy));
-                    break;
+                    return new OrderSpecifier<>(order, entityPath.getString(sortBy));
                 case "crawledDate":
-                    orderSpecifier = new OrderSpecifier<>(order, entityPath.getDateTime(sortBy, Date.class));
-                    break;
-                // 필요한 필드에 대해 추가
+                    return new OrderSpecifier<>(order, entityPath.getDateTime(sortBy, Date.class));
+                case "fixedPrice", "discountedPrice":
+                    return new OrderSpecifier<>(order, entityPath.getNumber(sortBy, Integer.class));
                 default:
                     throw new IllegalArgumentException("Invalid sortBy parameter");
             }
