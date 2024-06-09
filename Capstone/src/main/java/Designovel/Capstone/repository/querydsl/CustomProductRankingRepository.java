@@ -13,7 +13,7 @@ import java.util.List;
 public interface CustomProductRankingRepository {
 
     BooleanBuilder buildProductRankingFilter(ProductFilterDTO filterDTO);
-    QueryResults<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable);
+    QueryResults<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder);
     List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, List<ProductId> productIdList);
     List<Tuple> getTop10BrandOrderByExposureIndex(BooleanBuilder builder, Pageable pageable);
 }

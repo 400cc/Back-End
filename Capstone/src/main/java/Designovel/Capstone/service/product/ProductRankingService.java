@@ -17,10 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static Designovel.Capstone.entity.QCategoryProduct.categoryProduct;
@@ -39,7 +36,7 @@ public class ProductRankingService {
         BooleanBuilder builder = productRankingRepository.buildProductRankingFilter(filter);
 
         //노출 지수 가져오기
-        QueryResults<Tuple> productRankingQueryResult = productRankingRepository.getExposureIndexFromProductRanking(builder, pageable);
+        QueryResults<Tuple> productRankingQueryResult = productRankingRepository.getExposureIndexFromProductRanking(builder, pageable, filter.getSortBy(), filter.getSortOrder());
         List<Tuple> exposureIndexQueryResult = productRankingQueryResult.getResults();
         long total = productRankingQueryResult.getTotal();
 
@@ -55,11 +52,12 @@ public class ProductRankingService {
         updateProductPrices(productRankingMap, priceQueryResult);
 
         List<ProductRankingDTO> resultList = new ArrayList<>(productRankingMap.values());
+
         return new PageImpl<>(resultList, pageable, total);
     }
 
     private Map<String, ProductRankingDTO> createProductRankingMap(List<Tuple> rankScoreResult) {
-        Map<String, ProductRankingDTO> resultMap = new HashMap<>();
+        Map<String, ProductRankingDTO> resultMap = new LinkedHashMap<>();
         for (Tuple tuple : rankScoreResult) {
             Product product = tuple.get(categoryProduct.product);
             String brand = tuple.get(productRanking.brand);

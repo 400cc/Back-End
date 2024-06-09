@@ -7,6 +7,11 @@ import Designovel.Capstone.repository.querydsl.CustomProductRankingRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -63,7 +68,8 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
 
 
     @Override
-    public QueryResults<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable) {
+    public QueryResults<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder) {
+        OrderSpecifier<?> orderSpecifier = getProductFilterOrderSpecifier(sortBy, sortOrder);
         return jpaQueryFactory.select(
                         categoryProduct.product,
                         productRanking.brand,
@@ -76,9 +82,35 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .groupBy(categoryProduct.product.id.productId,
                         categoryProduct.product.id.mallTypeId,
                         categoryProduct.category.name)
+                .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
+    }
+
+    private static OrderSpecifier<?> getProductFilterOrderSpecifier(String sortBy, String sortOrder) {
+        Order order = sortOrder.equalsIgnoreCase("asc") ? Order.ASC : Order.DESC;
+        OrderSpecifier<?> orderSpecifier;
+
+        if ("exposureIndex".equals(sortBy)) {
+            NumberExpression<Float> rankScoreSum = productRanking.rankScore.sum();
+            orderSpecifier = new OrderSpecifier<>(order, rankScoreSum);
+        } else {
+            PathBuilder<?> entityPath = new PathBuilder<>(productRanking.getType(), "productRanking");
+
+            switch (sortBy) {
+                case "brand":
+                    orderSpecifier = new OrderSpecifier<>(order, entityPath.getString(sortBy));
+                    break;
+                case "crawledDate":
+                    orderSpecifier = new OrderSpecifier<>(order, entityPath.getDateTime(sortBy, Date.class));
+                    break;
+                // 필요한 필드에 대해 추가
+                default:
+                    throw new IllegalArgumentException("Invalid sortBy parameter");
+            }
+        }
+        return orderSpecifier;
     }
 
     @Override
@@ -93,7 +125,6 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .where(builder)
                 .groupBy(productRanking.brand,
                         categoryProduct.product.id.mallTypeId)
-                .orderBy(productRanking.rankScore.sum().desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
