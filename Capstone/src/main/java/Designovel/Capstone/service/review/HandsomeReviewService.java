@@ -2,32 +2,37 @@ package Designovel.Capstone.service.review;
 
 import Designovel.Capstone.domain.HandsomeReviewDTO;
 import Designovel.Capstone.domain.ReviewCountDTO;
+import Designovel.Capstone.domain.ReviewFilterDTO;
 import Designovel.Capstone.repository.review.HandsomeReviewRepository;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static Designovel.Capstone.entity.QHandsomeReview.handsomeReview;
+
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class HandsomeReviewService {
     private final HandsomeReviewRepository handsomeReviewRepository;
 
-    public ReviewCountDTO findReviewCountByProductId(String productId, Date startDate) {
-        List<Object[]> reviewCountByProductId = handsomeReviewRepository.findReviewCountByProductIdAndWrittenDate(productId, startDate);
+    public ReviewCountDTO getReviewCountDTOByFilter(ReviewFilterDTO reviewFilterDTO) {
+        List<Tuple> handsomeReviewCounts = handsomeReviewRepository.findHandsomeReviewCountsByFilter(reviewFilterDTO);
         Map<Integer, Integer> ratingCountMap = new HashMap<>();
         int total = 0;
-        for (Object[] reviewCount : reviewCountByProductId) {
-            int rating = (int) reviewCount[0];
-            int count = ((Long) reviewCount[1]).intValue();
-            ratingCountMap.put(rating, count);
-            total += count;
+        for (Tuple tuple : handsomeReviewCounts) {
+            Integer rating = tuple.get(handsomeReview.rating);
+            Long count = tuple.get(handsomeReview.count());
+
+            int countValue = (count != null) ? count.intValue() : 0;
+            ratingCountMap.put(rating, countValue);
+            total += countValue;
         }
         ReviewCountDTO reviewCountDTO = new ReviewCountDTO();
         reviewCountDTO.setRate1(ratingCountMap.getOrDefault(1, 0));
@@ -39,8 +44,14 @@ public class HandsomeReviewService {
         return reviewCountDTO;
     }
 
-    public Page<HandsomeReviewDTO> findReviewByProductIdAndRate(String productId, Date startDate, int page, int rate) {
-        Pageable pageable = PageRequest.of(page, 10);
-        return handsomeReviewRepository.findByProductIdAndRateAndWrittenDate(productId, startDate, rate, pageable);
+
+    public Map<String, Object> getHandsomeReviewPageByFilter(ReviewFilterDTO reviewFilterDTO) {
+        ReviewCountDTO reviewCountByProductId = getReviewCountDTOByFilter(reviewFilterDTO);
+        Page<HandsomeReviewDTO> handsomeReviewDTOPage = handsomeReviewRepository.findHandsomeReviewPageByFilter(reviewFilterDTO);
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("count", reviewCountByProductId);
+        response.put("review", handsomeReviewDTOPage);
+        return response;
     }
+
 }

@@ -1,7 +1,6 @@
 package Designovel.Capstone.controller;
 
-import Designovel.Capstone.domain.HandsomeReviewDTO;
-import Designovel.Capstone.domain.ReviewCountDTO;
+import Designovel.Capstone.domain.ReviewFilterDTO;
 import Designovel.Capstone.entity.WConceptReview;
 import Designovel.Capstone.service.review.HandsomeReviewService;
 import Designovel.Capstone.service.review.MusinsaReviewService;
@@ -11,11 +10,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -35,24 +33,12 @@ public class ProductDetailReviewController {
 //        return ResponseEntity.ok(musinsaReviewPage);
 //    }
 
-    @Operation(summary = "한섬 상품 리뷰 개수 조회", description = "특정 한섬 상품의 별점 별 리뷰 개수 조회 - 상품ID와 날짜로 조회")
-    @GetMapping("/FHyETFQN/general/{productId}")
-    public ResponseEntity<ReviewCountDTO> getHandsomeReviewCount(@PathVariable("productId") String productId,
-                                                                 @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate) {
-        ReviewCountDTO reviewCountDTO = handsomeReviewService.findReviewCountByProductId(productId, startDate);
-        return ResponseEntity.ok(reviewCountDTO);
+    @Operation(summary = "한섬 상품 리뷰 조회", description = "key:count - rate1 ~ rate5 개수 조회, key:review - 리뷰 페이지로 조회")
+    @GetMapping("/FHyETFQN")
+    public ResponseEntity<Map<String, Object>> getHandsomeReviewCount(@ModelAttribute ReviewFilterDTO reviewFilterDTO) {
+        Map<String, Object> response = handsomeReviewService.getHandsomeReviewPageByFilter(reviewFilterDTO);
+        return ResponseEntity.ok(response);
     }
-
-    @Operation(summary = "한섬 상품 리뷰 조회", description = "특정 한섬 상품의 리뷰를 조회(페이지)")
-    @GetMapping("/FHyETFQN/precise/{productId}")
-    public ResponseEntity<Page<HandsomeReviewDTO>> getHandsomeReviewByRating(@PathVariable("productId") String productId,
-                                                                             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
-                                                                             @RequestParam("page") int page,
-                                                                             @RequestParam("rate") int rate) {
-        Page<HandsomeReviewDTO> handsomeReviewDTOPage = handsomeReviewService.findReviewByProductIdAndRate(productId, startDate, page, rate);
-        return ResponseEntity.ok(handsomeReviewDTOPage);
-    }
-
 
 
     @Operation(summary = "W컨셉 상품 리뷰 조회", description = "특정 W컨셉 상품의 리뷰를 조회(페이지)")
