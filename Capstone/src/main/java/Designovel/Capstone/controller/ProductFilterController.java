@@ -41,9 +41,9 @@ public class ProductFilterController {
 
     @Operation(summary = "특정 쇼핑몰의 카테고리 계층도 조회", description = "특정 쇼핑몰의 카테고리 트리 조회")
     @ApiResponse(responseCode = "200", description = "카테고리 계층 조회", content = @Content(schema = @Schema(implementation = CategoryNode.class)))
-    @GetMapping("/category/{mallType}")
-    public ResponseEntity<List<CategoryNode>> getCategories(@PathVariable("mallType") String mallType) {
-        return ResponseEntity.ok(categoryService.getCategoryTree(mallType));
+    @GetMapping("/category/{mallTypeId}")
+    public ResponseEntity<List<CategoryNode>> getCategories(@PathVariable("mallTypeId") String mallTypeId) {
+        return ResponseEntity.ok(categoryService.getCategoryTree(mallTypeId));
     }
 
 
@@ -55,10 +55,10 @@ public class ProductFilterController {
                             examples = @ExampleObject(name = "Json 리스트", value = "{ \"brand\": [\"브랜드1\", \"브랜드2\"] }")
                     ))
     })
-    @GetMapping("/brand/{mallType}")
-    public ResponseEntity<Object> getBrands(@PathVariable("mallType") String mallType) {
+    @GetMapping("/brand/{mallTypeId}")
+    public ResponseEntity<Object> getBrands(@PathVariable("mallTypeId") String mallTypeId) {
         Map<String, List<String>> distinctBrandMap = new HashMap<>();
-        distinctBrandMap.put("brand", productRankingService.getBrands(mallType));
+        distinctBrandMap.put("brand", productRankingService.getBrands(mallTypeId));
         return ResponseEntity.ok(distinctBrandMap);
     }
 

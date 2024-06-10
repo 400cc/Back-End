@@ -31,10 +31,9 @@ public class ProductDetailController {
     private final ProductService productService;
     private final MusinsaVariableService musinsaVariableService;
     private final HandsomeVariableService handsomeVariableService;
-    private final HandsomeReviewService handsomeReviewService;
+
     private final WConceptVariableService wConceptVariableService;
-    private final WConceptReviewService wConceptReviewService;
-    private final MusinsaReviewService musinsaReviewService;
+
 
     @Operation(summary = "무신사 상품 상세 정보 조회", description = "특정 무신사 상품의 상세 정보(리뷰 제외) 조회")
     @GetMapping("/JN1qnDZA/{productId}")
@@ -47,13 +46,7 @@ public class ProductDetailController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "무신사 상품 리뷰 조회", description = "특정 무신사 상품의 리뷰를 조회(페이지)")
-    @GetMapping("/JN1qnDZA/review/{productId}")
-    public ResponseEntity<Page<MusinsaReview>> getMusinsaProductDetailReview(@PathVariable("productId") String productId,
-                                                                             @RequestParam int page) {
-        Page<MusinsaReview> musinsaReviewPage = musinsaReviewService.findByProductId(productId, page);
-        return ResponseEntity.ok(musinsaReviewPage);
-    }
+
 
     @Operation(summary = "한섬 상품 상세 정보 조회", description = "특정 한섬 상품의 상세 정보(리뷰 제외) 조회")
     @GetMapping("/FHyETFQN/{productId}")
@@ -66,13 +59,7 @@ public class ProductDetailController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "한섬 상품 리뷰 조회", description = "특정 한섬 상품의 리뷰를 조회(페이지)")
-    @GetMapping("/FHyETFQN/review/{productId}")
-    public ResponseEntity<Page<HandsomeReview>> getHandsomeProductDetailReview(@PathVariable("productId") String productId,
-                                                                               @RequestParam int page) {
-        Page<HandsomeReview> handsomeReviewPage = handsomeReviewService.findByProductId(productId, page);
-        return ResponseEntity.ok(handsomeReviewPage);
-    }
+
 
     @Operation(summary = "W컨셉 상품 상세 정보 조회", description = "특정 W컨셉 상품의 상세 정보(리뷰 제외) 조회")
     @GetMapping("/l8WAu4fP/{productId}")
@@ -85,11 +72,5 @@ public class ProductDetailController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "W컨셉 상품 리뷰 조회", description = "특정 W컨셉 상품의 리뷰를 조회(페이지)")
-    @GetMapping("/l8WAu4fP/review/{productId}")
-    public ResponseEntity<Page<WConceptReview>> getWConceptProductDetailReview(@PathVariable("productId") String productId,
-                                                                               @RequestParam int page) {
-        Page<WConceptReview> wConceptReviewPage = wConceptReviewService.findByProductId(productId, page);
-        return ResponseEntity.ok(wConceptReviewPage);
-    }
+
 }

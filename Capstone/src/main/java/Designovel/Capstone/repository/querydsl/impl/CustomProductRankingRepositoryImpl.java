@@ -9,7 +9,6 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
@@ -88,7 +87,8 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .fetchResults();
     }
 
-    private static OrderSpecifier<?> getProductFilterOrderSpecifier(String sortBy, String sortOrder) {
+    @Override
+    public OrderSpecifier<?> getProductFilterOrderSpecifier(String sortBy, String sortOrder) {
         Order order = sortOrder.equalsIgnoreCase("asc") ? Order.ASC : Order.DESC;
         OrderSpecifier<?> orderSpecifier;
 
@@ -129,6 +129,22 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .limit(pageable.getPageSize())
                 .fetch();
     }
+
+//    @Override
+//    public List<Tuple> getProductRankingByPriceRange(BooleanBuilder builder, Pageable pageable) {
+//        QProductRanking subProductRanking = new QProductRanking("subProductRanking");
+//        JPQLQuery<Date> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(subProductRanking);
+//        return jpaQueryFactory.select(productRanking,
+//                        new CaseBuilder()
+//                                .when(productRanking.fixedPrice.lt(10000)).then("0-10k")
+//                                .when(productRanking.fixedPrice.between(10000, 19999)).then("10k-20k")
+//                                .when(productRanking.fixedPrice.between(20000, 29999)).then("20k-30k")
+//                                .when(productRanking.fixedPrice.between(30000, 39999)).then("30k-40k")
+//                                .otherwise("40k+").as("priceRange"))
+//                .from(productRanking)
+//                .where(builder.and(productRanking.crawledDate.eq(latestCrawledDateSubQuery)))
+//                .fetch();
+//    }
 
 
     @Override
