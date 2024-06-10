@@ -124,6 +124,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
                 .where(builder)
                 .groupBy(productRanking.brand,
                         categoryProduct.product.id.mallTypeId)
+                .orderBy(productRanking.rankScore.sum().desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
