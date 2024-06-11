@@ -45,7 +45,7 @@ public class ProductFilterQueryDSLImpl implements ProductFilterQueryDSL {
 
 
     @Override
-    public List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, List<ProductId> productIdList) {
+    public List<Tuple> getPriceInfo(BooleanBuilder builder, List<ProductId> productIdList) {
         QProductRanking subProductRanking = new QProductRanking("subProductRanking");
         JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(subProductRanking);
 
@@ -68,7 +68,7 @@ public class ProductFilterQueryDSLImpl implements ProductFilterQueryDSL {
 
 
     @Override
-    public QueryResults<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder) {
+    public QueryResults<Tuple> getExposureIndexInfo(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder) {
         OrderSpecifier<?> orderSpecifier = getProductFilterOrderSpecifier(sortBy, sortOrder);
         return jpaQueryFactory.select(
                         categoryProduct.product,
@@ -115,7 +115,7 @@ public class ProductFilterQueryDSLImpl implements ProductFilterQueryDSL {
 
 
     @Override
-    public BooleanBuilder buildProductRankingFilter(ProductFilterDTO filterDTO) {
+    public BooleanBuilder buildProductFilter(ProductFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (filterDTO.getBrand() != null) {

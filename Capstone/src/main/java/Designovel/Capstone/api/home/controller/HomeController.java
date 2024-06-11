@@ -1,8 +1,8 @@
 package Designovel.Capstone.api.home.controller;
 
-import Designovel.Capstone.api.home.service.TopBrandService;
-import Designovel.Capstone.api.productFilter.dto.ProductFilterDTO;
 import Designovel.Capstone.api.home.dto.TopBrandDTO;
+import Designovel.Capstone.api.home.dto.TopBrandFilterDTO;
+import Designovel.Capstone.api.home.service.TopBrandService;
 import Designovel.Capstone.domain.product.productRanking.ProductRanking;
 import Designovel.Capstone.domain.product.productRanking.ProductRankingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +35,7 @@ public class HomeController {
                                     schema = @Schema(implementation = TopBrandDTO.class)))
             })
     @GetMapping("/brand")
-    public ResponseEntity<Map<String, List<TopBrandDTO>>> getTop10Brands(@ModelAttribute ProductFilterDTO filterDTO) {
+    public ResponseEntity<Map<String, List<TopBrandDTO>>> getTop10Brands(@ModelAttribute TopBrandFilterDTO filterDTO) {
         List<TopBrandDTO> top10BrandList = topBrandService.getTop10BrandsByMallType(filterDTO);
         return ResponseEntity.ok(Collections.singletonMap("top10BrandList", top10BrandList));
     }

@@ -11,9 +11,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ProductFilterQueryDSL {
-    QueryResults<Tuple> getExposureIndexFromProductRanking(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder);
-    List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, List<ProductId> productIdList);
+    QueryResults<Tuple> getExposureIndexInfo(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder);
+    List<Tuple> getPriceInfo(BooleanBuilder builder, List<ProductId> productIdList);
     OrderSpecifier<?> getProductFilterOrderSpecifier(String sortBy, String sortOrder);
-    BooleanBuilder buildProductRankingFilter(ProductFilterDTO filterDTO);
+    BooleanBuilder buildProductFilter(ProductFilterDTO filterDTO);
 
 }

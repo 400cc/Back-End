@@ -3,7 +3,6 @@ package Designovel.Capstone.api.productFilter.service;
 import Designovel.Capstone.api.productFilter.dto.DupeExposureIndex;
 import Designovel.Capstone.api.productFilter.dto.ProductFilterDTO;
 import Designovel.Capstone.api.productFilter.queryDSL.ProductFilterQueryDSL;
-import Designovel.Capstone.api.productFilter.queryDSL.ProductFilterQueryDSLImpl;
 import Designovel.Capstone.domain.category.category.Category;
 import Designovel.Capstone.domain.product.product.Product;
 import Designovel.Capstone.domain.product.product.ProductId;
@@ -50,10 +49,10 @@ public class ProductFilterService {
     public Page<ProductRankingDTO> getProductRankingByFilter(ProductFilterDTO filter, int page) {
         int size = 20; // 페이지당 항목 수 고정
         Pageable pageable = PageRequest.of(page, size);
-        BooleanBuilder builder = productFilterQueryDSL.buildProductRankingFilter(filter);
+        BooleanBuilder builder = productFilterQueryDSL.buildProductFilter(filter);
 
         //노출 지수 가져오기
-        QueryResults<Tuple> productRankingQueryResult = productFilterQueryDSL.getExposureIndexFromProductRanking(builder, pageable, filter.getSortBy(), filter.getSortOrder());
+        QueryResults<Tuple> productRankingQueryResult = productFilterQueryDSL.getExposureIndexInfo(builder, pageable, filter.getSortBy(), filter.getSortOrder());
         List<Tuple> exposureIndexQueryResult = productRankingQueryResult.getResults();
         long total = productRankingQueryResult.getTotal();
 
@@ -65,7 +64,7 @@ public class ProductFilterService {
                 .collect(Collectors.toList());
 
         //제일 최신 가격(현재가, 할인가) 가져오기
-        List<Tuple> priceQueryResult = productFilterQueryDSL.getPriceFromProductRanking(builder, productIds);
+        List<Tuple> priceQueryResult = productFilterQueryDSL.getPriceInfo(builder, productIds);
         updateProductPrices(productRankingMap, priceQueryResult);
 
         List<ProductRankingDTO> resultList = new ArrayList<>(productRankingMap.values());
