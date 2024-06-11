@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class CustomHandsomeReviewRepositoryImpl implements CustomHandsomeReviewR
     public BooleanBuilder buildHandsomeReviewFilter(ReviewFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
         String productId = filterDTO.getProductId();
-        Date startDate = filterDTO.getStartDate();
+        LocalDate startDate = filterDTO.getStartDate();
 
         builder.and(handsomeReview.productId.eq(productId));
         if (startDate != null) {

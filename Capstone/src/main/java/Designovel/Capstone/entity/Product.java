@@ -16,7 +16,7 @@ public class Product {
     private ProductId id;
     @ManyToOne
     @JoinColumn(name = "mall_type_id", insertable = false, updatable = false)
-    private MallType mallType;
+    private MallType mallTypeId;
 
     @OneToMany(mappedBy = "product")
     @ToString.Exclude

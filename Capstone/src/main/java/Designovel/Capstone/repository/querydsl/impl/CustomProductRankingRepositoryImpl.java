@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
     private final JPAQueryFactory jpaQueryFactory;
 
 
-    private JPQLQuery<Date> createLatestCrawledDateSubQuery(QProductRanking subProductRanking) {
+    private JPQLQuery<LocalDate> createLatestCrawledDateSubQuery(QProductRanking subProductRanking) {
         BooleanBuilder subQueryConditions = new BooleanBuilder();
         subQueryConditions.and(subProductRanking.categoryProduct.id.eq(productRanking.categoryProduct.id));
 
@@ -46,7 +47,7 @@ public class CustomProductRankingRepositoryImpl implements CustomProductRankingR
     @Override
     public List<Tuple> getPriceFromProductRanking(BooleanBuilder builder, List<ProductId> productIdList) {
         QProductRanking subProductRanking = new QProductRanking("subProductRanking");
-        JPQLQuery<Date> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(subProductRanking);
+        JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(subProductRanking);
 
         return jpaQueryFactory.select(
                         categoryProduct.product,

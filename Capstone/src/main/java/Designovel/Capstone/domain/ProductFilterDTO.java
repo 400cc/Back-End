@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -15,9 +16,9 @@ public class ProductFilterDTO {
     private List<Integer> category;
     private List<String> brand;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private LocalDate startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
+    private LocalDate endDate;
     private String mallTypeId;
     private String sortBy;
     private String sortOrder;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -29,8 +30,7 @@ public class HandsomeReview {
     @Column(name = "rating")
     private Integer rating;
     @Column(name = "written_date")
-    @Temporal(TemporalType.DATE)
-    private Date writtenDate;
+    private LocalDate writtenDate;
     @Column(name = "user_id")
     private String userId;
     @Column(name = "body")

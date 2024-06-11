@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -40,5 +41,5 @@ public class ProductRanking {
     private String monetaryUnit;
 
     @Column(name = "crawled_date")
-    private Date crawledDate;
+    private LocalDate crawledDate;
 }

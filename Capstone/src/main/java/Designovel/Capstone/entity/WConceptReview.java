@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -38,8 +38,7 @@ public class WConceptReview {
     @Column(name = "user_id")
     private String userId;
     @Column(name = "written_date")
-    @Temporal(TemporalType.DATE)
-    private Date writtenDate;
+    private LocalDate writtenDate;
     @Column(name = "body")
     private String body;
     @Column(name = "rate")

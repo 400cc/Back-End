@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -15,7 +16,7 @@ import java.util.Date;
 public class ReviewFilterDTO {
     private String productId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private LocalDate startDate;
     private Integer rate;
     private Integer page;
 }

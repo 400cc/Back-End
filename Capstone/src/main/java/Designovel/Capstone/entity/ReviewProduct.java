@@ -4,6 +4,7 @@ import Designovel.Capstone.entity.id.ReviewProductId;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -21,7 +22,7 @@ public class ReviewProduct {
     private String orgReviewId;
 
     @Column(name = "crawled_date")
-    private Date crawledDate;
+    private LocalDate crawledDate;
 
     @ManyToOne
     @JoinColumns({

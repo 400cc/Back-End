@@ -1,11 +1,10 @@
 package Designovel.Capstone.controller;
 
 import Designovel.Capstone.domain.ProductBasicDetailDTO;
-import Designovel.Capstone.entity.*;
+import Designovel.Capstone.entity.HandsomeVariable;
+import Designovel.Capstone.entity.MusinsaVariable;
+import Designovel.Capstone.entity.WConceptVariable;
 import Designovel.Capstone.service.product.ProductService;
-import Designovel.Capstone.service.review.HandsomeReviewService;
-import Designovel.Capstone.service.review.MusinsaReviewService;
-import Designovel.Capstone.service.review.WConceptReviewService;
 import Designovel.Capstone.service.variable.HandsomeVariableService;
 import Designovel.Capstone.service.variable.MusinsaVariableService;
 import Designovel.Capstone.service.variable.WConceptVariableService;
@@ -13,9 +12,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +48,6 @@ public class ProductDetailController {
     }
 
 
-
     @Operation(summary = "한섬 상품 상세 정보 조회", description = "특정 한섬 상품의 상세 정보(리뷰 제외) 조회")
     @GetMapping("/FHyETFQN/{productId}")
     public ResponseEntity<Object> getHandsomeProductDetail(@PathVariable("productId") String productId) {
@@ -58,7 +58,6 @@ public class ProductDetailController {
         response.put("variable", handsomeVariable);
         return ResponseEntity.ok(response);
     }
-
 
 
     @Operation(summary = "W컨셉 상품 상세 정보 조회", description = "특정 W컨셉 상품의 상세 정보(리뷰 제외) 조회")

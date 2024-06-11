@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Data
@@ -21,12 +22,12 @@ public class ProductBasicDetailDTO {
     private Integer discountedPrice;
     private Integer fixedPrice;
     private String monetaryUnit;
-    private Date crawledDate;
+    private LocalDate crawledDate;
     private List<Image> imageList = new ArrayList<>();
     private Map<String, Object> skuAttribute = new HashMap<>();
     private List<DupeExposureIndex> exposureIndexList = new ArrayList<>();
 
-    public ProductBasicDetailDTO(String brand, int discountedPrice, int fixedPrice, String monetaryUnit, Date crawledDate, ProductId productId) {
+    public ProductBasicDetailDTO(String brand, int discountedPrice, int fixedPrice, String monetaryUnit, LocalDate crawledDate, ProductId productId) {
         this.brand = brand;
         this.discountedPrice = discountedPrice;
         this.fixedPrice = fixedPrice;

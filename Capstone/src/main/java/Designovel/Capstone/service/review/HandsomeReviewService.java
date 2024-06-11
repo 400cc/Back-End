@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import static Designovel.Capstone.entity.QHandsomeReview.handsomeReview;
 @RequiredArgsConstructor
 public class HandsomeReviewService {
     private final HandsomeReviewRepository handsomeReviewRepository;
+    private final ReviewProductService reviewProductService;
 
     public ReviewCountDTO getReviewCountDTOByFilter(ReviewFilterDTO reviewFilterDTO) {
         List<Tuple> handsomeReviewCounts = handsomeReviewRepository.findHandsomeReviewCountsByFilter(reviewFilterDTO);
@@ -52,6 +54,22 @@ public class HandsomeReviewService {
         response.put("count", reviewCountByProductId);
         response.put("review", handsomeReviewDTOPage);
         return response;
+    }
+
+    public Map<LocalDate, Integer> getReviewTrend(String productId) {
+        List<Object[]> queryResult = handsomeReviewRepository.findReviewCountByProductIdAndDate(productId);
+        LocalDate startDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(0)[0];
+        LocalDate endDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(queryResult.size() - 1)[0];
+        log.info(String.valueOf(startDate));
+        log.info(String.valueOf(endDate));
+        Map<LocalDate, Integer> dateRangeMap = reviewProductService.createDateRangeMap(startDate, endDate);
+        for (Object[] object : queryResult) {
+            LocalDate crawledDate = (LocalDate) object[0];
+            Long longReviewCount = (Long) object[1];
+            Integer reviewCount = (longReviewCount != null) ? longReviewCount.intValue() : 0;
+            dateRangeMap.put(crawledDate, reviewCount);
+        }
+        return dateRangeMap;
     }
 
 }
