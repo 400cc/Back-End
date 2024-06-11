@@ -10,16 +10,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SKUAttributeService {
-    private final SKUAttributeRepository skuAttributeRepository;
 
-    public void setProductDetailSKUAttribute(ProductBasicDetailDTO productBasicDetailDTO) {
-        ProductId productId = new ProductId(productBasicDetailDTO.getProductId(), productBasicDetailDTO.getMallType());
-        List<SKUAttribute> skuAttribute = skuAttributeRepository.findByProduct_Id(productId);
-        if (!skuAttribute.isEmpty()) {
-            skuAttribute.stream().forEach(sku -> {
-                productBasicDetailDTO.getSkuAttribute().put(sku.getAttrKey(), sku.getAttrValue());
-            });
-        }
-    }
 
 }

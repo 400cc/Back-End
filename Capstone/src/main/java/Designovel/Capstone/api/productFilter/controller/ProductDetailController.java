@@ -1,6 +1,7 @@
 package Designovel.Capstone.api.productFilter.controller;
 
 import Designovel.Capstone.api.productFilter.dto.ProductBasicDetailDTO;
+import Designovel.Capstone.api.productFilter.service.ProductDetailService;
 import Designovel.Capstone.domain.variable.handsomeVariable.HandsomeVariable;
 import Designovel.Capstone.domain.variable.musinsaVariable.MusinsaVariable;
 import Designovel.Capstone.domain.variable.wconceptVariable.WConceptVariable;
@@ -29,7 +30,7 @@ import static Designovel.Capstone.domain.mallType.enumType.MallTypeId.*;
 @Tag(name = "상품 상세", description = "상품 상세 정보 API")
 @RequestMapping("/style/detail")
 public class ProductDetailController {
-    private final ProductService productService;
+    private final ProductDetailService productDetailService;
     private final MusinsaVariableService musinsaVariableService;
     private final HandsomeVariableService handsomeVariableService;
 
@@ -40,7 +41,7 @@ public class ProductDetailController {
     @GetMapping("/JN1qnDZA/{productId}")
     public ResponseEntity<Map<String, Object>> getMusinsaProductDetail(@PathVariable("productId") String productId) {
         Map<String, Object> response = new HashMap<>();
-        ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, MUSINSA.getType());
+        ProductBasicDetailDTO productBasicDetail = productDetailService.getProductBasicDetailDTO(productId, MUSINSA.getType());
         MusinsaVariable musinsaVariable = musinsaVariableService.getMusinsaVariable(productId);
         response.put("basicDetail", productBasicDetail);
         response.put("variable", musinsaVariable);
@@ -52,7 +53,7 @@ public class ProductDetailController {
     @GetMapping("/FHyETFQN/{productId}")
     public ResponseEntity<Object> getHandsomeProductDetail(@PathVariable("productId") String productId) {
         Map<String, Object> response = new HashMap<>();
-        ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, HANDSOME.getType());
+        ProductBasicDetailDTO productBasicDetail = productDetailService.getProductBasicDetailDTO(productId, HANDSOME.getType());
         HandsomeVariable handsomeVariable = handsomeVariableService.getHandsomeVariableByProductId(productId);
         response.put("basicDetail", productBasicDetail);
         response.put("variable", handsomeVariable);
@@ -64,7 +65,7 @@ public class ProductDetailController {
     @GetMapping("/l8WAu4fP/{productId}")
     public ResponseEntity<Object> getWConceptProductDetail(@PathVariable("productId") String productId) {
         Map<String, Object> response = new HashMap<>();
-        ProductBasicDetailDTO productBasicDetail = productService.getProductBasicDetailDTO(productId, WCONCEPT.getType());
+        ProductBasicDetailDTO productBasicDetail = productDetailService.getProductBasicDetailDTO(productId, WCONCEPT.getType());
         WConceptVariable wConceptVariable = wConceptVariableService.getWConceptVariableByProductId(productId);
         response.put("basicDetail", productBasicDetail);
         response.put("variable", wConceptVariable);

@@ -2,8 +2,9 @@ package Designovel.Capstone.api.productFilter.controller;
 
 import Designovel.Capstone.api.productFilter.dto.CategoryNode;
 import Designovel.Capstone.api.productFilter.dto.ProductFilterDTO;
+import Designovel.Capstone.api.productFilter.service.CategoryNodeService;
+import Designovel.Capstone.api.productFilter.service.ProductFilterService;
 import Designovel.Capstone.domain.product.productRanking.ProductRankingDTO;
-import Designovel.Capstone.domain.category.category.CategoryService;
 import Designovel.Capstone.domain.product.productRanking.ProductRankingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,13 +30,15 @@ import java.util.Map;
 @RequestMapping("/style/filter")
 public class ProductFilterController {
 
+    private final ProductFilterService productFilterService;
+    private final CategoryNodeService categoryNodeService;
     private final ProductRankingService productRankingService;
-    private final CategoryService categoryService;
+
 
     @Operation(summary = "전체 상품 필더 조회", description = "필터를 적용하여 상품의 기본 정보(가격, 노출 지수 등 조회)")
     @GetMapping
     public ResponseEntity<Page<ProductRankingDTO>> getProductRankings(@ModelAttribute ProductFilterDTO filter, int page) {
-        Page<ProductRankingDTO> productRankings = productRankingService.getProductRankingByFilter(filter, page);
+        Page<ProductRankingDTO> productRankings = productFilterService.getProductRankingByFilter(filter, page);
         return ResponseEntity.ok(productRankings);
     }
 
@@ -43,7 +46,7 @@ public class ProductFilterController {
     @ApiResponse(responseCode = "200", description = "카테고리 계층 조회", content = @Content(schema = @Schema(implementation = CategoryNode.class)))
     @GetMapping("/category/{mallTypeId}")
     public ResponseEntity<List<CategoryNode>> getCategories(@PathVariable("mallTypeId") String mallTypeId) {
-        return ResponseEntity.ok(categoryService.getCategoryTree(mallTypeId));
+        return ResponseEntity.ok(categoryNodeService.getCategoryTree(mallTypeId));
     }
 
 
@@ -56,9 +59,9 @@ public class ProductFilterController {
                     ))
     })
     @GetMapping("/brand/{mallTypeId}")
-    public ResponseEntity<Object> getBrands(@PathVariable("mallTypeId") String mallTypeId) {
+    public ResponseEntity<Object> getBrandsByMallTypeId(@PathVariable("mallTypeId") String mallTypeId) {
         Map<String, List<String>> distinctBrandMap = new HashMap<>();
-        distinctBrandMap.put("brand", productRankingService.getBrands(mallTypeId));
+        distinctBrandMap.put("brand", productRankingService.getBrandsByMallTypeId(mallTypeId));
         return ResponseEntity.ok(distinctBrandMap);
     }
 

@@ -1,5 +1,6 @@
 package Designovel.Capstone.api.home.controller;
 
+import Designovel.Capstone.api.home.service.TopBrandService;
 import Designovel.Capstone.api.productFilter.dto.ProductFilterDTO;
 import Designovel.Capstone.api.home.dto.TopBrandDTO;
 import Designovel.Capstone.domain.product.productRanking.ProductRanking;
@@ -25,6 +26,7 @@ import java.util.Map;
 @RequestMapping("/home")
 public class HomeController {
     private final ProductRankingService productRankingService;
+    private final TopBrandService topBrandService;
 
     @Operation(summary = "쇼핑몰 별 Top 10 브랜드 조회", description = "노출 지수 기준으로 Top 10 브랜드 반환",
             responses = {
@@ -34,15 +36,14 @@ public class HomeController {
             })
     @GetMapping("/brand")
     public ResponseEntity<Map<String, List<TopBrandDTO>>> getTop10Brands(@ModelAttribute ProductFilterDTO filterDTO) {
-        List<TopBrandDTO> top10BrandList = productRankingService.getTop10BrandsByMallType(filterDTO);
+        List<TopBrandDTO> top10BrandList = topBrandService.getTop10BrandsByMallType(filterDTO);
         return ResponseEntity.ok(Collections.singletonMap("top10BrandList", top10BrandList));
     }
 
     @Operation(summary = "쇼핑몰 별 가격대 상품 조회", description = "해당 쇼핑몰의 가격대별 상품 반환")
     @GetMapping("/price/{mallTypeId}")
     public ResponseEntity<Map<String, List<ProductRanking>>> getProductListByPriceRanges(@PathVariable("mallTypeId") String mallTypeId) {
-        Map<String, List<ProductRanking>> productListByPriceRanges = productRankingService.getProductListByPriceRanges(mallTypeId);
-        return ResponseEntity.ok(productListByPriceRanges);
+        return null;
     }
 
 }

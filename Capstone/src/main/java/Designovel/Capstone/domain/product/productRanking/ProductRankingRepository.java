@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRankingRepository extends JpaRepository<ProductRanking, Integer>, CustomProductRankingRepository {
+public interface ProductRankingRepository extends JpaRepository<ProductRanking, Integer> {
 
     @Query("select distinct p.brand from ProductRanking p where p.categoryProduct.product.id.mallTypeId = :mallTypeId")
     List<String> findDistinctBrand(@Param("mallTypeId") String mallTypeId);
@@ -28,22 +28,4 @@ public interface ProductRankingRepository extends JpaRepository<ProductRanking, 
             "order by p.crawledDate desc")
     Page<ProductBasicDetailDTO> findPriceInfoByProduct(@Param("productId") String productId, @Param("mallTypeId") String mallTypeId, Pageable pageable);
 
-    @Query("select p, " +
-            "case " +
-            "    when p.fixedPrice < 10000 then '0-10k' " +
-            "    when p.fixedPrice >= 10000 and p.fixedPrice < 20000 then '10k-20k' " +
-            "    when p.fixedPrice >= 20000 and p.fixedPrice < 30000 then '20k-30k' " +
-            "    when p.fixedPrice >= 30000 and p.fixedPrice < 40000 then '30k-40k' " +
-            "    else '40k+' " +
-            "end as priceRange " +
-            "from ProductRanking p " +
-            "where p.crawledDate in (" +
-            "    select max(pr.crawledDate) " +
-            "    from ProductRanking pr " +
-            "    where pr.categoryProduct.id.productId = p.categoryProduct.id.productId " +
-            "    and pr.categoryProduct.id.mallTypeId = :mallTypeId " +
-            "    group by pr.categoryProduct.id" +
-            ") " +
-            "and p.categoryProduct.id.mallTypeId = :mallTypeId")
-    List<Object[]> findAllProductsGroupedByPriceRange(@Param("mallTypeId") String mallTypeId);
 }
