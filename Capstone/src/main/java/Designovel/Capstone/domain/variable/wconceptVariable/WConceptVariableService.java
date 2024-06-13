@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 public class WConceptVariableService {
     private final WConceptVariableRepository wConceptVariableRepository;
 
-    public WConceptVariable getWConceptVariableByProductId(String productId) {
-        return wConceptVariableRepository.findByProduct_Id_ProductId(productId)
+    public WConceptVariable getWConceptVariableByStyleId(String styleId) {
+        return wConceptVariableRepository.findByStyle_Id_StyleId(styleId)
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.VARIABLE_NOT_FOUND_ID));
     }
 }

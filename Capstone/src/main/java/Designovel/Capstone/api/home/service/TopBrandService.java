@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Designovel.Capstone.domain.category.categoryProduct.QCategoryProduct.categoryProduct;
-import static Designovel.Capstone.domain.product.productRanking.QProductRanking.productRanking;
+import static Designovel.Capstone.domain.category.categoryStyle.QCategoryStyle.categoryStyle;
+import static Designovel.Capstone.domain.style.styleRanking.QStyleRanking.styleRanking;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +29,9 @@ public class TopBrandService {
 
         return top10BrandOrderByExposureIndex.stream()
                 .map(tuple -> TopBrandDTO.builder()
-                        .brand(tuple.get(productRanking.brand))
-                        .exposureIndexSum(tuple.get(productRanking.rankScore.sum()))
-                        .mallType(tuple.get(categoryProduct.product.id.mallTypeId.stringValue()))
+                        .brand(tuple.get(styleRanking.brand))
+                        .exposureIndexSum(tuple.get(styleRanking.rankScore.sum()))
+                        .mallType(tuple.get(categoryStyle.style.id.mallTypeId.stringValue()))
                         .build())
                 .collect(Collectors.toList());
     }

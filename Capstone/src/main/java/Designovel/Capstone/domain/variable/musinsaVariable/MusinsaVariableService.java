@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 public class MusinsaVariableService {
     private final MusinsaVariableRepository musinsaVariableRepository;
 
-    public MusinsaVariable getMusinsaVariable(String productId) {
-        return musinsaVariableRepository.findByProduct_Id_ProductId(productId)
+    public MusinsaVariable getMusinsaVariable(String styleId) {
+        return musinsaVariableRepository.findByStyle_Id_StyleId(styleId)
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.VARIABLE_NOT_FOUND_ID));
     }
 }

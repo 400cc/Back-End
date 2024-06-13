@@ -1,6 +1,6 @@
 package Designovel.Capstone.domain.review.handsomeReview;
 
-import Designovel.Capstone.domain.review.reviewProduct.ReviewProduct;
+import Designovel.Capstone.domain.review.reviewProduct.ReviewStyle;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -21,24 +21,24 @@ public class HandsomeReview {
     @MapsId
     @JoinColumn(name = "review_id")
     @JsonIgnore
-    private ReviewProduct reviewProduct;
-    @Column(name = "product_id", nullable = false)
-    private String productId;
+    private ReviewStyle reviewStyle;
+    @Column(name = "style_id", nullable = false)
+    private String styleId;
 
     @Column(name = "org_review_id", unique = true, nullable = false)
     private String orgReviewId;
-    @Column(name = "rating")
-    private Integer rating;
+    @Column(name = "rate")
+    private Integer rate;
     @Column(name = "written_date")
     private LocalDate writtenDate;
     @Column(name = "user_id")
     private String userId;
     @Column(name = "body")
     private String body;
-    @Column(name = "product_color")
-    private String productColor;
-    @Column(name = "product_size")
-    private String productSize;
+    @Column(name = "style_color")
+    private String styleColor;
+    @Column(name = "style_size")
+    private String styleSize;
     @Column(name = "import_source")
     private String importSource;
     @Column(name = "user_height")

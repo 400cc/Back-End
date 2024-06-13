@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 public class WConceptReviewService {
     private final WConceptReviewRepository wConceptReviewRepository;
 
-    public Page<WConceptReview> findByProductId(String productId, int page) {
+    public Page<WConceptReview> findByStyleId(String styleId, int page) {
         int size = 20;
         Pageable pageable = PageRequest.of(page, size);
-        return wConceptReviewRepository.findByProductId(productId, pageable);
+        return wConceptReviewRepository.findByStyleId(styleId, pageable);
     }
 }

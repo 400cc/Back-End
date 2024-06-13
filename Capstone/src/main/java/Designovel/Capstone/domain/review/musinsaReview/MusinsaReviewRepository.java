@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MusinsaReviewRepository extends JpaRepository<MusinsaReview, Integer> {
-    Page<MusinsaReview> findByProductId(String productId, Pageable pageable);
+    Page<MusinsaReview> findByStyleId(String styleId, Pageable pageable);
 
 }

@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface HandsomeVariableRepository extends JpaRepository<HandsomeVariable, Integer> {
-    Optional<HandsomeVariable> findByProduct_Id_ProductId(String productId);
+    Optional<HandsomeVariable> findByStyle_Id_StyleId(String styleId);
 }

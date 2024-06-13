@@ -12,8 +12,8 @@ public class HandsomeVariableService {
 
     private final HandsomeVariableRepository handsomeVariableRepository;
 
-    public HandsomeVariable getHandsomeVariableByProductId(String productId) {
-        return handsomeVariableRepository.findByProduct_Id_ProductId(productId)
+    public HandsomeVariable getHandsomeVariableByStyleId(String styleId) {
+        return handsomeVariableRepository.findByStyle_Id_StyleId(styleId)
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.VARIABLE_NOT_FOUND_ID));
     }
 }

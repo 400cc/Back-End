@@ -1,8 +1,8 @@
 package Designovel.Capstone.domain.review.handsomeReview;
 
-import Designovel.Capstone.api.productFilter.dto.ReviewCountDTO;
-import Designovel.Capstone.api.productFilter.dto.ReviewFilterDTO;
-import Designovel.Capstone.domain.review.reviewProduct.ReviewProductService;
+import Designovel.Capstone.api.styleFilter.dto.ReviewCountDTO;
+import Designovel.Capstone.api.styleFilter.dto.ReviewFilterDTO;
+import Designovel.Capstone.domain.review.reviewProduct.ReviewStyleService;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +22,14 @@ import static Designovel.Capstone.domain.review.handsomeReview.QHandsomeReview.h
 @RequiredArgsConstructor
 public class HandsomeReviewService {
     private final HandsomeReviewRepository handsomeReviewRepository;
-    private final ReviewProductService reviewProductService;
+    private final ReviewStyleService reviewStyleService;
 
     public ReviewCountDTO getReviewCountDTOByFilter(ReviewFilterDTO reviewFilterDTO) {
         List<Tuple> handsomeReviewCounts = handsomeReviewRepository.findHandsomeReviewCountsByFilter(reviewFilterDTO);
         Map<Integer, Integer> ratingCountMap = new HashMap<>();
         int total = 0;
         for (Tuple tuple : handsomeReviewCounts) {
-            Integer rating = tuple.get(handsomeReview.rating);
+            Integer rating = tuple.get(handsomeReview.rate);
             Long count = tuple.get(handsomeReview.count());
 
             int countValue = (count != null) ? count.intValue() : 0;
@@ -48,19 +48,19 @@ public class HandsomeReviewService {
 
 
     public Map<String, Object> getHandsomeReviewPageByFilter(ReviewFilterDTO reviewFilterDTO) {
-        ReviewCountDTO reviewCountByProductId = getReviewCountDTOByFilter(reviewFilterDTO);
+        ReviewCountDTO reviewCountByStyleId = getReviewCountDTOByFilter(reviewFilterDTO);
         Page<HandsomeReviewDTO> handsomeReviewDTOPage = handsomeReviewRepository.findHandsomeReviewPageByFilter(reviewFilterDTO);
         HashMap<String, Object> response = new HashMap<>();
-        response.put("count", reviewCountByProductId);
+        response.put("count", reviewCountByStyleId);
         response.put("review", handsomeReviewDTOPage);
         return response;
     }
 
-    public Map<LocalDate, Integer> getReviewTrend(String productId) {
-        List<Object[]> queryResult = handsomeReviewRepository.findReviewCountByProductIdAndDate(productId);
+    public Map<LocalDate, Integer> getReviewTrend(String styleId) {
+        List<Object[]> queryResult = handsomeReviewRepository.findReviewCountByStyleIdAndDate(styleId);
         LocalDate startDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(0)[0];
         LocalDate endDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(queryResult.size() - 1)[0];
-        Map<LocalDate, Integer> dateRangeMap = reviewProductService.createDateRangeMap(startDate, endDate);
+        Map<LocalDate, Integer> dateRangeMap = reviewStyleService.createDateRangeMap(startDate, endDate);
         for (Object[] object : queryResult) {
             LocalDate crawledDate = (LocalDate) object[0];
             Long longReviewCount = (Long) object[1];

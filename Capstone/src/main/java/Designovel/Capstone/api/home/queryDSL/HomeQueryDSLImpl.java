@@ -14,8 +14,8 @@ import java.util.List;
 
 import static Designovel.Capstone.domain.category.category.QCategory.category;
 import static Designovel.Capstone.domain.category.categoryClosure.QCategoryClosure.categoryClosure;
-import static Designovel.Capstone.domain.category.categoryProduct.QCategoryProduct.categoryProduct;
-import static Designovel.Capstone.domain.product.productRanking.QProductRanking.productRanking;
+import static Designovel.Capstone.domain.category.categoryStyle.QCategoryStyle.categoryStyle;
+import static Designovel.Capstone.domain.style.styleRanking.QStyleRanking.styleRanking;
 
 @Slf4j
 @Repository
@@ -25,16 +25,16 @@ public class HomeQueryDSLImpl implements HomeQueryDSL {
     @Override
     public List<Tuple> getTop10BrandOrderByExposureIndex(BooleanBuilder builder, Pageable pageable) {
         return jpaQueryFactory.select(
-                        productRanking.brand,
-                        productRanking.rankScore.sum(),
-                        categoryProduct.product.id.mallTypeId
+                        styleRanking.brand,
+                        styleRanking.rankScore.sum(),
+                        categoryStyle.style.id.mallTypeId
                 )
-                .from(productRanking)
-                .leftJoin(productRanking.categoryProduct, categoryProduct)
+                .from(styleRanking)
+                .leftJoin(styleRanking.categoryStyle, categoryStyle)
                 .where(builder)
-                .groupBy(productRanking.brand,
-                        categoryProduct.product.id.mallTypeId)
-                .orderBy(productRanking.rankScore.sum().desc())
+                .groupBy(styleRanking.brand,
+                        categoryStyle.style.id.mallTypeId)
+                .orderBy(styleRanking.rankScore.sum().desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -45,24 +45,24 @@ public class HomeQueryDSLImpl implements HomeQueryDSL {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (filterDTO.getStartDate() != null) {
-            builder.and(productRanking.crawledDate.goe(filterDTO.getStartDate()));
+            builder.and(styleRanking.crawledDate.goe(filterDTO.getStartDate()));
         }
 
         if (filterDTO.getEndDate() != null) {
-            builder.and(productRanking.crawledDate.loe(filterDTO.getEndDate()));
+            builder.and(styleRanking.crawledDate.loe(filterDTO.getEndDate()));
         }
 
         if (filterDTO.getMallTypeId() != null) {
-            builder.and(productRanking.categoryProduct.id.mallTypeId.eq(filterDTO.getMallTypeId()));
+            builder.and(styleRanking.categoryStyle.id.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
 
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {
             // 카테고리 필터링 로직
             builder.and(
-                    productRanking.categoryProduct.id.productId.in(
-                            JPAExpressions.select(categoryProduct.id.productId)
-                                    .from(categoryProduct)
-                                    .join(categoryProduct.category, category)
+                    styleRanking.categoryStyle.id.styleId.in(
+                            JPAExpressions.select(categoryStyle.id.styleId)
+                                    .from(categoryStyle)
+                                    .join(categoryStyle.category, category)
                                     .join(categoryClosure).on(categoryClosure.id.descendantId.eq(category.categoryId))
                                     .where(categoryClosure.id.ancestorId.in(filterDTO.getCategory()))
                     )

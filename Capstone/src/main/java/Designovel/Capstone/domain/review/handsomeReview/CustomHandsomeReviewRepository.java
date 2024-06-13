@@ -1,6 +1,6 @@
 package Designovel.Capstone.domain.review.handsomeReview;
 
-import Designovel.Capstone.api.productFilter.dto.ReviewFilterDTO;
+import Designovel.Capstone.api.styleFilter.dto.ReviewFilterDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import org.springframework.data.domain.Page;

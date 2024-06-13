@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MusinsaReviewService {
     private final MusinsaReviewRepository musinsaReviewRepository;
-    public Page<MusinsaReview> findByProductId(String productId, int page) {
+    public Page<MusinsaReview> findByStyleId(String styleId, int page) {
         int size = 20;
         Pageable pageable = PageRequest.of(page, size);
-        return musinsaReviewRepository.findByProductId(productId, pageable);
+        return musinsaReviewRepository.findByStyleId(styleId, pageable);
     }
 }

@@ -1,6 +1,6 @@
 package Designovel.Capstone.domain.review.wconceptReview;
 
-import Designovel.Capstone.domain.review.reviewProduct.ReviewProduct;
+import Designovel.Capstone.domain.review.reviewProduct.ReviewStyle;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -21,10 +21,10 @@ public class WConceptReview {
     @MapsId
     @JoinColumn(name = "review_id")
     @JsonIgnore
-    private ReviewProduct reviewProduct;
+    private ReviewStyle reviewStyle;
 
-    @Column(name = "product_id", nullable = false)
-    private String productId;
+    @Column(name = "style_id", nullable = false)
+    private String styleId;
 
     @Column(name = "org_review_id", unique = true, nullable = false)
     private String orgReviewId;

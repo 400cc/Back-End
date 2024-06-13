@@ -1,6 +1,6 @@
 package Designovel.Capstone.domain.review.handsomeReview;
 
-import Designovel.Capstone.domain.review.reviewProduct.ReviewProductId;
+import Designovel.Capstone.domain.review.reviewProduct.ReviewStyleId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,11 +10,11 @@ import java.util.List;
 
 
 @Repository
-public interface HandsomeReviewRepository extends JpaRepository<HandsomeReview, ReviewProductId>, CustomHandsomeReviewRepository {
+public interface HandsomeReviewRepository extends JpaRepository<HandsomeReview, ReviewStyleId>, CustomHandsomeReviewRepository {
 
     @Query("select r.writtenDate, count(r) from HandsomeReview r " +
-            "where r.productId = :productId " +
+            "where r.styleId = :styleId " +
             "group by r.writtenDate " +
             "order by r.writtenDate asc")
-    List<Object[]> findReviewCountByProductIdAndDate(@Param("productId") String productId);
+    List<Object[]> findReviewCountByStyleIdAndDate(@Param("styleId") String styleId);
 }

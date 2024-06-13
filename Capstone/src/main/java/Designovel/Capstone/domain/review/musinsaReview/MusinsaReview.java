@@ -1,6 +1,6 @@
 package Designovel.Capstone.domain.review.musinsaReview;
 
-import Designovel.Capstone.domain.review.reviewProduct.ReviewProduct;
+import Designovel.Capstone.domain.review.reviewProduct.ReviewStyle;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,9 +19,9 @@ public class MusinsaReview {
     @MapsId
     @JoinColumn(name = "review_id")
     @JsonIgnore
-    private ReviewProduct reviewProduct;
-    @Column(name = "product_id", nullable = false)
-    private String productId;
+    private ReviewStyle reviewStyle;
+    @Column(name = "style_id", nullable = false)
+    private String styleId;
 
     @Column(name = "org_review_id", unique = true, nullable = false)
     private String orgReviewId;

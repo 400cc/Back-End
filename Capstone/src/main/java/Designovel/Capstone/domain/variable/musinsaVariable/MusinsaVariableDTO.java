@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MusinsaVariableDTO {
     private Long variableId;
-    private String productId;
+    private String style_id;
     private String mallType;
     private String productNum;
     private double malePercentage;

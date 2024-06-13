@@ -8,5 +8,5 @@ import java.util.Optional;
 @Repository
 public interface MusinsaVariableRepository extends JpaRepository<MusinsaVariable, Integer> {
 
-    Optional<MusinsaVariable> findByProduct_Id_ProductId(String productId);
+    Optional<MusinsaVariable> findByStyle_Id_StyleId(String styleId);
 }

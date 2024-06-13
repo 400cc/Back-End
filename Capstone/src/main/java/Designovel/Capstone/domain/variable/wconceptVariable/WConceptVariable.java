@@ -1,6 +1,6 @@
 package Designovel.Capstone.domain.variable.wconceptVariable;
 
-import Designovel.Capstone.domain.product.product.Product;
+import Designovel.Capstone.domain.style.style.Style;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -16,11 +16,11 @@ public class WConceptVariable {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false),
+            @JoinColumn(name = "style_id", referencedColumnName = "style_id", insertable = false, updatable = false),
             @JoinColumn(name = "mall_type_id", referencedColumnName = "mall_type_id", insertable = false, updatable = false)
     })
     @JsonIgnore
-    private Product product;
+    private Style style;
 
     @Column(name = "product_name")
     private String productName;

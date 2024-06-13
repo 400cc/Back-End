@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class HandsomeReviewDTO {
 
     private int reviewId;
-    private String productId;
+    private String styleId;
 
     private String orgReviewId;
 
@@ -24,9 +24,9 @@ public class HandsomeReviewDTO {
 
     private String body;
 
-    private String productColor;
+    private String styleColor;
 
-    private String productSize;
+    private String styleSize;
 
     private String importSource;
 
@@ -36,14 +36,14 @@ public class HandsomeReviewDTO {
 
     public HandsomeReviewDTO(HandsomeReview review) {
         this.reviewId = review.getReviewId();
-        this.productId = review.getProductId();
+        this.styleId = review.getStyleId();
         this.orgReviewId = review.getOrgReviewId();
-        this.rating = review.getRating();
+        this.rating = review.getRate();
         this.writtenDate = review.getWrittenDate();
         this.userId = review.getUserId();
         this.body = review.getBody();
-        this.productColor = review.getProductColor();
-        this.productSize = review.getProductSize();
+        this.styleColor = review.getStyleColor();
+        this.styleSize = review.getStyleSize();
         this.importSource = review.getImportSource();
         this.userHeight = review.getUserHeight();
         this.userSize = review.getUserSize();

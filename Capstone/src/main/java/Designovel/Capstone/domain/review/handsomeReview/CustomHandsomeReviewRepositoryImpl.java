@@ -1,6 +1,6 @@
 package Designovel.Capstone.domain.review.handsomeReview;
 
-import Designovel.Capstone.api.productFilter.dto.ReviewFilterDTO;
+import Designovel.Capstone.api.styleFilter.dto.ReviewFilterDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
@@ -26,10 +26,10 @@ public class CustomHandsomeReviewRepositoryImpl implements CustomHandsomeReviewR
     @Override
     public BooleanBuilder buildHandsomeReviewFilter(ReviewFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
-        String productId = filterDTO.getProductId();
+        String styleId = filterDTO.getStyleId();
         LocalDate startDate = filterDTO.getStartDate();
 
-        builder.and(handsomeReview.productId.eq(productId));
+        builder.and(handsomeReview.styleId.eq(styleId));
         if (startDate != null) {
             builder.and(handsomeReview.writtenDate.goe(startDate));
         }
@@ -40,11 +40,11 @@ public class CustomHandsomeReviewRepositoryImpl implements CustomHandsomeReviewR
     public List<Tuple> findHandsomeReviewCountsByFilter(ReviewFilterDTO filterDTO) {
         BooleanBuilder builder = buildHandsomeReviewFilter(filterDTO);
         return jpaQueryFactory.select(
-                        handsomeReview.rating,
+                        handsomeReview.rate,
                         handsomeReview.count())
                 .from(handsomeReview)
                 .where(builder)
-                .groupBy(handsomeReview.rating)
+                .groupBy(handsomeReview.rate)
                 .fetch();
 
     }
@@ -54,19 +54,19 @@ public class CustomHandsomeReviewRepositoryImpl implements CustomHandsomeReviewR
         BooleanBuilder builder = buildHandsomeReviewFilter(filterDTO);
         Pageable pageable = PageRequest.of(filterDTO.getPage(), 10);
         if (filterDTO.getRate() != null) {
-            builder.and(handsomeReview.rating.in(filterDTO.getRate()));
+            builder.and(handsomeReview.rate.in(filterDTO.getRate()));
         }
         List<HandsomeReviewDTO> handsomeReviewDTOList =
                 jpaQueryFactory.select(Projections.constructor(HandsomeReviewDTO.class,
                                 handsomeReview.reviewId,
-                                handsomeReview.productId,
+                                handsomeReview.styleId,
                                 handsomeReview.orgReviewId,
-                                handsomeReview.rating,
+                                handsomeReview.rate,
                                 handsomeReview.writtenDate,
                                 handsomeReview.userId,
                                 handsomeReview.body,
-                                handsomeReview.productColor,
-                                handsomeReview.productSize,
+                                handsomeReview.styleColor,
+                                handsomeReview.styleSize,
                                 handsomeReview.importSource,
                                 handsomeReview.userHeight,
                                 handsomeReview.userSize))

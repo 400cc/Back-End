@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WConceptReviewRepository extends JpaRepository<WConceptReview, Integer> {
-    Page<WConceptReview> findByProductId(String productId, Pageable pageable);
+    Page<WConceptReview> findByStyleId(String styleId, Pageable pageable);
 }
