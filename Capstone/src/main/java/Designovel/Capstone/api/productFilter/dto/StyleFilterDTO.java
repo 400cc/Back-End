@@ -6,13 +6,12 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class ProductFilterDTO {
+public class StyleFilterDTO {
     private List<Integer> category;
     private List<String> brand;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

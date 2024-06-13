@@ -1,6 +1,6 @@
 package Designovel.Capstone.api.productFilter.queryDSL;
 
-import Designovel.Capstone.api.productFilter.dto.ProductFilterDTO;
+import Designovel.Capstone.api.productFilter.dto.StyleFilterDTO;
 import Designovel.Capstone.domain.product.product.ProductId;
 import Designovel.Capstone.domain.product.productRanking.QProductRanking;
 import com.querydsl.core.BooleanBuilder;
@@ -30,7 +30,7 @@ import static Designovel.Capstone.domain.product.productRanking.QProductRanking.
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class ProductFilterQueryDSLImpl implements ProductFilterQueryDSL {
+public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -115,7 +115,7 @@ public class ProductFilterQueryDSLImpl implements ProductFilterQueryDSL {
 
 
     @Override
-    public BooleanBuilder buildProductFilter(ProductFilterDTO filterDTO) {
+    public BooleanBuilder buildProductFilter(StyleFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (filterDTO.getBrand() != null) {

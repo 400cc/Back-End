@@ -20,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Tag(name = "상품 상세 리뷰", description = "상품 상세 리뷰 정보 API")
 @RequestMapping("/style/detail/review")
-public class ProductDetailReviewController {
+public class StyleDetailReviewController {
     private final WConceptReviewService wConceptReviewService;
     private final MusinsaReviewService musinsaReviewService;
     private final HandsomeReviewService handsomeReviewService;

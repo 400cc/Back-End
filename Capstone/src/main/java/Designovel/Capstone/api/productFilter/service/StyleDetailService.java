@@ -1,7 +1,7 @@
 package Designovel.Capstone.api.productFilter.service;
 
 import Designovel.Capstone.api.productFilter.dto.DupeExposureIndex;
-import Designovel.Capstone.api.productFilter.dto.ProductBasicDetailDTO;
+import Designovel.Capstone.api.productFilter.dto.StyleBasicDetailDTO;
 import Designovel.Capstone.domain.category.category.Category;
 import Designovel.Capstone.domain.image.Image;
 import Designovel.Capstone.domain.image.ImageRepository;
@@ -19,43 +19,43 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ProductDetailService {
+public class StyleDetailService {
 
     private final ProductRankingRepository productRankingRepository;
     private final SKUAttributeRepository skuAttributeRepository;
     private final ImageRepository imageRepository;
 
-    public void setProductDetailImage(ProductBasicDetailDTO productBasicDetailDTO) {
-        ProductId productId = new ProductId(productBasicDetailDTO.getProductId(), productBasicDetailDTO.getMallType());
+    public void setProductDetailImage(StyleBasicDetailDTO styleBasicDetailDTO) {
+        ProductId productId = new ProductId(styleBasicDetailDTO.getProductId(), styleBasicDetailDTO.getMallType());
         List<Image> image = imageRepository.findByProduct_Id(productId);
         if (!image.isEmpty()) {
-            productBasicDetailDTO.setImageList(image);
+            styleBasicDetailDTO.setImageList(image);
         }
     }
 
-    public void setProductDetailSKUAttribute(ProductBasicDetailDTO productBasicDetailDTO) {
-        ProductId productId = new ProductId(productBasicDetailDTO.getProductId(), productBasicDetailDTO.getMallType());
+    public void setProductDetailSKUAttribute(StyleBasicDetailDTO styleBasicDetailDTO) {
+        ProductId productId = new ProductId(styleBasicDetailDTO.getProductId(), styleBasicDetailDTO.getMallType());
         List<SKUAttribute> skuAttribute = skuAttributeRepository.findByProduct_Id(productId);
         if (!skuAttribute.isEmpty()) {
             skuAttribute.stream().forEach(sku -> {
-                productBasicDetailDTO.getSkuAttribute().put(sku.getAttrKey(), sku.getAttrValue());
+                styleBasicDetailDTO.getSkuAttribute().put(sku.getAttrKey(), sku.getAttrValue());
             });
         }
     }
 
-    public ProductBasicDetailDTO getExposureIndexAndPriceInfo(String productId, String mallType) {
+    public StyleBasicDetailDTO getExposureIndexAndPriceInfo(String productId, String mallType) {
         List<Object[]> rankScore = productRankingRepository.findRankScoreByProduct(productId, mallType);
         Pageable pageable = PageRequest.of(0, 1);
-        ProductBasicDetailDTO productBasicDetailDTO = productRankingRepository.findPriceInfoByProduct(productId, mallType, pageable).getContent().get(0);
+        StyleBasicDetailDTO styleBasicDetailDTO = productRankingRepository.findPriceInfoByProduct(productId, mallType, pageable).getContent().get(0);
 
         List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(productId, mallType, ((Number) data[1]).floatValue(), (Category) data[0]))
                 .collect(Collectors.toList());
-        productBasicDetailDTO.setExposureIndexList(exposureIndexList);
-        return productBasicDetailDTO;
+        styleBasicDetailDTO.setExposureIndexList(exposureIndexList);
+        return styleBasicDetailDTO;
     }
 
-    public ProductBasicDetailDTO getProductBasicDetailDTO(String productId, String mallType) {
-        ProductBasicDetailDTO productBasicDetail = getExposureIndexAndPriceInfo(productId, mallType);
+    public StyleBasicDetailDTO getProductBasicDetailDTO(String productId, String mallType) {
+        StyleBasicDetailDTO productBasicDetail = getExposureIndexAndPriceInfo(productId, mallType);
         setProductDetailSKUAttribute(productBasicDetail);
         setProductDetailImage(productBasicDetail);
         return productBasicDetail;

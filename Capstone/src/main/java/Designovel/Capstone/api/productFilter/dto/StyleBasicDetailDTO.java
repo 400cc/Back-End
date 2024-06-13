@@ -14,7 +14,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductBasicDetailDTO {
+public class StyleBasicDetailDTO {
 
     private String productId;
     private String mallType;
@@ -27,7 +27,7 @@ public class ProductBasicDetailDTO {
     private Map<String, Object> skuAttribute = new HashMap<>();
     private List<DupeExposureIndex> exposureIndexList = new ArrayList<>();
 
-    public ProductBasicDetailDTO(String brand, int discountedPrice, int fixedPrice, String monetaryUnit, LocalDate crawledDate, ProductId productId) {
+    public StyleBasicDetailDTO(String brand, int discountedPrice, int fixedPrice, String monetaryUnit, LocalDate crawledDate, ProductId productId) {
         this.brand = brand;
         this.discountedPrice = discountedPrice;
         this.fixedPrice = fixedPrice;

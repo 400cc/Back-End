@@ -3,7 +3,6 @@ package Designovel.Capstone.api.home.service;
 import Designovel.Capstone.api.home.dto.TopBrandDTO;
 import Designovel.Capstone.api.home.dto.TopBrandFilterDTO;
 import Designovel.Capstone.api.home.queryDSL.HomeQueryDSL;
-import Designovel.Capstone.api.productFilter.dto.ProductFilterDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;

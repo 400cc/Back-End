@@ -4,7 +4,6 @@ import Designovel.Capstone.api.home.dto.TopBrandDTO;
 import Designovel.Capstone.api.home.dto.TopBrandFilterDTO;
 import Designovel.Capstone.api.home.service.TopBrandService;
 import Designovel.Capstone.domain.product.productRanking.ProductRanking;
-import Designovel.Capstone.domain.product.productRanking.ProductRankingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +24,6 @@ import java.util.Map;
 @Tag(name = "메인 화면", description = "메인 화면(통계) API")
 @RequestMapping("/home")
 public class HomeController {
-    private final ProductRankingService productRankingService;
     private final TopBrandService topBrandService;
 
     @Operation(summary = "쇼핑몰 별 Top 10 브랜드 조회", description = "노출 지수 기준으로 Top 10 브랜드 반환",

@@ -1,7 +1,6 @@
 package Designovel.Capstone.api.home.queryDSL;
 
 import Designovel.Capstone.api.home.dto.TopBrandFilterDTO;
-import Designovel.Capstone.api.productFilter.dto.ProductFilterDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPAExpressions;

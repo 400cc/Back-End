@@ -60,8 +60,6 @@ public class HandsomeReviewService {
         List<Object[]> queryResult = handsomeReviewRepository.findReviewCountByProductIdAndDate(productId);
         LocalDate startDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(0)[0];
         LocalDate endDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(queryResult.size() - 1)[0];
-        log.info(String.valueOf(startDate));
-        log.info(String.valueOf(endDate));
         Map<LocalDate, Integer> dateRangeMap = reviewProductService.createDateRangeMap(startDate, endDate);
         for (Object[] object : queryResult) {
             LocalDate crawledDate = (LocalDate) object[0];

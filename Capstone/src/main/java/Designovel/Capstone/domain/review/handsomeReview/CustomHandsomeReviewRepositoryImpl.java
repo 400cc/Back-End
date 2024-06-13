@@ -54,7 +54,7 @@ public class CustomHandsomeReviewRepositoryImpl implements CustomHandsomeReviewR
         BooleanBuilder builder = buildHandsomeReviewFilter(filterDTO);
         Pageable pageable = PageRequest.of(filterDTO.getPage(), 10);
         if (filterDTO.getRate() != null) {
-            builder.and(handsomeReview.rating.eq(filterDTO.getRate()));
+            builder.and(handsomeReview.rating.in(filterDTO.getRate()));
         }
         List<HandsomeReviewDTO> handsomeReviewDTOList =
                 jpaQueryFactory.select(Projections.constructor(HandsomeReviewDTO.class,

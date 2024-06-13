@@ -1,6 +1,6 @@
 package Designovel.Capstone.domain.product.productRanking;
 
-import Designovel.Capstone.api.productFilter.dto.ProductBasicDetailDTO;
+import Designovel.Capstone.api.productFilter.dto.StyleBasicDetailDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,10 +22,10 @@ public interface ProductRankingRepository extends JpaRepository<ProductRanking, 
             "group by p.categoryProduct.product, p.categoryProduct.category")
     List<Object[]> findRankScoreByProduct(@Param("productId") String productId, @Param("mallTypeId") String mallTypeId);
 
-    @Query("select new Designovel.Capstone.api.productFilter.dto.ProductBasicDetailDTO(p.brand, p.discountedPrice, p.fixedPrice, p.monetaryUnit, p.crawledDate, p.categoryProduct.product.id) " +
+    @Query("select new Designovel.Capstone.api.productFilter.dto.StyleBasicDetailDTO(p.brand, p.discountedPrice, p.fixedPrice, p.monetaryUnit, p.crawledDate, p.categoryProduct.product.id) " +
             "from ProductRanking p " +
             "where p.categoryProduct.product.id.productId =:productId and p.categoryProduct.product.id.mallTypeId =:mallTypeId " +
             "order by p.crawledDate desc")
-    Page<ProductBasicDetailDTO> findPriceInfoByProduct(@Param("productId") String productId, @Param("mallTypeId") String mallTypeId, Pageable pageable);
+    Page<StyleBasicDetailDTO> findPriceInfoByProduct(@Param("productId") String productId, @Param("mallTypeId") String mallTypeId, Pageable pageable);
 
 }
