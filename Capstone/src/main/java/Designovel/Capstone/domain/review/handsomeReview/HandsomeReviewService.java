@@ -2,6 +2,7 @@ package Designovel.Capstone.domain.review.handsomeReview;
 
 import Designovel.Capstone.api.styleFilter.dto.ReviewCountDTO;
 import Designovel.Capstone.api.styleFilter.dto.ReviewFilterDTO;
+import Designovel.Capstone.api.styleFilter.dto.ReviewTrendDTO;
 import Designovel.Capstone.domain.review.reviewProduct.ReviewStyleService;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static Designovel.Capstone.domain.review.handsomeReview.QHandsomeReview.handsomeReview;
 
@@ -56,7 +58,7 @@ public class HandsomeReviewService {
         return response;
     }
 
-    public Map<LocalDate, Integer> getReviewTrend(String styleId) {
+    public List<ReviewTrendDTO> getReviewTrend(String styleId) {
         List<Object[]> queryResult = handsomeReviewRepository.findReviewCountByStyleIdAndDate(styleId);
         LocalDate startDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(0)[0];
         LocalDate endDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(queryResult.size() - 1)[0];
@@ -67,7 +69,16 @@ public class HandsomeReviewService {
             Integer reviewCount = (longReviewCount != null) ? longReviewCount.intValue() : 0;
             dateRangeMap.put(crawledDate, reviewCount);
         }
-        return dateRangeMap;
+
+        List<ReviewTrendDTO> ReviewTrendDTOList = convertToReviewTrendDTO(dateRangeMap);
+
+        return ReviewTrendDTOList;
+    }
+
+    private static List<ReviewTrendDTO> convertToReviewTrendDTO(Map<LocalDate, Integer> dateRangeMap) {
+        return dateRangeMap.entrySet().stream()
+                .map(entry -> new ReviewTrendDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
 }

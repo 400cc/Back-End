@@ -1,5 +1,6 @@
 package Designovel.Capstone.api.styleFilter.controller;
 
+import Designovel.Capstone.api.styleFilter.dto.ReviewTrendDTO;
 import Designovel.Capstone.domain.review.handsomeReview.HandsomeReviewService;
 import Designovel.Capstone.domain.review.musinsaReview.MusinsaReviewService;
 import Designovel.Capstone.domain.review.reviewProduct.ReviewStyleService;
@@ -12,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -35,7 +36,7 @@ public class StyleDetailReviewController {
 
     @Operation(summary = "리뷰 트랜드 분석", description = "기간을 받아 해당 기간에 리뷰 개수를 반환")
     @GetMapping("/FHyETFQN/trend")
-    public Map<LocalDate, Integer> getHandsomeReviewTrend(@RequestParam String styleId) {
+    public List<ReviewTrendDTO> getHandsomeReviewTrend(@RequestParam String styleId) {
         return handsomeReviewService.getReviewTrend(styleId);
 
     }
