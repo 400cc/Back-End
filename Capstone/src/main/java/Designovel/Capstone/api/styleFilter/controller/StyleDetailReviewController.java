@@ -48,10 +48,18 @@ public class StyleDetailReviewController {
         return ResponseEntity.ok(response);
     }
 
+
     @Operation(summary = "무신사 리뷰 트랜드 분석", description = "기간을 받아 해당 기간에 리뷰 개수를 반환")
     @GetMapping("/JN1qnDZA/trend")
     public List<ReviewTrendDTO> getMusinsaReviewTrend(@RequestParam String styleId) {
         return musinsaReviewService.getMusinsaReviewTrend(styleId);
+    }
+
+    @Operation(summary = "W컨셉 상품 리뷰 조회", description = "key:count - rate1 ~ rate5 개수 조회, key:review - 리뷰 페이지로 조회")
+    @GetMapping("/l8WAu4fP")
+    public ResponseEntity<Map<String, Object>> getWConceptReviewCount(@ModelAttribute ReviewFilterDTO reviewFilterDTO) {
+        Map<String, Object> response = wConceptReviewService.getWConceptReviewPageByFilter(reviewFilterDTO);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "W컨셉 리뷰 트랜드 분석", description = "기간을 받아 해당 기간에 리뷰 개수를 반환")
@@ -59,6 +67,5 @@ public class StyleDetailReviewController {
     public List<ReviewTrendDTO> getWConceptReviewTrend(@RequestParam String styleId) {
         return wConceptReviewService.getWConceptReviewTrend(styleId);
     }
-
 
 }

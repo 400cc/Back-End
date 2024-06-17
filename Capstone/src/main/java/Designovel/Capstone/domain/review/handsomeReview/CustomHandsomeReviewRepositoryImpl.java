@@ -51,7 +51,7 @@ public class CustomHandsomeReviewRepositoryImpl implements CustomHandsomeReviewR
     @Override
     public Page<HandsomeReviewDTO> findHandsomeReviewPageByFilter(ReviewFilterDTO filterDTO) {
         BooleanBuilder builder = buildHandsomeReviewFilter(filterDTO);
-        Pageable pageable = PageRequest.of(filterDTO.getPage(), 10);
+        Pageable pageable = PageRequest.of( filterDTO.getPage(), 10);
         if (filterDTO.getRate() != null) {
             builder.and(handsomeReview.rate.in(filterDTO.getRate()));
         }
