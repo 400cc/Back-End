@@ -16,5 +16,5 @@ public interface HandsomeReviewRepository extends JpaRepository<HandsomeReview, 
             "where r.styleId = :styleId " +
             "group by r.writtenDate " +
             "order by r.writtenDate asc")
-    List<Object[]> findReviewCountByStyleIdAndDate(@Param("styleId") String styleId);
+    List<Object[]> findReviewCountByStyleId(@Param("styleId") String styleId);
 }

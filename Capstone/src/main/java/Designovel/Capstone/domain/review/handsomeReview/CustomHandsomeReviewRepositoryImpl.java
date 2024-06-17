@@ -46,7 +46,6 @@ public class CustomHandsomeReviewRepositoryImpl implements CustomHandsomeReviewR
                 .where(builder)
                 .groupBy(handsomeReview.rate)
                 .fetch();
-
     }
 
     @Override

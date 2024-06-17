@@ -1,5 +1,6 @@
 package Designovel.Capstone.domain.review.reviewProduct;
 
+import Designovel.Capstone.api.styleFilter.dto.ReviewTrendDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -7,7 +8,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,4 +28,26 @@ public class ReviewStyleService {
         }
         return dateRangeMap;
     }
+
+    public List<ReviewTrendDTO> processReviewTrendQueryResult(List<Object[]> queryResult) {
+        LocalDate startDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(0)[0];
+        LocalDate endDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(queryResult.size() - 1)[0];
+        Map<LocalDate, Integer> dateRangeMap = createDateRangeMap(startDate, endDate);
+        for (Object[] object : queryResult) {
+            LocalDate crawledDate = (LocalDate) object[0];
+            Long longReviewCount = (Long) object[1];
+            Integer reviewCount = (longReviewCount != null) ? longReviewCount.intValue() : 0;
+            dateRangeMap.put(crawledDate, reviewCount);
+        }
+        List<ReviewTrendDTO> ReviewTrendDTOList = convertToReviewTrendDTO(dateRangeMap);
+
+        return ReviewTrendDTOList;
+    }
+
+    public List<ReviewTrendDTO> convertToReviewTrendDTO(Map<LocalDate, Integer> dateRangeMap) {
+        return dateRangeMap.entrySet().stream()
+                .map(entry -> new ReviewTrendDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
 }

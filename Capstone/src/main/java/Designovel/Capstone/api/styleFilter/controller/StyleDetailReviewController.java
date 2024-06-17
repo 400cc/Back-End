@@ -34,30 +34,24 @@ public class StyleDetailReviewController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "리뷰 트랜드 분석", description = "기간을 받아 해당 기간에 리뷰 개수를 반환")
+    @Operation(summary = "한섬 리뷰 트랜드 분석", description = "기간을 받아 해당 기간에 리뷰 개수를 반환")
     @GetMapping("/FHyETFQN/trend")
     public List<ReviewTrendDTO> getHandsomeReviewTrend(@RequestParam String styleId) {
-        return handsomeReviewService.getReviewTrend(styleId);
+        return handsomeReviewService.getHandsomeReviewTrend(styleId);
 
     }
 
+    @Operation(summary = "무신사 리뷰 트랜드 분석", description = "기간을 받아 해당 기간에 리뷰 개수를 반환")
+    @GetMapping("/JN1qnDZA/trend")
+    public List<ReviewTrendDTO> getMusinsaReviewTrend(@RequestParam String styleId) {
+        return musinsaReviewService.getMusinsaReviewTrend(styleId);
+    }
 
-//    @Operation(summary = "무신사 상품 리뷰 조회", description = "특정 무신사 상품의 리뷰를 조회(페이지)")
-//    @GetMapping("/JN1qnDZA/general/{productId}/{startDate}")
-//    public ResponseEntity<Page<MusinsaReview>> getMusinsaProductDetailReview(@PathVariable("productId") String productId,
-//                                                                             @PathVariable("startDate") Date startDate) {
-//        Page<MusinsaReview> musinsaReviewPage = musinsaReviewService.findByProductId(productId, page);
-//        return ResponseEntity.ok(musinsaReviewPage);
-//    }
-
-
-//    @Operation(summary = "W컨셉 상품 리뷰 조회", description = "특정 W컨셉 상품의 리뷰를 조회(페이지)")
-//    @GetMapping("/l8WAu4fP/review/{productId}")
-//    public ResponseEntity<Page<WConceptReview>> getWConceptProductDetailReview(@PathVariable("productId") String productId,
-//                                                                               @RequestParam int page) {
-//        Page<WConceptReview> wConceptReviewPage = wConceptReviewService.findByProductId(productId, page);
-//        return ResponseEntity.ok(wConceptReviewPage);
-//    }
+    @Operation(summary = "W컨셉 리뷰 트랜드 분석", description = "기간을 받아 해당 기간에 리뷰 개수를 반환")
+    @GetMapping("/l8WAu4fP/trend")
+    public List<ReviewTrendDTO> getWConceptReviewTrend(@RequestParam String styleId) {
+        return wConceptReviewService.getWConceptReviewTrend(styleId);
+    }
 
 
 }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @Table(name = "musinsa_review")
@@ -25,6 +27,9 @@ public class MusinsaReview {
 
     @Column(name = "org_review_id", unique = true, nullable = false)
     private String orgReviewId;
+
+    @Column(name = "written_date")
+    private LocalDate writtenDate;
 
     @Column(name = "rate")
     private Integer rate;

@@ -10,11 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static Designovel.Capstone.domain.review.handsomeReview.QHandsomeReview.handsomeReview;
 
@@ -33,7 +31,6 @@ public class HandsomeReviewService {
         for (Tuple tuple : handsomeReviewCounts) {
             Integer rating = tuple.get(handsomeReview.rate);
             Long count = tuple.get(handsomeReview.count());
-
             int countValue = (count != null) ? count.intValue() : 0;
             ratingCountMap.put(rating, countValue);
             total += countValue;
@@ -58,27 +55,9 @@ public class HandsomeReviewService {
         return response;
     }
 
-    public List<ReviewTrendDTO> getReviewTrend(String styleId) {
-        List<Object[]> queryResult = handsomeReviewRepository.findReviewCountByStyleIdAndDate(styleId);
-        LocalDate startDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(0)[0];
-        LocalDate endDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(queryResult.size() - 1)[0];
-        Map<LocalDate, Integer> dateRangeMap = reviewStyleService.createDateRangeMap(startDate, endDate);
-        for (Object[] object : queryResult) {
-            LocalDate crawledDate = (LocalDate) object[0];
-            Long longReviewCount = (Long) object[1];
-            Integer reviewCount = (longReviewCount != null) ? longReviewCount.intValue() : 0;
-            dateRangeMap.put(crawledDate, reviewCount);
-        }
-
-        List<ReviewTrendDTO> ReviewTrendDTOList = convertToReviewTrendDTO(dateRangeMap);
-
-        return ReviewTrendDTOList;
-    }
-
-    private static List<ReviewTrendDTO> convertToReviewTrendDTO(Map<LocalDate, Integer> dateRangeMap) {
-        return dateRangeMap.entrySet().stream()
-                .map(entry -> new ReviewTrendDTO(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+    public List<ReviewTrendDTO> getHandsomeReviewTrend(String styleId) {
+        List<Object[]> queryResult = handsomeReviewRepository.findReviewCountByStyleId(styleId);
+        return reviewStyleService.processReviewTrendQueryResult(queryResult);
     }
 
 }
