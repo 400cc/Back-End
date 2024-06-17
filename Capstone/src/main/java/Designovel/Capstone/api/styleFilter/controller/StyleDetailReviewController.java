@@ -1,10 +1,10 @@
 package Designovel.Capstone.api.styleFilter.controller;
 
+import Designovel.Capstone.api.styleFilter.dto.ReviewFilterDTO;
 import Designovel.Capstone.api.styleFilter.dto.ReviewTrendDTO;
 import Designovel.Capstone.domain.review.handsomeReview.HandsomeReviewService;
 import Designovel.Capstone.domain.review.musinsaReview.MusinsaReviewService;
 import Designovel.Capstone.domain.review.reviewProduct.ReviewStyleService;
-import Designovel.Capstone.api.styleFilter.dto.ReviewFilterDTO;
 import Designovel.Capstone.domain.review.wconceptReview.WConceptReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,6 +39,13 @@ public class StyleDetailReviewController {
     public List<ReviewTrendDTO> getHandsomeReviewTrend(@RequestParam String styleId) {
         return handsomeReviewService.getHandsomeReviewTrend(styleId);
 
+    }
+
+    @Operation(summary = "무신사 상품 리뷰 조회", description = "key:count - rate1 ~ rate5 개수 조회, key:review - 리뷰 페이지로 조회")
+    @GetMapping("/JN1qnDZA")
+    public ResponseEntity<Map<String, Object>> getMusinsaReviewCount(@ModelAttribute ReviewFilterDTO reviewFilterDTO) {
+        Map<String, Object> response = musinsaReviewService.getMusinsaReviewPageByFilter(reviewFilterDTO);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "무신사 리뷰 트랜드 분석", description = "기간을 받아 해당 기간에 리뷰 개수를 반환")

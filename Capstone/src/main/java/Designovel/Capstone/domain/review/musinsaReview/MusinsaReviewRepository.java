@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MusinsaReviewRepository extends JpaRepository<MusinsaReview, Integer> {
+public interface MusinsaReviewRepository extends JpaRepository<MusinsaReview, Integer>, CustomMusinsaReviewRepository {
     Page<MusinsaReview> findByStyleId(String styleId, Pageable pageable);
 
     @Query("select r.writtenDate, count(r) from MusinsaReview r " +

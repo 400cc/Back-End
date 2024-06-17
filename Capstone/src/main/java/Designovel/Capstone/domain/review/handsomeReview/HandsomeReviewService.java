@@ -35,15 +35,9 @@ public class HandsomeReviewService {
             ratingCountMap.put(rating, countValue);
             total += countValue;
         }
-        ReviewCountDTO reviewCountDTO = new ReviewCountDTO();
-        reviewCountDTO.setRate1(ratingCountMap.getOrDefault(1, 0));
-        reviewCountDTO.setRate2(ratingCountMap.getOrDefault(2, 0));
-        reviewCountDTO.setRate3(ratingCountMap.getOrDefault(3, 0));
-        reviewCountDTO.setRate4(ratingCountMap.getOrDefault(4, 0));
-        reviewCountDTO.setRate5(ratingCountMap.getOrDefault(5, 0));
-        reviewCountDTO.setTotal(total);
-        return reviewCountDTO;
+        return reviewStyleService.createReviewCountDTO(ratingCountMap, total);
     }
+
 
 
     public Map<String, Object> getHandsomeReviewPageByFilter(ReviewFilterDTO reviewFilterDTO) {

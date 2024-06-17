@@ -1,5 +1,6 @@
 package Designovel.Capstone.domain.review.reviewProduct;
 
+import Designovel.Capstone.api.styleFilter.dto.ReviewCountDTO;
 import Designovel.Capstone.api.styleFilter.dto.ReviewTrendDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,18 @@ public class ReviewStyleService {
         return dateRangeMap.entrySet().stream()
                 .map(entry -> new ReviewTrendDTO(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+    }
+
+
+    public static ReviewCountDTO createReviewCountDTO(Map<Integer, Integer> ratingCountMap, int total) {
+        ReviewCountDTO reviewCountDTO = new ReviewCountDTO();
+        reviewCountDTO.setRate1(ratingCountMap.getOrDefault(1, 0));
+        reviewCountDTO.setRate2(ratingCountMap.getOrDefault(2, 0));
+        reviewCountDTO.setRate3(ratingCountMap.getOrDefault(3, 0));
+        reviewCountDTO.setRate4(ratingCountMap.getOrDefault(4, 0));
+        reviewCountDTO.setRate5(ratingCountMap.getOrDefault(5, 0));
+        reviewCountDTO.setTotal(total);
+        return reviewCountDTO;
     }
 
 }

@@ -16,7 +16,7 @@ public class HandsomeReviewDTO {
 
     private String orgReviewId;
 
-    private Integer rating;
+    private Integer rate;
 
     private LocalDate writtenDate;
 
@@ -38,7 +38,7 @@ public class HandsomeReviewDTO {
         this.reviewId = review.getReviewId();
         this.styleId = review.getStyleId();
         this.orgReviewId = review.getOrgReviewId();
-        this.rating = review.getRate();
+        this.rate = review.getRate();
         this.writtenDate = review.getWrittenDate();
         this.userId = review.getUserId();
         this.body = review.getBody();
