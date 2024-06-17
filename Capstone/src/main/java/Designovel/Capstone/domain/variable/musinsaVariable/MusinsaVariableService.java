@@ -12,7 +12,7 @@ public class MusinsaVariableService {
     private final MusinsaVariableRepository musinsaVariableRepository;
 
     public MusinsaVariable getMusinsaVariable(String styleId) {
-        return musinsaVariableRepository.findByStyle_Id_StyleId(styleId)
+        return musinsaVariableRepository.findByStyleId(styleId)
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.VARIABLE_NOT_FOUND_ID));
     }
 }

@@ -26,7 +26,7 @@ public class StyleDetailService {
     private final ImageRepository imageRepository;
 
     public void setStyleDetailImage(StyleBasicDetailDTO styleBasicDetailDTO) {
-        StyleId styleId = new StyleId(styleBasicDetailDTO.getStyleId(), styleBasicDetailDTO.getMallType());
+        StyleId styleId = new StyleId(styleBasicDetailDTO.getStyleId(), styleBasicDetailDTO.getMallTypeId());
         List<Image> image = imageRepository.findByStyle_Id(styleId);
         if (!image.isEmpty()) {
             styleBasicDetailDTO.setImageList(image);
@@ -34,8 +34,7 @@ public class StyleDetailService {
     }
 
     public void setStyleDetailSKUAttribute(StyleBasicDetailDTO styleBasicDetailDTO) {
-        StyleId styleId = new StyleId(styleBasicDetailDTO.getStyleId(), styleBasicDetailDTO.getMallType());
-        List<SKUAttribute> skuAttribute = skuAttributeRepository.findByStyle_Id_StyleId(styleId);
+        List<SKUAttribute> skuAttribute = skuAttributeRepository.findByStyleId(styleBasicDetailDTO.getStyleId(), styleBasicDetailDTO.getMallTypeId());
         if (!skuAttribute.isEmpty()) {
             skuAttribute.stream().forEach(sku -> {
                 styleBasicDetailDTO.getSkuAttribute().put(sku.getAttrKey(), sku.getAttrValue());
@@ -55,9 +54,9 @@ public class StyleDetailService {
     }
 
     public StyleBasicDetailDTO getStyleBasicDetailDTO(String styleId, String mallType) {
-        StyleBasicDetailDTO productBasicDetail = getExposureIndexAndPriceInfo(styleId, mallType);
-        setStyleDetailSKUAttribute(productBasicDetail);
-        setStyleDetailImage(productBasicDetail);
-        return productBasicDetail;
+        StyleBasicDetailDTO styleBasicDetail = getExposureIndexAndPriceInfo(styleId, mallType);
+        setStyleDetailSKUAttribute(styleBasicDetail);
+        setStyleDetailImage(styleBasicDetail);
+        return styleBasicDetail;
     }
 }

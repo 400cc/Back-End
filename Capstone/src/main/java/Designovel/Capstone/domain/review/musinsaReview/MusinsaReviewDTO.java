@@ -15,7 +15,6 @@ public class MusinsaReviewDTO {
 
     private String orgReviewId;
 
-
     private LocalDate writtenDate;
 
     private Integer rate;

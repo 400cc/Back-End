@@ -22,9 +22,7 @@ public class MusinsaVariable {
     })
     @JsonIgnore
     private Style style;
-
-    @Column(name = "product_num")
-    private String productNum;
+    
     @Column(name = "male_percentage")
     private Integer malePercentage;
     @Column(name = "female_percentage")

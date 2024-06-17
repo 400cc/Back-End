@@ -17,24 +17,26 @@ import java.util.*;
 public class StyleBasicDetailDTO {
 
     private String styleId;
-    private String mallType;
+    private String mallTypeId;
     private String brand;
     private Integer discountedPrice;
     private Integer fixedPrice;
+    private String styleName;
     private String monetaryUnit;
     private LocalDate crawledDate;
     private List<Image> imageList = new ArrayList<>();
     private Map<String, Object> skuAttribute = new HashMap<>();
     private List<DupeExposureIndex> exposureIndexList = new ArrayList<>();
 
-    public StyleBasicDetailDTO(String brand, int discountedPrice, int fixedPrice, String monetaryUnit, LocalDate crawledDate, StyleId styleId) {
+    public StyleBasicDetailDTO(String brand, int discountedPrice, int fixedPrice, String monetaryUnit, LocalDate crawledDate, StyleId styleId, String styleName) {
         this.brand = brand;
+        this.styleName = styleName;
         this.discountedPrice = discountedPrice;
         this.fixedPrice = fixedPrice;
         this.monetaryUnit = monetaryUnit;
         this.crawledDate = crawledDate;
         this.styleId = styleId.getStyleId();
-        this.mallType = styleId.getMallTypeId();
+        this.mallTypeId = styleId.getMallTypeId();
     }
 
 }

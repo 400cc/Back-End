@@ -9,14 +9,14 @@ import lombok.Data;
 @AllArgsConstructor
 public class DupeExposureIndex {
 
-    private String productId;
-    private String mallType;
+    private String styleId;
+    private String mallTypeId;
     private Float exposureIndex;
     private Category category;
 
     public DupeExposureIndex(Style style, Float exposureIndex, Category category) {
-        this.productId = style.getId().getStyleId();
-        this.mallType = style.getId().getMallTypeId();
+        this.styleId = style.getId().getStyleId();
+        this.mallTypeId = style.getId().getMallTypeId();
         this.exposureIndex = exposureIndex;
         this.category = category;
     }
