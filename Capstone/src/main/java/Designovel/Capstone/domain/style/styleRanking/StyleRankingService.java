@@ -20,13 +20,13 @@ public class StyleRankingService {
         return styleRankingRepository.findDistinctBrand(mallTypeId);
     }
 
-    public Map<String, Float> getMinMaxFixedPriceByMallTypeId(String mallTypeId) {
-        Map<String, Float> minMaxFixedPriceMap = new HashMap<>();
-        Object[] queryResult = styleRankingRepository.findMinMaxFixedPriceByMallTypeId(mallTypeId);
-        Float minFixedPrice = (Float) queryResult[0];
-        Float maxFixedPrice = (Float) queryResult[1];
-        minMaxFixedPriceMap.put("minFixedPrice", minFixedPrice);
-        minMaxFixedPriceMap.put("maxFixedPrice", maxFixedPrice);
-        return minMaxFixedPriceMap;
-    }
+//    public Map<String, Float> getMinMaxFixedPriceByMallTypeId(String mallTypeId) {
+//        Map<String, Float> minMaxFixedPriceMap = new HashMap<>();
+//        Object[] queryResult = styleRankingRepository.findMinMaxFixedPriceByMallTypeId(mallTypeId);
+//        Float minFixedPrice = (Float) queryResult[0];
+//        Float maxFixedPrice = (Float) queryResult[1];
+//        minMaxFixedPriceMap.put("minFixedPrice", minFixedPrice);
+//        minMaxFixedPriceMap.put("maxFixedPrice", maxFixedPrice);
+//        return minMaxFixedPriceMap;
+//    }
 }
