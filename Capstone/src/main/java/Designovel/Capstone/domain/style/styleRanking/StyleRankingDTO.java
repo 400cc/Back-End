@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class StyleRankingDTO {
     private String styleId;
-    private String mallType;
+    private String mallTypeId;
     private String brand;
     private Integer discountedPrice;
     private Integer fixedPrice;
@@ -29,7 +29,7 @@ public class StyleRankingDTO {
 
     public StyleRankingDTO(Style style, String brand, Float exposureIndex) {
         this.styleId = style.getId().getStyleId();
-        this.mallType = style.getId().getMallTypeId();
+        this.mallTypeId = style.getId().getMallTypeId();
         this.image = java.util.Optional.ofNullable(style.getImages())
                 .filter(images -> !images.isEmpty())
                 .map(images -> images.get(0))
