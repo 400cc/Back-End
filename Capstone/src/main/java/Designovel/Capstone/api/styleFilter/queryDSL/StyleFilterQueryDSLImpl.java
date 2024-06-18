@@ -119,7 +119,7 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
     public BooleanBuilder buildStyleFilter(StyleFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (filterDTO.getBrand() != null) {
+        if (filterDTO.getBrand() != null && !filterDTO.getBrand().isEmpty()) {
             builder.and(styleRanking.brand.in(filterDTO.getBrand()));
         }
 
@@ -131,7 +131,7 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
             builder.and(styleRanking.crawledDate.loe(filterDTO.getEndDate()));
         }
 
-        if (filterDTO.getMallTypeId() != null) {
+        if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
             builder.and(styleRanking.categoryStyle.id.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
 

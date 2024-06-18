@@ -52,7 +52,7 @@ public class HomeQueryDSLImpl implements HomeQueryDSL {
             builder.and(styleRanking.crawledDate.loe(filterDTO.getEndDate()));
         }
 
-        if (filterDTO.getMallTypeId() != null) {
+        if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
             builder.and(styleRanking.categoryStyle.id.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
 
