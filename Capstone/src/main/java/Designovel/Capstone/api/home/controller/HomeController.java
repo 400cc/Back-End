@@ -42,8 +42,8 @@ public class HomeController {
 
     @Operation(summary = "쇼핑몰 별 가격대 상품 수 조회", description = "해당 쇼핑몰의 가격대별 상품 수 반환")
     @GetMapping("/price")
-    public ResponseEntity<Map<String, Integer>> getStyleListByPriceRanges(PriceRangeFilterDTO priceRangeFilterDTO) {
-        Map<String, Integer> styleByPriceRange = priceRangeService.getStyleByPriceRange(priceRangeFilterDTO);
+    public ResponseEntity<Map<String, Integer>> getPriceRangesCountList(PriceRangeFilterDTO priceRangeFilterDTO) {
+        Map<String, Integer> styleByPriceRange = priceRangeService.getPriceRangesCountList(priceRangeFilterDTO);
         return ResponseEntity.ok(styleByPriceRange);
     }
 

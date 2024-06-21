@@ -15,5 +15,4 @@ public class PriceRangeFilterDTO {
     private List<Integer> category;
     private List<String> brand;
     private String mallTypeId;
-    private int page;
 }

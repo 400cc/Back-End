@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class TopBrandDTO {
     private String brand;
     private Float exposureIndexSum;
-    private String mallType;
+    private String mallTypeId;
 }

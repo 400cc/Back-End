@@ -22,7 +22,7 @@ public class PriceRangeService {
     private final StyleRankingRepository styleRankingRepository;
     private final PriceRangeQueryDSLImpl priceRangeQueryDSL;
 
-    public Map<String, Integer> getStyleByPriceRange(PriceRangeFilterDTO priceRangeFilterDTO) {
+    public Map<String, Integer> getPriceRangesCountList(PriceRangeFilterDTO priceRangeFilterDTO) {
         List<Object[]> minMaxPriceList = styleRankingRepository.findMinMaxFixedPriceByMallTypeId(priceRangeFilterDTO.getMallTypeId());
 
         Object[] minMaxPrice = minMaxPriceList.get(0);
