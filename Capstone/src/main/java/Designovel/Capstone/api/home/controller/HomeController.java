@@ -1,6 +1,6 @@
 package Designovel.Capstone.api.home.controller;
 
-import Designovel.Capstone.api.home.dto.PriceRangeDTO;
+import Designovel.Capstone.api.home.dto.PriceRangeFilterDTO;
 import Designovel.Capstone.api.home.dto.TopBrandDTO;
 import Designovel.Capstone.api.home.dto.TopBrandFilterDTO;
 import Designovel.Capstone.api.home.service.PriceRangeService;
@@ -40,11 +40,10 @@ public class HomeController {
         return ResponseEntity.ok(Collections.singletonMap("top10BrandList", top10BrandList));
     }
 
-    @Operation(summary = "쇼핑몰 별 가격대 상품 조회", description = "해당 쇼핑몰의 가격대별 상품 반환")
-    @GetMapping("/price/{mallTypeId}")
-    public ResponseEntity<Map<String, List<PriceRangeDTO>>> getStyleListByPriceRanges(@PathVariable("mallTypeId") String mallTypeId,
-                                                                                       @RequestParam int page) {
-        Map<String, List<PriceRangeDTO>> styleByPriceRange = priceRangeService.getStyleByPriceRange(mallTypeId, page);
+    @Operation(summary = "쇼핑몰 별 가격대 상품 수 조회", description = "해당 쇼핑몰의 가격대별 상품 수 반환")
+    @GetMapping("/price")
+    public ResponseEntity<Map<String, Integer>> getStyleListByPriceRanges(PriceRangeFilterDTO priceRangeFilterDTO) {
+        Map<String, Integer> styleByPriceRange = priceRangeService.getStyleByPriceRange(priceRangeFilterDTO);
         return ResponseEntity.ok(styleByPriceRange);
     }
 
