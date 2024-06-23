@@ -1,6 +1,9 @@
 package Designovel.Capstone.domain.mallType.enumType;
 
+import Designovel.Capstone.global.exception.CustomException;
+import Designovel.Capstone.global.exception.ErrorCode;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public enum MallTypeId {
@@ -12,5 +15,14 @@ public enum MallTypeId {
 
     MallTypeId(String type) {
         this.type = type;
+    }
+
+    public static void checkMallTypeId(String type) {
+        for (MallTypeId mallTypeId : values()) {
+            if (mallTypeId.getType().equals(type)) {
+                return;
+            }
+        }
+        throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_MALL_TYPE_ID);
     }
 }

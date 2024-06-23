@@ -4,8 +4,11 @@ import Designovel.Capstone.api.styleFilter.dto.CategoryNode;
 import Designovel.Capstone.api.styleFilter.dto.StyleFilterDTO;
 import Designovel.Capstone.api.styleFilter.service.CategoryNodeService;
 import Designovel.Capstone.api.styleFilter.service.StyleFilterService;
+import Designovel.Capstone.domain.mallType.enumType.MallTypeId;
 import Designovel.Capstone.domain.style.styleRanking.StyleRankingDTO;
 import Designovel.Capstone.domain.style.styleRanking.StyleRankingService;
+import Designovel.Capstone.global.exception.CustomException;
+import Designovel.Capstone.global.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -16,12 +19,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -37,8 +42,10 @@ public class StyleFilterController {
 
     @Operation(summary = "전체 상품 필더 조회", description = "필터를 적용하여 상품의 기본 정보(가격, 노출 지수 등 조회)")
     @GetMapping
-    public ResponseEntity<Page<StyleRankingDTO>> getProductRankings(@ModelAttribute StyleFilterDTO filter, int page) {
-        Page<StyleRankingDTO> styleRankings = styleFilterService.getStyleRankingByFilter(filter, page);
+    public ResponseEntity<Page<StyleRankingDTO>> getProductRankings(@ModelAttribute StyleFilterDTO filter, Optional<Integer> page) {
+        MallTypeId.checkMallTypeId(filter.getMallTypeId());
+        Integer pageNumber = page.orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.PAGE_NUM_IS_NULL));
+        Page<StyleRankingDTO> styleRankings = styleFilterService.getStyleRankingByFilter(filter, pageNumber);
         return ResponseEntity.ok(styleRankings);
     }
 
@@ -46,6 +53,7 @@ public class StyleFilterController {
     @ApiResponse(responseCode = "200", description = "카테고리 계층 조회", content = @Content(schema = @Schema(implementation = CategoryNode.class)))
     @GetMapping("/category/{mallTypeId}")
     public ResponseEntity<List<CategoryNode>> getCategories(@PathVariable("mallTypeId") String mallTypeId) {
+        MallTypeId.checkMallTypeId(mallTypeId);
         return ResponseEntity.ok(categoryNodeService.getCategoryTree(mallTypeId));
     }
 
@@ -60,6 +68,7 @@ public class StyleFilterController {
     })
     @GetMapping("/brand/{mallTypeId}")
     public ResponseEntity<Object> getBrandsByMallTypeId(@PathVariable("mallTypeId") String mallTypeId) {
+        MallTypeId.checkMallTypeId(mallTypeId);
         Map<String, List<String>> distinctBrandMap = new HashMap<>();
         distinctBrandMap.put("brand", styleRankingService.getBrandsByMallTypeId(mallTypeId));
         return ResponseEntity.ok(distinctBrandMap);

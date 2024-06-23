@@ -5,6 +5,7 @@ import Designovel.Capstone.api.home.dto.TopBrandDTO;
 import Designovel.Capstone.api.home.dto.TopBrandFilterDTO;
 import Designovel.Capstone.api.home.service.PriceRangeService;
 import Designovel.Capstone.api.home.service.TopBrandService;
+import Designovel.Capstone.domain.mallType.enumType.MallTypeId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,13 +37,15 @@ public class HomeController {
             })
     @GetMapping("/brand")
     public ResponseEntity<Map<String, List<TopBrandDTO>>> getTop10Brands(@ModelAttribute TopBrandFilterDTO filterDTO) {
-        List<TopBrandDTO> top10BrandList = topBrandService.getTop10BrandsByMallType(filterDTO);
+        MallTypeId.checkMallTypeId(filterDTO.getMallTypeId());
+        List<TopBrandDTO> top10BrandList = topBrandService.getTop10BrandsByMallTypeId(filterDTO);
         return ResponseEntity.ok(Collections.singletonMap("top10BrandList", top10BrandList));
     }
 
     @Operation(summary = "쇼핑몰 별 가격대 상품 수 조회", description = "해당 쇼핑몰의 가격대별 상품 수 반환")
     @GetMapping("/price")
-    public ResponseEntity<Map<String, Integer>> getPriceRangesCountList(PriceRangeFilterDTO priceRangeFilterDTO) {
+    public ResponseEntity<Map<String, Integer>> getPriceRangesCountList(@ModelAttribute PriceRangeFilterDTO priceRangeFilterDTO) {
+        MallTypeId.checkMallTypeId(priceRangeFilterDTO.getMallTypeId());
         Map<String, Integer> styleByPriceRange = priceRangeService.getPriceRangesCountList(priceRangeFilterDTO);
         return ResponseEntity.ok(styleByPriceRange);
     }

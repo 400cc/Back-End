@@ -1,5 +1,6 @@
 package Designovel.Capstone.api.home.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +15,6 @@ import java.util.List;
 public class PriceRangeFilterDTO {
     private List<Integer> category;
     private List<String> brand;
+
     private String mallTypeId;
 }

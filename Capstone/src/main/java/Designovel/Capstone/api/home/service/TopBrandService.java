@@ -22,7 +22,7 @@ public class TopBrandService {
 
     private final HomeQueryDSL homeQueryDSL;
 
-    public List<TopBrandDTO> getTop10BrandsByMallType(TopBrandFilterDTO filter) {
+    public List<TopBrandDTO> getTop10BrandsByMallTypeId(TopBrandFilterDTO filter) {
         Pageable pageable = PageRequest.of(0, 10);
         BooleanBuilder builder = homeQueryDSL.buildTopBrandFilter(filter);
         List<Tuple> top10BrandOrderByExposureIndex = homeQueryDSL.getTop10BrandOrderByExposureIndex(builder, pageable);
