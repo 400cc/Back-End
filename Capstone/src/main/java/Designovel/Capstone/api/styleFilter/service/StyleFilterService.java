@@ -63,10 +63,12 @@ public class StyleFilterService {
 
         List<StyleId> styleIds = exposureIndexQueryResult.stream()
                 .map(tuple -> tuple.get(categoryStyle.style).getId())
+                .peek(id -> log.info("Style ID: " + id)) // 로그 출력
                 .collect(Collectors.toList());
 
         //제일 최신 가격(현재가, 할인가) 가져오기
         List<Tuple> priceQueryResult = styleFilterQueryDSL.getPriceInfo(builder, styleIds);
+        log.info("Price Query Result: " + priceQueryResult);
         updateStylePrices(styleRankingMap, priceQueryResult);
 
         List<StyleRankingDTO> resultList = new ArrayList<>(styleRankingMap.values());

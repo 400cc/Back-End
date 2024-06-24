@@ -40,10 +40,9 @@ public class StyleFilterController {
     private final StyleRankingService styleRankingService;
 
 
-    @Operation(summary = "전체 상품 필더 조회", description = "필터를 적용하여 상품의 기본 정보(가격, 노출 지수 등 조회)")
+    @Operation(summary = "전체 스타일 필더 조회", description = "필터를 적용하여 스타일의 기본 정보(가격, 노출 지수 등 조회)")
     @GetMapping
-    public ResponseEntity<Page<StyleRankingDTO>> getProductRankings(@ModelAttribute StyleFilterDTO filter, Optional<Integer> page) {
-        MallTypeId.checkMallTypeId(filter.getMallTypeId());
+    public ResponseEntity<Page<StyleRankingDTO>> getStyleRanking(@ModelAttribute StyleFilterDTO filter, Optional<Integer> page) {
         Integer pageNumber = page.orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.PAGE_NUM_IS_NULL));
         Page<StyleRankingDTO> styleRankings = styleFilterService.getStyleRankingByFilter(filter, pageNumber);
         return ResponseEntity.ok(styleRankings);
