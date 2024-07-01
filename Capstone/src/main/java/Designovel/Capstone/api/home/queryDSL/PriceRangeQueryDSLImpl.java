@@ -30,7 +30,8 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
 
 
     @Override
-    public JPQLQuery<LocalDate> createLatestCrawledDateSubQuery(QStyleRanking subStyleRanking) {
+    public JPQLQuery<LocalDate> createLatestCrawledDateSubQuery() {
+        QStyleRanking subStyleRanking = new QStyleRanking("subStyleRanking");
         BooleanBuilder subQueryConditions = new BooleanBuilder();
         subQueryConditions.and(subStyleRanking.categoryStyle.id.eq(styleRanking.categoryStyle.id));
 
@@ -40,11 +41,19 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     }
 
     @Override
-    public List<Tuple> findStyleRankingWithPriceRanges(Integer minPrice, Integer intervalSize, PriceRangeFilterDTO filterDTO, List<String> priceRangeKey) {
-        QStyleRanking subStyleRanking = new QStyleRanking("subStyleRanking");
-        JPQLQuery<LocalDate> latestCrawledDate = createLatestCrawledDateSubQuery(subStyleRanking);
-        BooleanBuilder priceRangeFilter = buildPriceRangeFilter(filterDTO);
+    public List<Tuple> findMinMaxPriceByFilter(JPQLQuery<LocalDate> lastCrawledDateQuery, BooleanBuilder priceRangeFilter) {
+        return jpaQueryFactory.select(
+                        styleRanking.fixedPrice.min(),
+                        styleRanking.fixedPrice.max()
+                )
+                .from(styleRanking)
+                .where(styleRanking.crawledDate.eq(lastCrawledDateQuery)
+                        .and(priceRangeFilter))
+                .fetch();
+    }
 
+    @Override
+    public List<Tuple> findStyleRankingWithPriceRanges(Integer minPrice, Integer intervalSize, BooleanBuilder priceRangeFilter, JPQLQuery<LocalDate> latestCrawledDate, List<String> priceRangeKey) {
         StringExpression priceRangeExpression = createPriceRangeExpression(minPrice, intervalSize, priceRangeKey);
 
         return jpaQueryFactory.select(

@@ -12,8 +12,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface PriceRangeQueryDSL {
-    List<Tuple> findStyleRankingWithPriceRanges(Integer minPrice, Integer intervalSize, PriceRangeFilterDTO filterDTO, List<String> priceRangeKey);
-    JPQLQuery<LocalDate> createLatestCrawledDateSubQuery(QStyleRanking subStyleRanking);
+    List<Tuple> findStyleRankingWithPriceRanges(Integer minPrice, Integer intervalSize, BooleanBuilder priceRangeFilter, JPQLQuery<LocalDate> latestCrawledDate, List<String> priceRangeKey);
+
+    JPQLQuery<LocalDate> createLatestCrawledDateSubQuery();
+
     BooleanBuilder buildPriceRangeFilter(PriceRangeFilterDTO filterDTO);
+
     StringExpression createPriceRangeExpression(int minPrice, int intervalSize, List<String> ranges);
+
+    List<Tuple> findMinMaxPriceByFilter(JPQLQuery<LocalDate> lastCrawledDateQuery, BooleanBuilder priceRangeFilter);
 }
