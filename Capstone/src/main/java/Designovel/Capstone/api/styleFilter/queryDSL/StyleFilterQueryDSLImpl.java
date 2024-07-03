@@ -34,7 +34,8 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    private JPQLQuery<LocalDate> createLatestCrawledDateSubQuery(QStyleRanking subStyleRanking) {
+    @Override
+    public JPQLQuery<LocalDate> createLatestCrawledDateSubQuery(QStyleRanking subStyleRanking) {
         BooleanBuilder subQueryConditions = new BooleanBuilder();
         subQueryConditions.and(subStyleRanking.categoryStyle.id.eq(styleRanking.categoryStyle.id));
 
