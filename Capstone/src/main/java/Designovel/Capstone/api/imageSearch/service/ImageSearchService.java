@@ -21,7 +21,7 @@ public class ImageSearchService {
 
     private final WebClient webClient;
 
-    public ResponseEntity<String> sendImageSearchRequest(MultipartFile image, String category, int topNum) throws IOException {
+    public ResponseEntity<String> sendImageSearchRequest(MultipartFile image, String category, int offset) throws IOException {
         byte[] imageBytes = image.getBytes();
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("image_upload", new ByteArrayResource(imageBytes) {
@@ -32,7 +32,7 @@ public class ImageSearchService {
         });
 
         body.add("category", category);
-        body.add("top_num", topNum);
+        body.add("top_num", offset);
 
         Mono<String> response = webClient.post()
                 .uri("/process/image")
