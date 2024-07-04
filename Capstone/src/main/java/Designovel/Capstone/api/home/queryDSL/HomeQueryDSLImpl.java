@@ -1,6 +1,6 @@
 package Designovel.Capstone.api.home.queryDSL;
 
-import Designovel.Capstone.api.home.dto.TopBrandFilterDTO;
+import Designovel.Capstone.api.home.dto.HomeFilterDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPAExpressions;
@@ -41,7 +41,7 @@ public class HomeQueryDSLImpl implements HomeQueryDSL {
     }
 
     @Override
-    public BooleanBuilder buildTopBrandFilter(TopBrandFilterDTO filterDTO) {
+    public BooleanBuilder buildTopBrandFilter(HomeFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (filterDTO.getStartDate() != null) {

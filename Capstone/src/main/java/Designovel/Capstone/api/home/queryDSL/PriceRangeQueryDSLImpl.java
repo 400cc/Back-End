@@ -1,6 +1,6 @@
 package Designovel.Capstone.api.home.queryDSL;
 
-import Designovel.Capstone.api.home.dto.PriceRangeFilterDTO;
+import Designovel.Capstone.api.home.dto.HomeFilterDTO;
 import Designovel.Capstone.domain.style.styleRanking.QStyleRanking;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -43,8 +43,8 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     @Override
     public List<Tuple> findMinMaxPriceByFilter(JPQLQuery<LocalDate> lastCrawledDateQuery, BooleanBuilder priceRangeFilter) {
         return jpaQueryFactory.select(
-                        styleRanking.fixedPrice.min(),
-                        styleRanking.fixedPrice.max()
+                        styleRanking.discountedPrice.min(),
+                        styleRanking.discountedPrice.max()
                 )
                 .from(styleRanking)
                 .where(styleRanking.crawledDate.eq(lastCrawledDateQuery)
@@ -61,10 +61,9 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
                         priceRangeExpression.as("priceRange")
                 )
                 .from(styleRanking)
-                .where(styleRanking.crawledDate.eq(latestCrawledDate)
-                        .and(priceRangeFilter))
+                .where(priceRangeFilter)
                 .groupBy(priceRangeExpression)
-                .orderBy(styleRanking.fixedPrice.asc())
+                .orderBy(styleRanking.discountedPrice.asc())
                 .fetch();
     }
 
@@ -72,11 +71,11 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     @Override
     public StringExpression createPriceRangeExpression(int minPrice, int intervalSize, List<String> ranges) {
         CaseBuilder.Cases<String, StringExpression> caseBuilder = new CaseBuilder()
-                .when(styleRanking.fixedPrice.between(minPrice, minPrice + intervalSize - 1)).then(ranges.get(0));
+                .when(styleRanking.discountedPrice.between(minPrice, minPrice + intervalSize - 1)).then(ranges.get(0));
         for (int i = 1; i < ranges.size(); i++) {
             int lowerBound = minPrice + i * intervalSize;
             int upperBound = lowerBound + intervalSize;
-            caseBuilder = caseBuilder.when(styleRanking.fixedPrice.between(lowerBound, upperBound)).then(ranges.get(i));
+            caseBuilder = caseBuilder.when(styleRanking.discountedPrice.between(lowerBound, upperBound)).then(ranges.get(i));
         }
 
         return caseBuilder.otherwise("");
@@ -84,14 +83,22 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
 
 
     @Override
-    public BooleanBuilder buildPriceRangeFilter(PriceRangeFilterDTO filterDTO) {
+    public BooleanBuilder buildPriceRangeFilter(HomeFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
             builder.and(styleRanking.categoryStyle.id.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
-        if (filterDTO.getBrand() != null && !filterDTO.getBrand().isEmpty()) {
-            builder.and(styleRanking.brand.in(filterDTO.getBrand()));
+
+        if (filterDTO.getStartDate() != null) {
+            builder.and(styleRanking.crawledDate.goe(filterDTO.getStartDate()));
+        }
+
+        if (filterDTO.getEndDate() != null) {
+            builder.and(styleRanking.crawledDate.loe(filterDTO.getEndDate()));
+        } else {
+            JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery();
+            builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
         }
 
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {

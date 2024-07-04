@@ -1,12 +1,10 @@
 package Designovel.Capstone.api.home.queryDSL;
 
-import Designovel.Capstone.api.home.dto.PriceRangeFilterDTO;
-import Designovel.Capstone.domain.style.styleRanking.QStyleRanking;
+import Designovel.Capstone.api.home.dto.HomeFilterDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPQLQuery;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,7 +14,7 @@ public interface PriceRangeQueryDSL {
 
     JPQLQuery<LocalDate> createLatestCrawledDateSubQuery();
 
-    BooleanBuilder buildPriceRangeFilter(PriceRangeFilterDTO filterDTO);
+    BooleanBuilder buildPriceRangeFilter(HomeFilterDTO filterDTO);
 
     StringExpression createPriceRangeExpression(int minPrice, int intervalSize, List<String> ranges);
 

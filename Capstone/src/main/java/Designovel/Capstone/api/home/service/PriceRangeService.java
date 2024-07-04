@@ -1,8 +1,7 @@
 package Designovel.Capstone.api.home.service;
 
-import Designovel.Capstone.api.home.dto.PriceRangeFilterDTO;
+import Designovel.Capstone.api.home.dto.HomeFilterDTO;
 import Designovel.Capstone.api.home.queryDSL.PriceRangeQueryDSLImpl;
-import Designovel.Capstone.domain.style.styleRanking.StyleRankingRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQuery;
@@ -24,9 +23,19 @@ public class PriceRangeService {
 
     private final PriceRangeQueryDSLImpl priceRangeQueryDSL;
 
-    public Map<String, Integer> getPriceRangesCountList(PriceRangeFilterDTO priceRangeFilterDTO) {
+    private static Map<String, Integer> createPriceRangeMap(List<String> priceRangeKey) {
+        return priceRangeKey.stream()
+                .collect(Collectors.toMap(
+                        priceRange -> priceRange,
+                        priceRange -> 0,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+    }
+
+    public Map<String, Integer> getPriceRangesCountList(HomeFilterDTO filterDTO) {
         JPQLQuery<LocalDate> latestCrawledDate = priceRangeQueryDSL.createLatestCrawledDateSubQuery();
-        BooleanBuilder priceRangeFilter = priceRangeQueryDSL.buildPriceRangeFilter(priceRangeFilterDTO);
+        BooleanBuilder priceRangeFilter = priceRangeQueryDSL.buildPriceRangeFilter(filterDTO);
         Tuple minMaxPriceByFilter = priceRangeQueryDSL.findMinMaxPriceByFilter(latestCrawledDate, priceRangeFilter).get(0);
 
         Integer minPrice = minMaxPriceByFilter.get(0, Integer.class) != null ? minMaxPriceByFilter.get(0, Integer.class) : 0;
@@ -47,17 +56,6 @@ public class PriceRangeService {
         }
         return priceRangeMap;
     }
-
-    private static Map<String, Integer> createPriceRangeMap(List<String> priceRangeKey) {
-        return priceRangeKey.stream()
-                .collect(Collectors.toMap(
-                        priceRange -> priceRange,
-                        priceRange -> 0,
-                        (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
-    }
-
 
     public List<String> createPriceRangeKeys(int minPrice, int intervalSize) {
         List<String> ranges = new ArrayList<>();

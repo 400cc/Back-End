@@ -1,8 +1,7 @@
 package Designovel.Capstone.api.home.controller;
 
-import Designovel.Capstone.api.home.dto.PriceRangeFilterDTO;
+import Designovel.Capstone.api.home.dto.HomeFilterDTO;
 import Designovel.Capstone.api.home.dto.TopBrandDTO;
-import Designovel.Capstone.api.home.dto.TopBrandFilterDTO;
 import Designovel.Capstone.api.home.service.PriceRangeService;
 import Designovel.Capstone.api.home.service.TopBrandService;
 import Designovel.Capstone.domain.mallType.enumType.MallTypeId;
@@ -14,7 +13,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +38,7 @@ public class HomeController {
                                     schema = @Schema(implementation = TopBrandDTO.class)))
             })
     @GetMapping("/brand")
-    public ResponseEntity<Map<String, List<TopBrandDTO>>> getTop10Brands(@ModelAttribute TopBrandFilterDTO filterDTO) {
+    public ResponseEntity<Map<String, List<TopBrandDTO>>> getTop10Brands(@ModelAttribute HomeFilterDTO filterDTO) {
         MallTypeId.checkMallTypeId(filterDTO.getMallTypeId());
         List<TopBrandDTO> top10BrandList = topBrandService.getTop10BrandsByMallTypeId(filterDTO);
         return ResponseEntity.ok(Collections.singletonMap("top10BrandList", top10BrandList));
@@ -44,9 +46,9 @@ public class HomeController {
 
     @Operation(summary = "쇼핑몰 별 가격대 상품 수 조회", description = "해당 쇼핑몰의 가격대별 상품 수 반환")
     @GetMapping("/price")
-    public ResponseEntity<Map<String, Integer>> getPriceRangesCountList(@ModelAttribute PriceRangeFilterDTO priceRangeFilterDTO) {
-        MallTypeId.checkMallTypeId(priceRangeFilterDTO.getMallTypeId());
-        Map<String, Integer> styleByPriceRange = priceRangeService.getPriceRangesCountList(priceRangeFilterDTO);
+    public ResponseEntity<Map<String, Integer>> getPriceRangesCountList(@ModelAttribute HomeFilterDTO filterDTO) {
+        MallTypeId.checkMallTypeId(filterDTO.getMallTypeId());
+        Map<String, Integer> styleByPriceRange = priceRangeService.getPriceRangesCountList(filterDTO);
         return ResponseEntity.ok(styleByPriceRange);
     }
 

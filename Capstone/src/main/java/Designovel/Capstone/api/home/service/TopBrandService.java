@@ -1,7 +1,7 @@
 package Designovel.Capstone.api.home.service;
 
 import Designovel.Capstone.api.home.dto.TopBrandDTO;
-import Designovel.Capstone.api.home.dto.TopBrandFilterDTO;
+import Designovel.Capstone.api.home.dto.HomeFilterDTO;
 import Designovel.Capstone.api.home.queryDSL.HomeQueryDSL;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -22,7 +22,7 @@ public class TopBrandService {
 
     private final HomeQueryDSL homeQueryDSL;
 
-    public List<TopBrandDTO> getTop10BrandsByMallTypeId(TopBrandFilterDTO filter) {
+    public List<TopBrandDTO> getTop10BrandsByMallTypeId(HomeFilterDTO filter) {
         Pageable pageable = PageRequest.of(0, 10);
         BooleanBuilder builder = homeQueryDSL.buildTopBrandFilter(filter);
         List<Tuple> top10BrandOrderByExposureIndex = homeQueryDSL.getTop10BrandOrderByExposureIndex(builder, pageable);
