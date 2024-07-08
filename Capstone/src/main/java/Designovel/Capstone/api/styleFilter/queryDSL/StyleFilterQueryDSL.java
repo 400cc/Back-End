@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface StyleFilterQueryDSL {
-    JPQLQuery<LocalDate> createLatestCrawledDateSubQuery(QStyleRanking subStyleRanking);
+    JPQLQuery<LocalDate> createLatestCrawledDateSubQuery();
 
     QueryResults<Tuple> getExposureIndexInfo(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder);
 

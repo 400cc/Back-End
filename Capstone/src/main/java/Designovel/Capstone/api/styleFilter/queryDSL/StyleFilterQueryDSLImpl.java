@@ -35,13 +35,11 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public JPQLQuery<LocalDate> createLatestCrawledDateSubQuery(QStyleRanking subStyleRanking) {
-        BooleanBuilder subQueryConditions = new BooleanBuilder();
-        subQueryConditions.and(subStyleRanking.categoryStyle.id.eq(styleRanking.categoryStyle.id));
-
+    public JPQLQuery<LocalDate> createLatestCrawledDateSubQuery() {
+        QStyleRanking subStyleRanking = new QStyleRanking("subStyleRanking");
         return JPAExpressions.select(subStyleRanking.crawledDate.max())
                 .from(subStyleRanking)
-                .where(subQueryConditions);
+                .where(subStyleRanking.categoryStyle.id.eq(styleRanking.categoryStyle.id));
     }
 
     @Override
@@ -126,8 +124,7 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
         if (filterDTO.getEndDate() != null) {
             builder.and(styleRanking.crawledDate.loe(filterDTO.getEndDate()));
         } else {
-            QStyleRanking subStyleRanking = new QStyleRanking("subStyleRanking");
-            JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(subStyleRanking);
+            JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery();
             builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
         }
 

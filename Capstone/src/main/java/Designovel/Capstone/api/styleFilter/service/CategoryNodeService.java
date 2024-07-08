@@ -56,7 +56,6 @@ public class CategoryNodeService {
     }
 
     public void addChildNodeToParentNode(List<CategoryClosure> closures, Map<Integer, CategoryNode> nodeMap) {
-
         for (CategoryClosure closure : closures) {
             CategoryNode parent = nodeMap.get(closure.getAncestorId().getCategoryId());
             CategoryNode child = nodeMap.get(closure.getDescendantId().getCategoryId());

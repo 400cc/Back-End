@@ -60,20 +60,20 @@ public class StyleFilterService {
 
         //응답 객체 생성
         Map<String, StyleRankingDTO> styleRankingMap = createStyleRankingDTOMap(exposureIndexQueryResult);
-
-        List<StyleId> styleIds = exposureIndexQueryResult.stream()
-                .map(tuple -> tuple.get(categoryStyle.style).getId())
-                .peek(id -> log.info("Style ID: " + id)) // 로그 출력
-                .collect(Collectors.toList());
+        List<StyleId> styleIdList = getStyleIdList(exposureIndexQueryResult);
 
         //제일 최신 가격(현재가, 할인가) 가져오기
-        List<Tuple> priceQueryResult = styleFilterQueryDSL.getPriceInfo(builder, styleIds);
-        log.info("Price Query Result: " + priceQueryResult);
+        List<Tuple> priceQueryResult = styleFilterQueryDSL.getPriceInfo(builder, styleIdList);
         updateStylePrices(styleRankingMap, priceQueryResult);
 
         List<StyleRankingDTO> resultList = new ArrayList<>(styleRankingMap.values());
-
         return new PageImpl<>(resultList, pageable, total);
+    }
+
+    public List<StyleId> getStyleIdList(List<Tuple> exposureIndexQueryResult) {
+        return exposureIndexQueryResult.stream()
+                .map(tuple -> tuple.get(categoryStyle.style).getId())
+                .collect(Collectors.toList());
     }
 
     private Map<String, StyleRankingDTO> createStyleRankingDTOMap(List<Tuple> rankScoreResult) {
