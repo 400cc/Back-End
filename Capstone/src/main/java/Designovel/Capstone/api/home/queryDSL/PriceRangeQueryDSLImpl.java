@@ -51,7 +51,6 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     @Override
     public List<Tuple> findStyleRankingWithPriceRanges(Integer minPrice, Integer intervalSize, BooleanBuilder priceRangeFilter, List<String> priceRangeKey) {
         StringExpression priceRangeExpression = createPriceRangeExpression(minPrice, intervalSize, priceRangeKey);
-
         return jpaQueryFactory.select(
                         styleRanking.count().as("count"),
                         priceRangeExpression.as("priceRange")
@@ -68,10 +67,10 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     public StringExpression createPriceRangeExpression(int minPrice, int intervalSize, List<String> ranges) {
         CaseBuilder.Cases<String, StringExpression> caseBuilder = new CaseBuilder()
                 .when(styleRanking.discountedPrice.between(minPrice, minPrice + intervalSize - 1)).then(ranges.get(0));
-        for (int i = 1; i < ranges.size(); i++) {
-            int lowerBound = minPrice + i * intervalSize;
+        for (int interval = 1; interval < ranges.size(); interval++) {
+            int lowerBound = minPrice + (interval * intervalSize);
             int upperBound = lowerBound + intervalSize;
-            caseBuilder = caseBuilder.when(styleRanking.discountedPrice.between(lowerBound, upperBound)).then(ranges.get(i));
+            caseBuilder = caseBuilder.when(styleRanking.discountedPrice.between(lowerBound, upperBound)).then(ranges.get(interval));
         }
 
         return caseBuilder.otherwise("");
@@ -81,7 +80,8 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     @Override
     public BooleanBuilder buildPriceRangeFilter(HomeFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
-
+        JPQLQuery<LocalDate> subQuery = createLatestCrawledDateSubQuery();
+        builder.and(styleRanking.crawledDate.eq(subQuery));
         if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
             builder.and(styleRanking.categoryStyle.id.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
@@ -92,9 +92,6 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
 
         if (filterDTO.getEndDate() != null) {
             builder.and(styleRanking.crawledDate.loe(filterDTO.getEndDate()));
-        } else {
-            JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery();
-            builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
         }
 
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {

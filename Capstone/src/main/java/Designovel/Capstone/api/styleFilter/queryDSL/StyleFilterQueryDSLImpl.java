@@ -56,7 +56,7 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
                         styleRanking.fixedPrice,
                         styleRanking.discountedPrice,
                         styleRanking.monetaryUnit,
-                        categoryStyle.category,
+                        categoryStyle.category
                 )
                 .from(styleRanking)
                 .leftJoin(styleRanking.categoryStyle, categoryStyle)

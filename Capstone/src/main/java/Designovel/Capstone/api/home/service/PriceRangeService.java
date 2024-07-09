@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static Designovel.Capstone.domain.style.styleRanking.QStyleRanking.styleRanking;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,7 +33,6 @@ public class PriceRangeService {
         List<String> priceRangeKey = createPriceRangeKeys(minPrice, intervalSize);
         Map<String, Integer> priceRangeMap = createPriceRangeMap(priceRangeKey);
         List<Tuple> results = priceRangeQueryDSL.findStyleRankingWithPriceRanges(minPrice, intervalSize, priceRangeFilter, priceRangeKey);
-
         mapPriceRangesWithStyleCount(priceRangeMap, results);
         return priceRangeMap;
     }
