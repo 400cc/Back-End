@@ -18,7 +18,7 @@ public interface StyleFilterQueryDSL {
 
     QueryResults<Tuple> getExposureIndexInfo(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder);
 
-    List<Tuple> getPriceInfo(BooleanBuilder builder, List<StyleId> styleIdList);
+    List<Tuple> getPriceInfo(BooleanBuilder builder, List<StyleId> styleIdList, StyleFilterDTO filterDTO);
 
     OrderSpecifier<?> getStyleFilterOrderSpecifier(String sortBy, String sortOrder);
 

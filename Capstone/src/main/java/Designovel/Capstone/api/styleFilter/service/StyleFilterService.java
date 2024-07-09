@@ -63,7 +63,7 @@ public class StyleFilterService {
         List<StyleId> styleIdList = getStyleIdList(exposureIndexQueryResult);
 
         //제일 최신 가격(현재가, 할인가) 가져오기
-        List<Tuple> priceQueryResult = styleFilterQueryDSL.getPriceInfo(builder, styleIdList);
+        List<Tuple> priceQueryResult = styleFilterQueryDSL.getPriceInfo(builder, styleIdList, filter);
         updateStylePrices(styleRankingMap, priceQueryResult);
 
         List<StyleRankingDTO> resultList = new ArrayList<>(styleRankingMap.values());

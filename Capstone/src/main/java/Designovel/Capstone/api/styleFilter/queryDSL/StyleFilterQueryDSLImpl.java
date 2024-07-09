@@ -43,7 +43,11 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
     }
 
     @Override
-    public List<Tuple> getPriceInfo(BooleanBuilder builder, List<StyleId> styleIdList) {
+    public List<Tuple> getPriceInfo(BooleanBuilder builder, List<StyleId> styleIdList, StyleFilterDTO filterDTO) {
+        if (filterDTO.getEndDate() == null) {
+            JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery();
+            builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
+        }
         return jpaQueryFactory.select(
                         categoryStyle.style,
                         styleRanking.styleName,
@@ -76,7 +80,7 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
                 .where(builder)
                 .groupBy(categoryStyle.style.id.styleId,
                         categoryStyle.style.id.mallTypeId,
-                        categoryStyle.category.name)
+                        categoryStyle.category.categoryId)
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -123,9 +127,6 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
 
         if (filterDTO.getEndDate() != null) {
             builder.and(styleRanking.crawledDate.loe(filterDTO.getEndDate()));
-        } else {
-            JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery();
-            builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
         }
 
         if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
