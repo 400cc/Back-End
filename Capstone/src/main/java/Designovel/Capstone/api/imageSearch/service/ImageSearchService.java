@@ -29,7 +29,7 @@ public class ImageSearchService {
         Mono<String> response = webClient.post()
                 .uri("/process/image")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .bodyValue(BodyInserters.fromMultipartData(bodyBuilder.build()))
+                .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
                 .retrieve()
                 .bodyToMono(String.class);
 
