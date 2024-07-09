@@ -104,7 +104,6 @@ public class StyleFilterService {
                 styleRankingDTO.setFixedPrice(tuple.get(styleRanking.fixedPrice));
                 styleRankingDTO.setMonetaryUnit(tuple.get(styleRanking.monetaryUnit));
                 styleRankingDTO.setCategory(tuple.get(categoryStyle.category));
-
             }
         }
     }

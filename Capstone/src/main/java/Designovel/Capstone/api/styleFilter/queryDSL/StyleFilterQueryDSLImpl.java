@@ -35,33 +35,35 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public JPQLQuery<LocalDate> createLatestCrawledDateSubQuery() {
+    public JPQLQuery<LocalDate> createLatestCrawledDateSubQuery(StyleFilterDTO filter) {
         QStyleRanking subStyleRanking = new QStyleRanking("subStyleRanking");
-        return JPAExpressions.select(subStyleRanking.crawledDate.max())
+        JPQLQuery<LocalDate> subQuery = JPAExpressions.select(subStyleRanking.crawledDate.max())
                 .from(subStyleRanking)
                 .where(subStyleRanking.categoryStyle.id.eq(styleRanking.categoryStyle.id));
+        if (filter.getEndDate() != null) {
+            subQuery = subQuery.where(subStyleRanking.crawledDate.loe(filter.getEndDate()));
+        }
+        return subQuery;
     }
 
     @Override
     public List<Tuple> getPriceInfo(BooleanBuilder builder, List<StyleId> styleIdList, StyleFilterDTO filterDTO) {
-        if (filterDTO.getEndDate() == null) {
-            JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery();
-            builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
-        }
+        JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(filterDTO);
+        builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
         return jpaQueryFactory.select(
                         categoryStyle.style,
                         styleRanking.styleName,
                         styleRanking.fixedPrice,
                         styleRanking.discountedPrice,
                         styleRanking.monetaryUnit,
-                        categoryStyle.category
+                        categoryStyle.category,
                 )
                 .from(styleRanking)
                 .leftJoin(styleRanking.categoryStyle, categoryStyle)
                 .where(builder.and(categoryStyle.style.id.in(styleIdList)))
                 .groupBy(categoryStyle.style.id.styleId,
                         categoryStyle.style.id.mallTypeId,
-                        categoryStyle.category)
+                        categoryStyle.category.categoryId)
                 .fetch();
     }
 
