@@ -1,6 +1,7 @@
 package Designovel.Capstone.api.home.queryDSL;
 
 import Designovel.Capstone.api.home.dto.HomeFilterDTO;
+import Designovel.Capstone.api.styleFilter.dto.StyleFilterDTO;
 import Designovel.Capstone.domain.style.styleRanking.QStyleRanking;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -30,11 +31,16 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
 
 
     @Override
-    public JPQLQuery<LocalDate> createLatestCrawledDateSubQuery() {
+    public JPQLQuery<LocalDate> createLatestCrawledDateSubQuery(HomeFilterDTO filter) {
         QStyleRanking subStyleRanking = new QStyleRanking("subStyleRanking");
-        return JPAExpressions.select(subStyleRanking.crawledDate.max())
+        JPQLQuery<LocalDate> subQuery = JPAExpressions.select(subStyleRanking.crawledDate.max())
                 .from(subStyleRanking)
                 .where(subStyleRanking.categoryStyle.id.eq(styleRanking.categoryStyle.id));
+
+        if (filter.getEndDate() != null) {
+            subQuery = subQuery.where(subStyleRanking.crawledDate.loe(filter.getEndDate()));
+        }
+        return subQuery;
     }
 
     @Override
@@ -80,19 +86,10 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     @Override
     public BooleanBuilder buildPriceRangeFilter(HomeFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
-        JPQLQuery<LocalDate> subQuery = createLatestCrawledDateSubQuery();
-        builder.and(styleRanking.crawledDate.eq(subQuery));
         if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
             builder.and(styleRanking.categoryStyle.id.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
 
-        if (filterDTO.getStartDate() != null) {
-            builder.and(styleRanking.crawledDate.goe(filterDTO.getStartDate()));
-        }
-
-        if (filterDTO.getEndDate() != null) {
-            builder.and(styleRanking.crawledDate.loe(filterDTO.getEndDate()));
-        }
 
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {
             // 카테고리 필터링 로직
@@ -106,6 +103,13 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
                     )
             );
         }
+
+        if (filterDTO.getStartDate() != null) {
+            builder.and(styleRanking.crawledDate.goe(filterDTO.getStartDate()));
+        }
+
+        JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(filterDTO);
+        builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
 
         return builder;
     }
