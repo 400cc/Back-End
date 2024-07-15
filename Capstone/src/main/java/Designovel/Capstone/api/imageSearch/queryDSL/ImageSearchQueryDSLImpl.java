@@ -32,7 +32,7 @@ public class ImageSearchQueryDSLImpl implements ImageSearchQueryDSL {
                                 .join(categoryStyle.category, category)
                                 .join(categoryClosure).on(categoryClosure.id.descendantId.eq(category.categoryId))
                                 .where(categoryClosure.id.ancestorId.in(imageSearchDTO.getCategoryList()))
-                ).and(categoryClosure.mallType.mallTypeId.eq(imageSearchDTO.getMallTypeId())))
+                ))
                 .fetch();
     }
 }

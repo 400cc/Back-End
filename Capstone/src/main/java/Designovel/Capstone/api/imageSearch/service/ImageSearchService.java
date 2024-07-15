@@ -33,8 +33,9 @@ public class ImageSearchService {
         bodyBuilder.part("category", categoryName);
         bodyBuilder.part("offset", imageSearchDTO.getOffset());
         bodyBuilder.part("style_id_list", styleByCategory);
-
-
+        for (String style : styleByCategory) {
+            log.info(" - {}", style);
+        }
         Mono<String> response = webClient.post()
                 .uri("/process/image")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
