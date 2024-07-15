@@ -26,9 +26,9 @@ public class ImageSearchService {
         List<String> styleByCategory = imageSearchQueryDSL.findStyleByCategory(imageSearchDTO);
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
         bodyBuilder.part("image_upload", imageSearchDTO.getImage().getResource());
-        bodyBuilder.part("category", imageSearchDTO.getCategoryList());
+        bodyBuilder.part("category_list", imageSearchDTO.getCategoryList());
         bodyBuilder.part("top_num", imageSearchDTO.getOffset());
-        bodyBuilder.part("styleIdList", styleByCategory);
+        bodyBuilder.part("style_id_list", styleByCategory);
 
 
         Mono<String> response = webClient.post()
