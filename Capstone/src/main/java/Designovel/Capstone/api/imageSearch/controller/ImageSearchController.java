@@ -1,12 +1,15 @@
 package Designovel.Capstone.api.imageSearch.controller;
 
+import Designovel.Capstone.api.imageSearch.dto.ImageSearchDTO;
 import Designovel.Capstone.api.imageSearch.service.ImageSearchService;
+import Designovel.Capstone.domain.mallType.enumType.MallTypeId;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -18,10 +21,10 @@ import java.io.IOException;
 public class ImageSearchController {
 
     private final ImageSearchService imageSearchService;
+
     @PostMapping("/search")
-    public ResponseEntity<String> getSimilarImages(@RequestParam("image") MultipartFile image,
-                                              @RequestParam("category") String category,
-                                              @RequestParam("offset") int offset) throws IOException {
-        return imageSearchService.sendImageSearchRequest(image, category, offset);
+    public ResponseEntity<String> getSimilarImages(ImageSearchDTO imageSearchDTO) throws IOException {
+        MallTypeId.checkMallTypeId(imageSearchDTO.getMallTypeId());
+        return imageSearchService.sendImageSearchRequest(imageSearchDTO);
     }
 }

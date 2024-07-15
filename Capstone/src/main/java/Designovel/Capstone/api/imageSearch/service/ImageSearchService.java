@@ -1,17 +1,18 @@
 package Designovel.Capstone.api.imageSearch.service;
 
+import Designovel.Capstone.api.imageSearch.dto.ImageSearchDTO;
+import Designovel.Capstone.api.imageSearch.queryDSL.ImageSearchQueryDSL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -19,12 +20,16 @@ import java.io.IOException;
 public class ImageSearchService {
 
     private final WebClient webClient;
+    private final ImageSearchQueryDSL imageSearchQueryDSL;
 
-    public ResponseEntity<String> sendImageSearchRequest(MultipartFile image, String category, int offset) throws IOException {
+    public ResponseEntity<String> sendImageSearchRequest(ImageSearchDTO imageSearchDTO) {
+        List<String> styleByCategory = imageSearchQueryDSL.findStyleByCategory(imageSearchDTO);
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
-        bodyBuilder.part("image_upload", image.getResource());
-        bodyBuilder.part("category", category);
-        bodyBuilder.part("top_num", offset);
+        bodyBuilder.part("image_upload", imageSearchDTO.getImage().getResource());
+        bodyBuilder.part("category", imageSearchDTO.getCategoryList());
+        bodyBuilder.part("top_num", imageSearchDTO.getOffset());
+        bodyBuilder.part("styleIdList", styleByCategory);
+
 
         Mono<String> response = webClient.post()
                 .uri("/process/image")
