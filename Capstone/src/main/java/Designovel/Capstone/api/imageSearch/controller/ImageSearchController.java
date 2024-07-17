@@ -8,8 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -20,8 +19,14 @@ public class ImageSearchController {
 
     private final ImageSearchService imageSearchService;
 
-    @PostMapping("/search")
-    public ResponseEntity<String> getSimilarImages(@ModelAttribute ImageSearchDTO imageSearchDTO) {
+    @PostMapping(value = "/search", consumes = "multipart/form-data")
+    public ResponseEntity<String> getSimilarImages(
+            @RequestPart("image") MultipartFile image,
+            @RequestParam("mallTypeId") String mallTypeId,
+            @RequestParam("categoryList") String categoryListStr,
+            @RequestParam("offset") int offset) {
+
+        ImageSearchDTO imageSearchDTO = new ImageSearchDTO(image, categoryListStr, mallTypeId, offset);
         MallTypeId.checkMallTypeId(imageSearchDTO.getMallTypeId());
         return imageSearchService.sendImageSearchRequest(imageSearchDTO);
     }
