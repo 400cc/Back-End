@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,9 @@ public class ImageSearchDTO {
     }
 
     public List<Integer> convertCategoryList(String categoryListStr) {
+        if (categoryListStr == null || categoryListStr.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
         return Arrays.stream(categoryListStr.replace("[", "").replace("]", "").split(","))
                 .map(Integer::parseInt)
                 .collect(Collectors.toList());

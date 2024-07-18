@@ -3,16 +3,21 @@ package Designovel.Capstone.api.imageSearch.service;
 import Designovel.Capstone.api.imageSearch.dto.ImageSearchDTO;
 import Designovel.Capstone.api.imageSearch.queryDSL.ImageSearchQueryDSL;
 import Designovel.Capstone.domain.category.category.CategoryService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -25,17 +30,21 @@ public class ImageSearchService {
     private final CategoryService categoryService;
 
     public ResponseEntity<String> sendImageSearchRequest(ImageSearchDTO imageSearchDTO) {
-        List<String> styleByCategory = imageSearchQueryDSL.findStyleByCategory(imageSearchDTO);
-        String categoryName = categoryService.findNameByCategoryIdList(imageSearchDTO.getCategoryList());
+        List<String> styleByCategory = Collections.emptyList();
+        String categoryName = "";
+        if(!imageSearchDTO.getCategoryList().isEmpty() && imageSearchDTO.getMallTypeId() != null) {
+            styleByCategory = imageSearchQueryDSL.findStyleByCategory(imageSearchDTO);
+            categoryName = categoryService.findNameByCategoryIdList(imageSearchDTO.getCategoryList());
+        }
 
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
         bodyBuilder.part("image_upload", imageSearchDTO.getImage().getResource());
         bodyBuilder.part("category", categoryName);
+        bodyBuilder.part("mall_type_id", imageSearchDTO.getMallTypeId());
         bodyBuilder.part("offset", imageSearchDTO.getOffset());
         bodyBuilder.part("style_id_list", styleByCategory);
-        for (String style : styleByCategory) {
-            log.info(" - {}", style);
-        }
+
+
         Mono<String> response = webClient.post()
                 .uri("/process/image")
                 .contentType(MediaType.MULTIPART_FORM_DATA)

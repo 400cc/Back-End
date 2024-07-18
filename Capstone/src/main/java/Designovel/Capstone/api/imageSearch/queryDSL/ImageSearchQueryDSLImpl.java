@@ -1,6 +1,7 @@
 package Designovel.Capstone.api.imageSearch.queryDSL;
 
 import Designovel.Capstone.api.imageSearch.dto.ImageSearchDTO;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -35,4 +36,5 @@ public class ImageSearchQueryDSLImpl implements ImageSearchQueryDSL {
                 ))
                 .fetch();
     }
+
 }

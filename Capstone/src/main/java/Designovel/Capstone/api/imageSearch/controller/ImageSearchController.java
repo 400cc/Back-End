@@ -27,7 +27,6 @@ public class ImageSearchController {
             @RequestParam("offset") int offset) {
 
         ImageSearchDTO imageSearchDTO = new ImageSearchDTO(image, categoryListStr, mallTypeId, offset);
-        MallTypeId.checkMallTypeId(imageSearchDTO.getMallTypeId());
         return imageSearchService.sendImageSearchRequest(imageSearchDTO);
     }
 }
