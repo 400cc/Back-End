@@ -35,8 +35,11 @@ public class ImageSearchService {
 
         if (!imageSearchDTO.getCategoryList().isEmpty() && imageSearchDTO.getMallTypeId() != null) {
             categoryName = categoryService.findNameByCategoryIdList(imageSearchDTO.getCategoryList());
-            styleByCategory = imageSearchQueryDSL.findStyleByCategory(imageSearchDTO)
-                    .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.STYLE_IMAGE_DOESNT_EXIST_FOR_CATEGORY));
+            styleByCategory = imageSearchQueryDSL.findStyleByCategory(imageSearchDTO);
+
+            if (styleByCategory.isEmpty()) {
+                throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.STYLE_IMAGE_DOESNT_EXIST_FOR_CATEGORY);
+            }
         }
 
         MultipartBodyBuilder request = buildImageSearchRequestBody(imageSearchDTO, categoryName, styleByCategory);
