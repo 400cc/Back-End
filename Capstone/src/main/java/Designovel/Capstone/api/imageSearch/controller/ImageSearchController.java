@@ -2,7 +2,6 @@ package Designovel.Capstone.api.imageSearch.controller;
 
 import Designovel.Capstone.api.imageSearch.dto.ImageSearchDTO;
 import Designovel.Capstone.api.imageSearch.service.ImageSearchService;
-import Designovel.Capstone.domain.mallType.enumType.MallTypeId;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +26,6 @@ public class ImageSearchController {
             @RequestParam(value = "offset", defaultValue = "5") int offset) {
 
         ImageSearchDTO imageSearchDTO = new ImageSearchDTO(image, categoryListStr, mallTypeId, offset);
-        return imageSearchService.sendImageSearchRequest(imageSearchDTO);
+        return imageSearchService.processImageSearch(imageSearchDTO);
     }
 }
