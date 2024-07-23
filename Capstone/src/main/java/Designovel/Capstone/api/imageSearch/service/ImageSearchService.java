@@ -3,18 +3,15 @@ package Designovel.Capstone.api.imageSearch.service;
 import Designovel.Capstone.api.imageSearch.dto.ImageSearchDTO;
 import Designovel.Capstone.api.imageSearch.queryDSL.ImageSearchQueryDSL;
 import Designovel.Capstone.domain.category.category.CategoryService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
@@ -31,8 +28,8 @@ public class ImageSearchService {
 
     public ResponseEntity<String> sendImageSearchRequest(ImageSearchDTO imageSearchDTO) {
         List<String> styleByCategory = Collections.emptyList();
-        String categoryName = "";
-        if(!imageSearchDTO.getCategoryList().isEmpty() && imageSearchDTO.getMallTypeId() != null) {
+        String categoryName = "apparel";
+        if (!imageSearchDTO.getCategoryList().isEmpty() && imageSearchDTO.getMallTypeId() != null) {
             styleByCategory = imageSearchQueryDSL.findStyleByCategory(imageSearchDTO);
             categoryName = categoryService.findNameByCategoryIdList(imageSearchDTO.getCategoryList());
         }
@@ -45,14 +42,18 @@ public class ImageSearchService {
         bodyBuilder.part("style_id_list", styleByCategory);
 
 
-        Mono<String> response = webClient.post()
-                .uri("/process/image")
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
-                .retrieve()
-                .bodyToMono(String.class);
+        try {
+            String response = webClient.post()
+                    .uri("/process/image")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-        String result = response.block();
-        return ResponseEntity.ok(result);
+            return ResponseEntity.ok(response);
+        } catch (WebClientResponseException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
+        }
     }
 }
