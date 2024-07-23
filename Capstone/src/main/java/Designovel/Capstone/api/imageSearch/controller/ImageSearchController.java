@@ -24,7 +24,7 @@ public class ImageSearchController {
             @RequestPart("image") MultipartFile image,
             @RequestParam("mallTypeId") String mallTypeId,
             @RequestParam("categoryList") String categoryListStr,
-            @RequestParam("offset") int offset) {
+            @RequestParam(value = "offset", defaultValue = "5") int offset) {
 
         ImageSearchDTO imageSearchDTO = new ImageSearchDTO(image, categoryListStr, mallTypeId, offset);
         return imageSearchService.sendImageSearchRequest(imageSearchDTO);
