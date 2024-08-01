@@ -49,7 +49,6 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
     @Override
     public List<Tuple> getPriceInfo(BooleanBuilder builder, List<StyleId> styleIdList, StyleFilterDTO filterDTO) {
         JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(filterDTO);
-        builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
         return jpaQueryFactory.select(
                         categoryStyle.style,
                         styleRanking.styleName,
@@ -59,11 +58,11 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
                         categoryStyle.category
                 )
                 .from(styleRanking)
-                .leftJoin(styleRanking.categoryStyle, categoryStyle)
-                .where(builder.and(categoryStyle.style.id.in(styleIdList)))
-                .groupBy(categoryStyle.style.id.styleId,
-                        categoryStyle.style.id.mallTypeId,
-                        categoryStyle.category.categoryId)
+                .where(categoryStyle.style.id.in(styleIdList)
+                        .and(builder)
+                        .and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery)))
+                .innerJoin(styleRanking.categoryStyle, categoryStyle)
+                .groupBy(categoryStyle.id)
                 .fetch();
     }
 
@@ -78,11 +77,9 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
                         categoryStyle.category
                 )
                 .from(styleRanking)
-                .leftJoin(styleRanking.categoryStyle, categoryStyle)
                 .where(builder)
-                .groupBy(categoryStyle.style.id.styleId,
-                        categoryStyle.style.id.mallTypeId,
-                        categoryStyle.category.categoryId)
+                .innerJoin(styleRanking.categoryStyle, categoryStyle)
+                .groupBy(categoryStyle.id)
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

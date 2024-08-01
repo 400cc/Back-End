@@ -36,7 +36,7 @@ public class PriceRangeService {
 
         List<String> priceRangeKey = createPriceRangeKeys(minPrice, maxPrice, intervalSize);
         Map<String, Integer> priceRangeMap = createPriceRangeMap(priceRangeKey);
-        List<Tuple> results = priceRangeQueryDSL.findStyleRankingWithPriceRanges(minPrice, intervalSize, priceRangeFilter, priceRangeKey);
+        List<Tuple> results = priceRangeQueryDSL.findStyleRankingWithPriceRanges(minPrice, intervalSize, priceRangeFilter, priceRangeKey, filterDTO);
         mapPriceRangesWithStyleCount(priceRangeMap, results);
         return priceRangeMap;
     }

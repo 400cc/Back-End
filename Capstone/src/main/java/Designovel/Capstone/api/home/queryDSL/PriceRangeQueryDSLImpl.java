@@ -1,7 +1,6 @@
 package Designovel.Capstone.api.home.queryDSL;
 
 import Designovel.Capstone.api.home.dto.HomeFilterDTO;
-import Designovel.Capstone.api.styleFilter.dto.StyleFilterDTO;
 import Designovel.Capstone.domain.style.styleRanking.QStyleRanking;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -55,14 +54,16 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     }
 
     @Override
-    public List<Tuple> findStyleRankingWithPriceRanges(Integer minPrice, Integer intervalSize, BooleanBuilder priceRangeFilter, List<String> priceRangeKey) {
+    public List<Tuple> findStyleRankingWithPriceRanges(Integer minPrice, Integer intervalSize, BooleanBuilder priceRangeFilter, List<String> priceRangeKey, HomeFilterDTO filterDTO) {
         StringExpression priceRangeExpression = createPriceRangeExpression(minPrice, intervalSize, priceRangeKey);
+        JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(filterDTO);
+
         return jpaQueryFactory.select(
                         styleRanking.count().as("count"),
                         priceRangeExpression.as("priceRange")
                 )
                 .from(styleRanking)
-                .where(priceRangeFilter)
+                .where(priceRangeFilter.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery)))
                 .groupBy(priceRangeExpression)
                 .orderBy(styleRanking.discountedPrice.asc())
                 .fetch();
@@ -108,8 +109,8 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
             builder.and(styleRanking.crawledDate.goe(filterDTO.getStartDate()));
         }
 
-        JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(filterDTO);
-        builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
+//        JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(filterDTO);
+//        builder.and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery));
 
         return builder;
     }

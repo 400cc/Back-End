@@ -34,7 +34,7 @@ public class StyleFilterService {
 
     private final StyleFilterQueryDSL styleFilterQueryDSL;
 
-    private static void addDuplicateExposureIndex(Map<String, StyleRankingDTO> resultMap, Style style, String brand, Float exposureIndex, Category category, String key) {
+    public void addDuplicateExposureIndex(Map<String, StyleRankingDTO> resultMap, Style style, String brand, Float exposureIndex, Category category, String key) {
         if (resultMap.containsKey(key)) {
             DupeExposureIndex dupeExposureIndex = new DupeExposureIndex(style, exposureIndex, category);
             resultMap.get(key).getDupeExposureIndexList().add(dupeExposureIndex);
@@ -79,7 +79,6 @@ public class StyleFilterService {
     private Map<String, StyleRankingDTO> createStyleRankingDTOMap(List<Tuple> rankScoreResult) {
         Map<String, StyleRankingDTO> resultMap = new LinkedHashMap<>();
         for (Tuple tuple : rankScoreResult) {
-
             Style style = tuple.get(categoryStyle.style);
             String brand = tuple.get(styleRanking.brand);
             Float exposureIndex = tuple.get(styleRanking.rankScore.sum());

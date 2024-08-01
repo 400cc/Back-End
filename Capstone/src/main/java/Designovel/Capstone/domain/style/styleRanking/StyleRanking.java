@@ -16,7 +16,7 @@ public class StyleRanking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer rankId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "style_id", referencedColumnName = "style_id"),
             @JoinColumn(name = "category_id", referencedColumnName = "category_id"),
