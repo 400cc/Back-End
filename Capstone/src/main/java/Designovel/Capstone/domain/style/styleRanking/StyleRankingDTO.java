@@ -2,7 +2,9 @@ package Designovel.Capstone.domain.style.styleRanking;
 
 import Designovel.Capstone.api.styleFilter.dto.DupeExposureIndex;
 import Designovel.Capstone.domain.category.category.Category;
+import Designovel.Capstone.domain.category.category.CategoryDTO;
 import Designovel.Capstone.domain.image.Image;
+import Designovel.Capstone.domain.image.ImageDTO;
 import Designovel.Capstone.domain.style.style.Style;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,17 +25,13 @@ public class StyleRankingDTO {
     private String styleName;
     private Float exposureIndex;
     private String monetaryUnit;
-    private Image image;
-    private Category category;
+    private ImageDTO image;
+    private CategoryDTO category;
     private List<DupeExposureIndex> dupeExposureIndexList;
 
-    public StyleRankingDTO(Style style, String brand, Float exposureIndex) {
-        this.styleId = style.getId().getStyleId();
-        this.mallTypeId = style.getId().getMallTypeId();
-        this.image = java.util.Optional.ofNullable(style.getImages())
-                .filter(images -> !images.isEmpty())
-                .map(images -> images.get(0))
-                .orElse(null);
+    public StyleRankingDTO(String styleId, String mallTypeId, String brand, Float exposureIndex) {
+        this.styleId = styleId;
+        this.mallTypeId = mallTypeId;
         this.brand = brand;
         this.exposureIndex = exposureIndex;
         this.dupeExposureIndexList = new ArrayList<>();

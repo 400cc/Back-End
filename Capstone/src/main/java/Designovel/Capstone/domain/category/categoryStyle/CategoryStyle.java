@@ -14,7 +14,7 @@ public class CategoryStyle {
     @EmbeddedId
     private CategoryStyleId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "style_id", referencedColumnName = "style_id", insertable = false, updatable = false),
             @JoinColumn(name = "mall_type_id", referencedColumnName = "mall_type_id", insertable = false, updatable = false)
@@ -22,7 +22,7 @@ public class CategoryStyle {
     @JsonIgnore
     private Style style;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("categoryId")
     @JoinColumn(name = "category_id", insertable=false, updatable=false)
     private Category category;

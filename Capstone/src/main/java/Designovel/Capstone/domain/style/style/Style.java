@@ -16,7 +16,7 @@ public class Style {
 
     @EmbeddedId
     private StyleId id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mall_type_id", insertable = false, updatable = false)
     private MallType mallTypeId;
 
@@ -24,7 +24,7 @@ public class Style {
     @ToString.Exclude
     private List<Image> images;
 
-    @OneToMany(mappedBy = "style")
-    @ToString.Exclude
-    private List<CategoryStyle> categoryStyles;
+//    @OneToMany(mappedBy = "style")
+//    @ToString.Exclude
+//    private List<CategoryStyle> categoryStyles;
 }

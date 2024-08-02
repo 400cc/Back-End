@@ -1,22 +1,22 @@
 package Designovel.Capstone.api.styleFilter.dto;
 
 import Designovel.Capstone.domain.category.category.Category;
+import Designovel.Capstone.domain.category.category.CategoryDTO;
 import Designovel.Capstone.domain.style.style.Style;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class DupeExposureIndex {
 
     private String styleId;
     private String mallTypeId;
     private Float exposureIndex;
-    private Category category;
+    private CategoryDTO category;
 
-    public DupeExposureIndex(Style style, Float exposureIndex, Category category) {
-        this.styleId = style.getId().getStyleId();
-        this.mallTypeId = style.getId().getMallTypeId();
+    public DupeExposureIndex(String styleId, String mallTypeId, Float exposureIndex, CategoryDTO category) {
+        this.styleId = styleId;
+        this.mallTypeId = mallTypeId;
         this.exposureIndex = exposureIndex;
         this.category = category;
     }

@@ -15,7 +15,7 @@ public class Category {
     @Column(nullable = false)
     private String orgCategoryId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mall_type_id", referencedColumnName = "mall_type_id", insertable = false, updatable = false)
     private MallType mallType;
 

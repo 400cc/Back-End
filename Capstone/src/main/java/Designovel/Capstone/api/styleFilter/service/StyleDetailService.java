@@ -3,6 +3,7 @@ package Designovel.Capstone.api.styleFilter.service;
 import Designovel.Capstone.api.styleFilter.dto.DupeExposureIndex;
 import Designovel.Capstone.api.styleFilter.dto.StyleBasicDetailDTO;
 import Designovel.Capstone.domain.category.category.Category;
+import Designovel.Capstone.domain.category.category.CategoryDTO;
 import Designovel.Capstone.domain.image.Image;
 import Designovel.Capstone.domain.image.ImageRepository;
 import Designovel.Capstone.domain.style.style.StyleId;
@@ -56,7 +57,7 @@ public class StyleDetailService {
         }
 
         StyleBasicDetailDTO styleBasicDetailDTO = styleBasicDetailDTOPage.getContent().get(0);
-        List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(styleId, mallType, ((Number) data[1]).floatValue(), (Category) data[0]))
+        List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(styleId, mallType, ((Number) data[1]).floatValue(), new CategoryDTO((Category) data[0])))
                 .collect(Collectors.toList());
         styleBasicDetailDTO.setExposureIndexList(exposureIndexList);
         return styleBasicDetailDTO;
