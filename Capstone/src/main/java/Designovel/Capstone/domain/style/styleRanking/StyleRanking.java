@@ -24,6 +24,14 @@ public class StyleRanking {
     })
     private CategoryStyle categoryStyle;
 
+    @Column(name = "style_id", insertable = false, updatable = false)
+    private String styleId;
+
+    @Column(name = "category_id", insertable = false, updatable = false)
+    private Integer categoryId;
+
+    @Column(name = "mall_type_id", insertable = false, updatable = false)
+    private String mallTypeId;
     @Column(name = "brand")
     private String brand;
 

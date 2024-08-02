@@ -3,7 +3,9 @@ package Designovel.Capstone.api.styleFilter.service;
 import Designovel.Capstone.api.styleFilter.dto.DupeExposureIndex;
 import Designovel.Capstone.api.styleFilter.dto.StyleFilterDTO;
 import Designovel.Capstone.api.styleFilter.queryDSL.StyleFilterQueryDSL;
+import Designovel.Capstone.domain.category.category.Category;
 import Designovel.Capstone.domain.category.category.CategoryDTO;
+import Designovel.Capstone.domain.category.category.QCategory;
 import Designovel.Capstone.domain.image.ImageDTO;
 import Designovel.Capstone.domain.image.QImage;
 import Designovel.Capstone.domain.mallType.MallType;
@@ -26,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static Designovel.Capstone.domain.category.categoryStyle.QCategoryStyle.categoryStyle;
+import static Designovel.Capstone.domain.category.category.QCategory.category;
 import static Designovel.Capstone.domain.style.styleRanking.QStyleRanking.styleRanking;
 
 @Slf4j
@@ -36,15 +38,15 @@ public class StyleFilterService {
 
     private final StyleFilterQueryDSL styleFilterQueryDSL;
 
-    public void addDuplicateExposureIndex(Map<String, StyleRankingDTO> resultMap, String styleId, String mallTypeId, String brand, Float exposureIndex, CategoryDTO category, String key) {
-        if (resultMap.containsKey(key)) {
-            DupeExposureIndex dupeExposureIndex = new DupeExposureIndex(styleId, mallTypeId, exposureIndex, category);
-            resultMap.get(key).getDupeExposureIndexList().add(dupeExposureIndex);
-        } else {
-            StyleRankingDTO styleRankingDTO = new StyleRankingDTO(styleId, mallTypeId, brand, exposureIndex);
-            resultMap.put(key, styleRankingDTO);
-        }
-    }
+//    public void addDuplicateExposureIndex(Map<String, StyleRankingDTO> resultMap, String styleId, String mallTypeId, String brand, Float exposureIndex, CategoryDTO category, String key) {
+//        if (resultMap.containsKey(key)) {
+//            DupeExposureIndex dupeExposureIndex = new DupeExposureIndex(styleId, mallTypeId, exposureIndex, category);
+//            resultMap.get(key).getDupeExposureIndexList().add(dupeExposureIndex);
+//        } else {
+////            StyleRankingDTO styleRankingDTO = new StyleRankingDTO(styleId, mallTypeId, brand, exposureIndex);
+////            resultMap.put(key, styleRankingDTO);
+//        }
+//    }
 
     public String generateStyleKey(String styleId, String mallTypeId) {
         return styleId + "_" + mallTypeId;
@@ -75,8 +77,8 @@ public class StyleFilterService {
     public List<StyleId> getStyleIdList(List<Tuple> exposureIndexQueryResult) {
         return exposureIndexQueryResult.stream()
                 .map(tuple -> new StyleId(
-                        tuple.get(categoryStyle.id.styleId),
-                        tuple.get(categoryStyle.category.mallType).getMallTypeId()
+                        tuple.get(styleRanking.styleId),
+                        tuple.get(category.mallType).getMallTypeId()
                 ))
                 .collect(Collectors.toList());
     }
@@ -85,38 +87,42 @@ public class StyleFilterService {
     private Map<String, StyleRankingDTO> createStyleRankingDTOMap(List<Tuple> rankScoreResult) {
         Map<String, StyleRankingDTO> resultMap = new LinkedHashMap<>();
         for (Tuple tuple : rankScoreResult) {
-            String styleId = tuple.get(categoryStyle.id.styleId);
-
-            MallType mallType = tuple.get(categoryStyle.category.mallType);
+            String styleId = tuple.get(styleRanking.styleId);
+            MallType mallType = tuple.get(category.mallType);
             String mallTypeId = mallType.getMallTypeId();
-            String brand = tuple.get(styleRanking.brand);
             Float exposureIndex = tuple.get(styleRanking.rankScore.sum());
-            CategoryDTO category = new CategoryDTO(tuple.get(categoryStyle.category), mallType);
-
             String key = generateStyleKey(styleId, mallTypeId);
 
-            addDuplicateExposureIndex(resultMap, styleId, mallTypeId, brand, exposureIndex, category, key);
+            StyleRankingDTO styleRankingDTO = new StyleRankingDTO(styleId, mallTypeId, exposureIndex);
+            resultMap.put(key, styleRankingDTO);
+
+//            addDuplicateExposureIndex(resultMap, styleId, mallTypeId, brand, exposureIndex, category, key);
         }
         return resultMap;
     }
 
     private void updateStylePrices(Map<String, StyleRankingDTO> resultMap, List<Tuple> priceResult) {
-        log.info(String.valueOf(priceResult.size()));
         for (Tuple tuple : priceResult) {
-            String styleId = tuple.get(styleRanking.categoryStyle.id.styleId);
-            MallType mallType = tuple.get(categoryStyle.category.mallType);
+            String styleId = tuple.get(styleRanking.styleId);
+            Category category = tuple.get(QCategory.category);
+            MallType mallType = category.getMallType();
             String mallTypeId = mallType.getMallTypeId();
+
             String key = generateStyleKey(styleId, mallTypeId);
             ImageDTO image = new ImageDTO(tuple.get(QImage.image));
+            CategoryDTO categoryDTO = new CategoryDTO(category, mallType);
             StyleRankingDTO styleRankingDTO = resultMap.get(key);
 
             if (styleRankingDTO != null && styleRankingDTO.getDiscountedPrice() == null) {
                 styleRankingDTO.setImage(image);
+                styleRankingDTO.setBrand(tuple.get(styleRanking.brand));
                 styleRankingDTO.setStyleName(tuple.get(styleRanking.styleName));
                 styleRankingDTO.setDiscountedPrice(tuple.get(styleRanking.discountedPrice));
                 styleRankingDTO.setFixedPrice(tuple.get(styleRanking.fixedPrice));
                 styleRankingDTO.setMonetaryUnit(tuple.get(styleRanking.monetaryUnit));
-                styleRankingDTO.setCategory(new CategoryDTO(tuple.get(categoryStyle.category), mallType));
+                styleRankingDTO.setCategory(categoryDTO);
+            } else {
+                styleRankingDTO.getDupeExposureIndexList().add(new DupeExposureIndex(styleId, mallTypeId, null, categoryDTO));
             }
         }
     }

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -24,7 +25,6 @@ public class Style {
     @ToString.Exclude
     private List<Image> images;
 
-//    @OneToMany(mappedBy = "style")
-//    @ToString.Exclude
-//    private List<CategoryStyle> categoryStyles;
+    @Column(name = "last_crawled_date")
+    private LocalDate lastCrawledDate;
 }

@@ -3,6 +3,7 @@ package Designovel.Capstone.api.styleFilter.queryDSL;
 import Designovel.Capstone.api.styleFilter.dto.StyleFilterDTO;
 import Designovel.Capstone.domain.style.style.StyleId;
 import Designovel.Capstone.domain.style.styleRanking.QStyleRanking;
+import Designovel.Capstone.domain.style.styleRanking.StyleRanking;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
@@ -53,23 +54,23 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
     public List<Tuple> getPriceInfo(BooleanBuilder builder, List<StyleId> styleIdList, StyleFilterDTO filterDTO) {
         JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(filterDTO);
         return jpaQueryFactory.select(
-                        styleRanking.categoryStyle.id.styleId,
-                        categoryStyle.category.mallType,
+                        styleRanking.styleId,
+                        styleRanking.brand,
                         styleRanking.styleName,
                         styleRanking.fixedPrice,
                         styleRanking.discountedPrice,
                         styleRanking.monetaryUnit,
-                        categoryStyle.category,
+                        category,
                         image
                 )
                 .from(styleRanking)
                 .innerJoin(styleRanking.categoryStyle, categoryStyle)
                 .innerJoin(categoryStyle.style, style)
-                .innerJoin(style.images, image)
+                .leftJoin(style.images, image)
                 .where(categoryStyle.style.id.in(styleIdList)
                         .and(builder)
                         .and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery))
-                        .and(image.sequence.eq(0)))
+                        .and(image.sequence.eq(0).or(image.isNull())))
                 .groupBy(categoryStyle.id)
                 .fetch();
     }
@@ -79,16 +80,16 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
     public QueryResults<Tuple> getExposureIndexInfo(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder) {
         OrderSpecifier<?> orderSpecifier = getStyleFilterOrderSpecifier(sortBy, sortOrder);
         return jpaQueryFactory.select(
-                        categoryStyle.id.styleId,
-                        categoryStyle.category.mallType,
-                        styleRanking.brand,
-                        styleRanking.rankScore.sum(),
-                        categoryStyle.category
+                        styleRanking.styleId,
+                        category.mallType,
+                        styleRanking.rankScore.sum()
                 )
                 .from(styleRanking)
                 .where(builder)
-                .innerJoin(styleRanking.categoryStyle, categoryStyle)
-                .groupBy(categoryStyle.id)
+                .innerJoin(category)
+                .on(styleRanking.categoryId.eq(category.categoryId))
+                .groupBy(styleRanking.styleId,
+                        styleRanking.mallTypeId)
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -144,8 +145,8 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {
             // 카테고리 필터링 로직
             builder.and(
-                    styleRanking.categoryStyle.id.styleId.in(
-                            JPAExpressions.select(categoryStyle.id.styleId)
+                    styleRanking.categoryStyle.id.in(
+                            JPAExpressions.select(categoryStyle.id)
                                     .from(categoryStyle)
                                     .join(categoryStyle.category, category)
                                     .join(categoryClosure).on(categoryClosure.id.descendantId.eq(category.categoryId))
