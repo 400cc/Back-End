@@ -3,9 +3,7 @@ package Designovel.Capstone.api.styleFilter.queryDSL;
 import Designovel.Capstone.api.styleFilter.dto.StyleFilterDTO;
 import Designovel.Capstone.domain.style.style.StyleId;
 import Designovel.Capstone.domain.style.styleRanking.QStyleRanking;
-import Designovel.Capstone.domain.style.styleRanking.StyleRanking;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -77,23 +75,29 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
 
 
     @Override
-    public QueryResults<Tuple> getExposureIndexInfo(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder) {
+    public List<Tuple> getExposureIndexInfo(BooleanBuilder builder, Pageable pageable, String sortBy, String sortOrder) {
         OrderSpecifier<?> orderSpecifier = getStyleFilterOrderSpecifier(sortBy, sortOrder);
         return jpaQueryFactory.select(
                         styleRanking.styleId,
-                        category.mallType,
+                        styleRanking.mallTypeId,
                         styleRanking.rankScore.sum()
                 )
                 .from(styleRanking)
                 .where(builder)
-                .innerJoin(category)
-                .on(styleRanking.categoryId.eq(category.categoryId))
                 .groupBy(styleRanking.styleId,
                         styleRanking.mallTypeId)
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
+                .fetch();
+    }
+
+    @Override
+    public Long getFilteredStyleCount(BooleanBuilder builder) {
+        return jpaQueryFactory.select(styleRanking.styleId.countDistinct())
+                .from(styleRanking)
+                .where(builder)
+                .fetchOne();
     }
 
     @Override

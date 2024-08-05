@@ -58,9 +58,8 @@ public class StyleFilterService {
         BooleanBuilder builder = styleFilterQueryDSL.buildStyleFilter(filter);
 
         //노출 지수 가져오기
-        QueryResults<Tuple> styleRankingQueryResult = styleFilterQueryDSL.getExposureIndexInfo(builder, pageable, filter.getSortBy(), filter.getSortOrder());
-        List<Tuple> exposureIndexQueryResult = styleRankingQueryResult.getResults();
-        long total = styleRankingQueryResult.getTotal();
+        List<Tuple> exposureIndexQueryResult = styleFilterQueryDSL.getExposureIndexInfo(builder, pageable, filter.getSortBy(), filter.getSortOrder());
+        long total = styleFilterQueryDSL.getFilteredStyleCount(builder);
 
         //응답 객체 생성
         Map<String, StyleRankingDTO> styleRankingMap = createStyleRankingDTOMap(exposureIndexQueryResult);
@@ -78,7 +77,7 @@ public class StyleFilterService {
         return exposureIndexQueryResult.stream()
                 .map(tuple -> new StyleId(
                         tuple.get(styleRanking.styleId),
-                        tuple.get(category.mallType).getMallTypeId()
+                        tuple.get(styleRanking.mallTypeId)
                 ))
                 .collect(Collectors.toList());
     }
@@ -88,8 +87,7 @@ public class StyleFilterService {
         Map<String, StyleRankingDTO> resultMap = new LinkedHashMap<>();
         for (Tuple tuple : rankScoreResult) {
             String styleId = tuple.get(styleRanking.styleId);
-            MallType mallType = tuple.get(category.mallType);
-            String mallTypeId = mallType.getMallTypeId();
+            String mallTypeId = tuple.get(styleRanking.mallTypeId);
             Float exposureIndex = tuple.get(styleRanking.rankScore.sum());
             String key = generateStyleKey(styleId, mallTypeId);
 
