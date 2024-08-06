@@ -29,9 +29,10 @@ public class StyleRankingDTO {
     private CategoryDTO category;
     private List<DupeExposureIndex> dupeExposureIndexList;
 
-    public StyleRankingDTO(String styleId, String mallTypeId, Float exposureIndex) {
+    public StyleRankingDTO(String styleId, String mallTypeId, Category category, Float exposureIndex) {
         this.styleId = styleId;
         this.mallTypeId = mallTypeId;
+        this.category = new CategoryDTO(category);
         this.exposureIndex = exposureIndex;
         this.dupeExposureIndexList = new ArrayList<>();
     }

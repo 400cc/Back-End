@@ -38,15 +38,6 @@ public class StyleFilterService {
 
     private final StyleFilterQueryDSL styleFilterQueryDSL;
 
-//    public void addDuplicateExposureIndex(Map<String, StyleRankingDTO> resultMap, String styleId, String mallTypeId, String brand, Float exposureIndex, CategoryDTO category, String key) {
-//        if (resultMap.containsKey(key)) {
-//            DupeExposureIndex dupeExposureIndex = new DupeExposureIndex(styleId, mallTypeId, exposureIndex, category);
-//            resultMap.get(key).getDupeExposureIndexList().add(dupeExposureIndex);
-//        } else {
-////            StyleRankingDTO styleRankingDTO = new StyleRankingDTO(styleId, mallTypeId, brand, exposureIndex);
-////            resultMap.put(key, styleRankingDTO);
-//        }
-//    }
 
     public String generateStyleKey(String styleId, String mallTypeId) {
         return styleId + "_" + mallTypeId;
@@ -74,12 +65,7 @@ public class StyleFilterService {
     }
 
     public List<StyleId> getStyleIdList(List<Tuple> exposureIndexQueryResult) {
-        return exposureIndexQueryResult.stream()
-                .map(tuple -> new StyleId(
-                        tuple.get(styleRanking.styleId),
-                        tuple.get(styleRanking.mallTypeId)
-                ))
-                .collect(Collectors.toList());
+        return exposureIndexQueryResult.stream().map(tuple -> new StyleId(tuple.get(styleRanking.styleId), tuple.get(styleRanking.mallTypeId))).collect(Collectors.toList());
     }
 
 
@@ -88,15 +74,22 @@ public class StyleFilterService {
         for (Tuple tuple : rankScoreResult) {
             String styleId = tuple.get(styleRanking.styleId);
             String mallTypeId = tuple.get(styleRanking.mallTypeId);
+            Category category = tuple.get(QCategory.category);
             Float exposureIndex = tuple.get(styleRanking.rankScore.sum());
             String key = generateStyleKey(styleId, mallTypeId);
 
-            StyleRankingDTO styleRankingDTO = new StyleRankingDTO(styleId, mallTypeId, exposureIndex);
-            resultMap.put(key, styleRankingDTO);
-
-//            addDuplicateExposureIndex(resultMap, styleId, mallTypeId, brand, exposureIndex, category, key);
+            addDuplicateExposureIndex(resultMap, key, styleId, mallTypeId, exposureIndex, category);
         }
         return resultMap;
+    }
+
+    private void addDuplicateExposureIndex(Map<String, StyleRankingDTO> resultMap, String key, String styleId, String mallTypeId, Float exposureIndex, Category category) {
+        if (resultMap.containsKey(key)) {
+            resultMap.get(key).getDupeExposureIndexList().add(new DupeExposureIndex(styleId, mallTypeId, exposureIndex, category));
+        } else {
+            StyleRankingDTO styleRankingDTO = new StyleRankingDTO(styleId, mallTypeId, category, exposureIndex);
+            resultMap.put(key, styleRankingDTO);
+        }
     }
 
     private void updateStylePrices(Map<String, StyleRankingDTO> resultMap, List<Tuple> priceResult) {
@@ -107,20 +100,16 @@ public class StyleFilterService {
             String mallTypeId = mallType.getMallTypeId();
 
             String key = generateStyleKey(styleId, mallTypeId);
-            ImageDTO image = new ImageDTO(tuple.get(QImage.image));
-            CategoryDTO categoryDTO = new CategoryDTO(category, mallType);
             StyleRankingDTO styleRankingDTO = resultMap.get(key);
 
             if (styleRankingDTO != null && styleRankingDTO.getDiscountedPrice() == null) {
-                styleRankingDTO.setImage(image);
+                styleRankingDTO.setImage(new ImageDTO(tuple.get(QImage.image)));
                 styleRankingDTO.setBrand(tuple.get(styleRanking.brand));
                 styleRankingDTO.setStyleName(tuple.get(styleRanking.styleName));
                 styleRankingDTO.setDiscountedPrice(tuple.get(styleRanking.discountedPrice));
                 styleRankingDTO.setFixedPrice(tuple.get(styleRanking.fixedPrice));
                 styleRankingDTO.setMonetaryUnit(tuple.get(styleRanking.monetaryUnit));
-                styleRankingDTO.setCategory(categoryDTO);
-            } else {
-                styleRankingDTO.getDupeExposureIndexList().add(new DupeExposureIndex(styleId, mallTypeId, null, categoryDTO));
+                styleRankingDTO.setCategory(new CategoryDTO(category));
             }
         }
     }

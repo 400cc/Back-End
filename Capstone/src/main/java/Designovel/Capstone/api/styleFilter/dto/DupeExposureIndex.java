@@ -14,10 +14,10 @@ public class DupeExposureIndex {
     private Float exposureIndex;
     private CategoryDTO category;
 
-    public DupeExposureIndex(String styleId, String mallTypeId, Float exposureIndex, CategoryDTO category) {
+    public DupeExposureIndex(String styleId, String mallTypeId, Float exposureIndex, Category category) {
         this.styleId = styleId;
         this.mallTypeId = mallTypeId;
         this.exposureIndex = exposureIndex;
-        this.category = category;
+        this.category = new CategoryDTO(category);
     }
 }

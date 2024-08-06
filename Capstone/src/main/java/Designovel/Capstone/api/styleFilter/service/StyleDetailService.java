@@ -41,9 +41,7 @@ public class StyleDetailService {
     public void setStyleDetailSKUAttribute(StyleBasicDetailDTO styleBasicDetailDTO) {
         List<SKUAttribute> skuAttribute = skuAttributeRepository.findByStyleId(styleBasicDetailDTO.getStyleId(), styleBasicDetailDTO.getMallTypeId());
         if (!skuAttribute.isEmpty()) {
-            skuAttribute.stream().forEach(sku -> {
-                styleBasicDetailDTO.getSkuAttribute().put(sku.getAttrKey(), sku.getAttrValue());
-            });
+            skuAttribute.forEach(sku -> styleBasicDetailDTO.getSkuAttribute().put(sku.getAttrKey(), sku.getAttrValue()));
         }
     }
 
@@ -57,7 +55,7 @@ public class StyleDetailService {
         }
 
         StyleBasicDetailDTO styleBasicDetailDTO = styleBasicDetailDTOPage.getContent().get(0);
-        List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(styleId, mallType, ((Number) data[1]).floatValue(), new CategoryDTO((Category) data[0])))
+        List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(styleId, mallType, ((Number) data[1]).floatValue(), (Category) data[0]))
                 .collect(Collectors.toList());
         styleBasicDetailDTO.setExposureIndexList(exposureIndexList);
         return styleBasicDetailDTO;
