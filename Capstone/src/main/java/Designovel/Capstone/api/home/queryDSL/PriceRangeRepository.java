@@ -1,7 +1,6 @@
 package Designovel.Capstone.api.home.queryDSL;
 
 import Designovel.Capstone.api.home.dto.HomeFilterDTO;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +14,11 @@ import java.util.Map;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
+public class PriceRangeRepository {
 
     private final EntityManager entityManager;
 
-    @Override
+
     public List<Integer> findDiscountedPriceByFilter(HomeFilterDTO filterDTO) {
         StringBuilder sql = new StringBuilder();
         sql.append("WITH latest AS ( ")
@@ -38,7 +37,6 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
                 .append("JOIN latest ON sr.style_id = latest.style_id AND sr.crawled_date = latest.crawled_date ")
                 .append("WHERE latest.rn = 1 ");
 
-        // 추가적인 필터 조건을 동적으로 추가
         Map<String, Object> params = new HashMap<>();
         String filterSql = buildPriceRangeFilter(filterDTO, params);
         sql.append(filterSql);

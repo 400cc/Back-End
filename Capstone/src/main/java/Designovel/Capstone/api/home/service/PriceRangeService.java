@@ -1,7 +1,7 @@
 package Designovel.Capstone.api.home.service;
 
 import Designovel.Capstone.api.home.dto.HomeFilterDTO;
-import Designovel.Capstone.api.home.queryDSL.PriceRangeQueryDSLImpl;
+import Designovel.Capstone.api.home.queryDSL.PriceRangeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PriceRangeService {
 
-    private final PriceRangeQueryDSLImpl priceRangeQueryDSL;
+    private final PriceRangeRepository priceRangeQueryDSL;
 
     public Map<String, Integer> getPriceRangesCountList(HomeFilterDTO filterDTO) {
 
@@ -29,38 +29,30 @@ public class PriceRangeService {
 
         List<String> priceRangeKey = createPriceRangeKeys(minPrice, maxPrice, intervalSize);
         Map<String, Integer> priceRangeMap = createPriceRangeMap(priceRangeKey);
-        mapPriceRangesWithStyleCount(priceRangeMap, discountedPriceList);
+        mapPriceRangesWithStyleCount(priceRangeMap, discountedPriceList, minPrice, intervalSize);
         return priceRangeMap;
     }
 
-    public int calculateIntervalSize(Integer maxPrice, Integer minPrice) {
+    private int calculateIntervalSize(Integer maxPrice, Integer minPrice) {
         int range = maxPrice - minPrice;
         return (int) Math.ceil((double) range / 10.0);
     }
 
-    public Map<String, Integer> createPriceRangeMap(List<String> priceRangeKey) {
-        return priceRangeKey.stream()
-                .collect(Collectors.toMap(
-                        priceRange -> priceRange,
-                        priceRange -> 0,
-                        (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
+    private Map<String, Integer> createPriceRangeMap(List<String> priceRangeKeys) {
+        Map<String, Integer> priceRangeMap = new LinkedHashMap<>();
+        for (String key : priceRangeKeys) {
+            priceRangeMap.put(key, 0);
+        }
+        return priceRangeMap;
     }
 
 
-    public void mapPriceRangesWithStyleCount(Map<String, Integer> priceRangeMap, List<Integer> discountedPriceList) {
+    public void mapPriceRangesWithStyleCount(Map<String, Integer> priceRangeMap, List<Integer> discountedPriceList, int minPrice, int intervalSize) {
+        List<String> keys = new ArrayList<>(priceRangeMap.keySet());
         for (int price : discountedPriceList) {
-            for (String range : priceRangeMap.keySet()) {
-                String[] bounds = range.split("-");
-                int lowerBound = Integer.parseInt(bounds[0]);
-                int upperBound = Integer.parseInt(bounds[1]);
-
-                if (price >= lowerBound && price <= upperBound) {
-                    priceRangeMap.put(range, priceRangeMap.get(range) + 1);
-                    break;
-                }
-            }
+            int rangeIndex = Math.min((price - minPrice) / intervalSize, keys.size() - 1); //최대값일 경우 index out of bound 방지
+            String rangeKey = keys.get(rangeIndex);
+            priceRangeMap.put(rangeKey, priceRangeMap.get(rangeKey) + 1);
         }
     }
 
