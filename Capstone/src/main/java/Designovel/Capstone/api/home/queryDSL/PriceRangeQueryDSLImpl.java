@@ -88,14 +88,14 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     public BooleanBuilder buildPriceRangeFilter(HomeFilterDTO filterDTO) {
         BooleanBuilder builder = new BooleanBuilder();
         if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
-            builder.and(styleRanking.categoryStyle.id.mallTypeId.eq(filterDTO.getMallTypeId()));
+            builder.and(styleRanking.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
 
 
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {
             // 카테고리 필터링 로직
             builder.and(
-                    styleRanking.categoryStyle.id.styleId.in(
+                    styleRanking.styleId.in(
                             JPAExpressions.select(categoryStyle.id.styleId)
                                     .from(categoryStyle)
                                     .join(categoryStyle.category, category)

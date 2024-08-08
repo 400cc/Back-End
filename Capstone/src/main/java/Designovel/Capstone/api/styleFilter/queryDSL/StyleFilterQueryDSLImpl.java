@@ -7,7 +7,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static Designovel.Capstone.domain.category.category.QCategory.category;
 import static Designovel.Capstone.domain.category.categoryClosure.QCategoryClosure.categoryClosure;
@@ -150,7 +148,7 @@ public class StyleFilterQueryDSLImpl implements StyleFilterQueryDSL {
         }
 
         if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
-            builder.and(styleRanking.categoryStyle.id.mallTypeId.eq(filterDTO.getMallTypeId()));
+            builder.and(styleRanking.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
 
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {

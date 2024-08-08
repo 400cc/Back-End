@@ -31,7 +31,7 @@ public class TopBrandService {
                 .map(tuple -> TopBrandDTO.builder()
                         .brand(tuple.get(styleRanking.brand))
                         .exposureIndexSum(tuple.get(styleRanking.rankScore.sum()))
-                        .mallTypeId(tuple.get(categoryStyle.style.id.mallTypeId.stringValue()))
+                        .mallTypeId(tuple.get(styleRanking.mallTypeId))
                         .build())
                 .collect(Collectors.toList());
     }

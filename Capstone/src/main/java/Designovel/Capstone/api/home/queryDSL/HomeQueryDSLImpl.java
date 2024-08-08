@@ -27,13 +27,12 @@ public class HomeQueryDSLImpl implements HomeQueryDSL {
         return jpaQueryFactory.select(
                         styleRanking.brand,
                         styleRanking.rankScore.sum(),
-                        categoryStyle.style.id.mallTypeId
+                        styleRanking.mallTypeId
                 )
                 .from(styleRanking)
-                .leftJoin(styleRanking.categoryStyle, categoryStyle)
                 .where(builder)
                 .groupBy(styleRanking.brand,
-                        categoryStyle.style.id.mallTypeId)
+                        styleRanking.mallTypeId)
                 .orderBy(styleRanking.rankScore.sum().desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -53,13 +52,13 @@ public class HomeQueryDSLImpl implements HomeQueryDSL {
         }
 
         if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
-            builder.and(styleRanking.categoryStyle.id.mallTypeId.eq(filterDTO.getMallTypeId()));
+            builder.and(styleRanking.mallTypeId.eq(filterDTO.getMallTypeId()));
         }
 
         if (filterDTO.getCategory() != null && !filterDTO.getCategory().isEmpty()) {
             // 카테고리 필터링 로직
             builder.and(
-                    styleRanking.categoryStyle.id.styleId.in(
+                    styleRanking.styleId.in(
                             JPAExpressions.select(categoryStyle.id.styleId)
                                     .from(categoryStyle)
                                     .join(categoryStyle.category, category)

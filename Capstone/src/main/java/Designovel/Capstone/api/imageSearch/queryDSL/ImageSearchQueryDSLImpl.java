@@ -11,7 +11,6 @@ import java.util.List;
 
 import static Designovel.Capstone.domain.category.category.QCategory.category;
 import static Designovel.Capstone.domain.category.categoryClosure.QCategoryClosure.categoryClosure;
-import static Designovel.Capstone.domain.category.categoryStyle.QCategoryStyle.categoryStyle;
 import static Designovel.Capstone.domain.style.styleRanking.QStyleRanking.styleRanking;
 
 @RequiredArgsConstructor
@@ -27,9 +26,10 @@ public class ImageSearchQueryDSLImpl implements ImageSearchQueryDSL {
                 .select(styleRanking.styleId)
                 .from(styleRanking)
                 .where(styleRanking.styleId.in(
-                        JPAExpressions.select(categoryStyle.id.styleId)
-                                .from(categoryStyle)
-                                .join(categoryStyle.category, category)
+                        JPAExpressions.select(styleRanking.styleId)
+                                .from(styleRanking)
+                                .join(category)
+                                .on(styleRanking.categoryId.eq(category.categoryId))
                                 .join(categoryClosure).on(categoryClosure.id.descendantId.eq(category.categoryId))
                                 .where(categoryClosure.id.ancestorId.in(imageSearchDTO.getCategoryList()))
                 ))
