@@ -22,24 +22,23 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
     @Override
     public List<Integer> findDiscountedPriceByFilter(HomeFilterDTO filterDTO) {
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT sr.discounted_price ")
-                .append("FROM style_ranking sr ")
-                .append("JOIN ( ")
-                .append("    SELECT MAX(sub_sr.crawled_date) AS latest_crawled_date, sub_sr.style_id ")
+        sql.append("WITH latest AS ( ")
+                .append("    SELECT sub_sr.style_id, sub_sr.crawled_date, ")
+                .append("           ROW_NUMBER() OVER (PARTITION BY sub_sr.style_id ORDER BY sub_sr.crawled_date DESC) as rn ")
                 .append("    FROM style_ranking sub_sr ")
                 .append("    WHERE 1=1 ");
 
-
-        // endDate 조건을 동적으로 추가
         if (filterDTO.getEndDate() != null) {
             sql.append("AND sub_sr.crawled_date <= :endDate ");
         }
 
-        sql.append("    GROUP BY sub_sr.style_id, sub_sr.mall_type_id ")
-                .append(") latest ON sr.style_id = latest.style_id AND sr.crawled_date = latest.latest_crawled_date ")
-                .append("WHERE 1=1 ");
+        sql.append(") ")
+                .append("SELECT sr.discounted_price ")
+                .append("FROM style_ranking sr ")
+                .append("JOIN latest ON sr.style_id = latest.style_id AND sr.crawled_date = latest.crawled_date ")
+                .append("WHERE latest.rn = 1 ");
 
-
+        // 추가적인 필터 조건을 동적으로 추가
         Map<String, Object> params = new HashMap<>();
         String filterSql = buildPriceRangeFilter(filterDTO, params);
         sql.append(filterSql);
@@ -49,6 +48,7 @@ public class PriceRangeQueryDSLImpl implements PriceRangeQueryDSL {
 
         return query.getResultList();
     }
+
 
 
     public String buildPriceRangeFilter(HomeFilterDTO filterDTO, Map<String, Object> params) {

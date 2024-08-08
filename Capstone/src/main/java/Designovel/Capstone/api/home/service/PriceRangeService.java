@@ -19,9 +19,15 @@ public class PriceRangeService {
     public Map<String, Integer> getPriceRangesCountList(HomeFilterDTO filterDTO) {
 
         List<Integer> discountedPriceList = priceRangeQueryDSL.findDiscountedPriceByFilter(filterDTO);
-        Integer minPrice = discountedPriceList.stream().mapToInt(Integer::intValue).min().orElse(0);
-        Integer maxPrice = discountedPriceList.stream().mapToInt(Integer::intValue).max().orElse(0);
-        Integer intervalSize = calculateIntervalSize(maxPrice, minPrice);
+        if (discountedPriceList.isEmpty()) {
+            return new HashMap<>() {{
+                put("0-0", 0);
+            }};
+        }
+        IntSummaryStatistics stats = discountedPriceList.stream().mapToInt(Integer::intValue).summaryStatistics();
+        int minPrice = stats.getMin();
+        int maxPrice = stats.getMax();
+        int intervalSize = calculateIntervalSize(maxPrice, minPrice);
 
         List<String> priceRangeKey = createPriceRangeKeys(minPrice, maxPrice, intervalSize);
         Map<String, Integer> priceRangeMap = createPriceRangeMap(priceRangeKey);
