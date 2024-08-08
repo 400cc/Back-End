@@ -20,9 +20,7 @@ public class PriceRangeService {
 
         List<Integer> discountedPriceList = priceRangeQueryDSL.findDiscountedPriceByFilter(filterDTO);
         if (discountedPriceList.isEmpty()) {
-            return new HashMap<>() {{
-                put("0-0", 0);
-            }};
+            return Collections.singletonMap("0-0", 0);
         }
         IntSummaryStatistics stats = discountedPriceList.stream().mapToInt(Integer::intValue).summaryStatistics();
         int minPrice = stats.getMin();
