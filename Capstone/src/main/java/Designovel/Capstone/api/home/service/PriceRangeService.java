@@ -2,16 +2,12 @@ package Designovel.Capstone.api.home.service;
 
 import Designovel.Capstone.api.home.dto.HomeFilterDTO;
 import Designovel.Capstone.api.home.queryDSL.PriceRangeQueryDSLImpl;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static Designovel.Capstone.domain.style.styleRanking.QStyleRanking.styleRanking;
 
 @Service
 @RequiredArgsConstructor
@@ -21,23 +17,15 @@ public class PriceRangeService {
     private final PriceRangeQueryDSLImpl priceRangeQueryDSL;
 
     public Map<String, Integer> getPriceRangesCountList(HomeFilterDTO filterDTO) {
-        BooleanBuilder priceRangeFilter = priceRangeQueryDSL.buildPriceRangeFilter(filterDTO);
-        Tuple minMaxPriceByFilter = priceRangeQueryDSL.findMinMaxPriceByFilter(priceRangeFilter).get(0);
 
-        Integer minPrice = Optional.ofNullable(minMaxPriceByFilter.get(0, Integer.class)).orElse(0);
-        Integer maxPrice = Optional.ofNullable(minMaxPriceByFilter.get(1, Integer.class)).orElse(0);
-
-        if (minPrice.equals(0) && maxPrice.equals(0)) {
-            // 값이 없을 경우
-            return Collections.singletonMap("0-0", 0);
-        }
-
-        int intervalSize = calculateIntervalSize(maxPrice, minPrice);
+        List<Integer> discountedPriceList = priceRangeQueryDSL.findDiscountedPriceByFilter(filterDTO);
+        Integer minPrice = discountedPriceList.stream().mapToInt(Integer::intValue).min().orElse(0);
+        Integer maxPrice = discountedPriceList.stream().mapToInt(Integer::intValue).max().orElse(0);
+        Integer intervalSize = calculateIntervalSize(maxPrice, minPrice);
 
         List<String> priceRangeKey = createPriceRangeKeys(minPrice, maxPrice, intervalSize);
         Map<String, Integer> priceRangeMap = createPriceRangeMap(priceRangeKey);
-        List<Tuple> results = priceRangeQueryDSL.findStyleRankingWithPriceRanges(minPrice, intervalSize, priceRangeFilter, priceRangeKey, filterDTO);
-        mapPriceRangesWithStyleCount(priceRangeMap, results);
+        mapPriceRangesWithStyleCount(priceRangeMap, discountedPriceList);
         return priceRangeMap;
     }
 
@@ -57,11 +45,18 @@ public class PriceRangeService {
     }
 
 
-    public void mapPriceRangesWithStyleCount(Map<String, Integer> priceRangeMap, List<Tuple> results) {
-        for (Tuple tuple : results) {
-            Integer styleCount = Optional.ofNullable(tuple.get(0, Long.class)).map(Long::intValue).orElse(0);
-            String priceRange = tuple.get(1, String.class);
-            priceRangeMap.put(priceRange, styleCount);
+    public void mapPriceRangesWithStyleCount(Map<String, Integer> priceRangeMap, List<Integer> discountedPriceList) {
+        for (int price : discountedPriceList) {
+            for (String range : priceRangeMap.keySet()) {
+                String[] bounds = range.split("-");
+                int lowerBound = Integer.parseInt(bounds[0]);
+                int upperBound = Integer.parseInt(bounds[1]);
+
+                if (price >= lowerBound && price <= upperBound) {
+                    priceRangeMap.put(range, priceRangeMap.get(range) + 1);
+                    break;
+                }
+            }
         }
     }
 
