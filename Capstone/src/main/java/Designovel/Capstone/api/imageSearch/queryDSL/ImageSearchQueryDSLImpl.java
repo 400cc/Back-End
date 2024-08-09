@@ -23,7 +23,7 @@ public class ImageSearchQueryDSLImpl implements ImageSearchQueryDSL {
     @Override
     public List<String> findStyleByCategory(ImageSearchDTO imageSearchDTO) {
         return jpaQueryFactory
-                .select(styleRanking.styleId)
+                .select(styleRanking.styleId).distinct()
                 .from(styleRanking)
                 .where(styleRanking.styleId.in(
                         JPAExpressions.select(styleRanking.styleId)

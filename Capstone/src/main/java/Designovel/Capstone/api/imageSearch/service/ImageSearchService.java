@@ -36,7 +36,7 @@ public class ImageSearchService {
         if (!imageSearchDTO.getCategoryList().isEmpty() && imageSearchDTO.getMallTypeId() != null) {
             categoryName = categoryService.findNameByCategoryIdList(imageSearchDTO.getCategoryList());
             styleByCategory = imageSearchQueryDSL.findStyleByCategory(imageSearchDTO);
-
+            log.info("styleId: {}", styleByCategory);
             if (styleByCategory.isEmpty()) {
                 throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.STYLE_IMAGE_DOESNT_EXIST_FOR_CATEGORY);
             }
