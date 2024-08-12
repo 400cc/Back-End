@@ -22,13 +22,10 @@ public interface StyleRankingRepository extends JpaRepository<StyleRanking, Inte
             "group by p.categoryStyle.style, p.categoryStyle.category")
     List<Object[]> findRankScoreByStyle(@Param("styleId") String styleId, @Param("mallTypeId") String mallTypeId);
 
-    @Query("select new Designovel.Capstone.api.styleFilter.dto.StyleBasicDetailDTO(p.brand, p.discountedPrice, p.fixedPrice, p.monetaryUnit, p.crawledDate, p.categoryStyle.style.id, p.styleName) " +
+    @Query("select new Designovel.Capstone.api.styleFilter.dto.StyleBasicDetailDTO(p.brand, p.discountedPrice, p.fixedPrice, p.monetaryUnit, p.crawledDate, p.styleId, p.mallTypeId, p.styleName) " +
             "from StyleRanking p " +
-            "where p.categoryStyle.style.id.styleId =:styleId and p.categoryStyle.style.id.mallTypeId =:mallTypeId " +
+            "where p.styleId =:styleId and p.mallTypeId =:mallTypeId " +
             "order by p.crawledDate desc")
     Page<StyleBasicDetailDTO> findPriceInfoByStyle(@Param("styleId") String styleId, @Param("mallTypeId") String mallTypeId, Pageable pageable);
 
-    @Query("select min(p.fixedPrice), max(p.fixedPrice) from StyleRanking p " +
-            "where p.categoryStyle.style.id.mallTypeId = :mallTypeId")
-    List<Object[]> findMinMaxFixedPriceByMallTypeId(@Param("mallTypeId") String mallTypeId);
 }

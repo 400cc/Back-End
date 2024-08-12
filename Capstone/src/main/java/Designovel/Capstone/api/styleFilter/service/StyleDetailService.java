@@ -45,17 +45,17 @@ public class StyleDetailService {
         }
     }
 
-    public StyleBasicDetailDTO getExposureIndexAndPriceInfo(String styleId, String mallType) {
-        List<Object[]> rankScore = styleRankingRepository.findRankScoreByStyle(styleId, mallType);
+    public StyleBasicDetailDTO getExposureIndexAndPriceInfo(String styleId, String mallTypeId) {
+        List<Object[]> rankScore = styleRankingRepository.findRankScoreByStyle(styleId, mallTypeId);
         Pageable pageable = PageRequest.of(0, 1);
-        Page<StyleBasicDetailDTO> styleBasicDetailDTOPage = styleRankingRepository.findPriceInfoByStyle(styleId, mallType, pageable);
+        Page<StyleBasicDetailDTO> styleBasicDetailDTOPage = styleRankingRepository.findPriceInfoByStyle(styleId, mallTypeId, pageable);
 
         if (styleBasicDetailDTOPage.isEmpty()) {
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.STYLE_DETAIL_IS_EMPTY);
         }
 
         StyleBasicDetailDTO styleBasicDetailDTO = styleBasicDetailDTOPage.getContent().get(0);
-        List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(styleId, mallType, ((Number) data[1]).floatValue(), (Category) data[0]))
+        List<DupeExposureIndex> exposureIndexList = rankScore.stream().map(data -> new DupeExposureIndex(styleId, mallTypeId, ((Number) data[1]).floatValue(), (Category) data[0]))
                 .collect(Collectors.toList());
         styleBasicDetailDTO.setExposureIndexList(exposureIndexList);
         return styleBasicDetailDTO;

@@ -27,10 +27,10 @@ public class MusinsaReviewService {
     }
 
     public ReviewCountDTO getReviewCountDTOByFilter(ReviewFilterDTO reviewFilterDTO) {
-        List<Tuple> handsomeReviewCounts = musinsaReviewRepository.findMusinsaReviewCountsByFilter(reviewFilterDTO);
+        List<Tuple> musinsaReviewCounts = musinsaReviewRepository.findMusinsaReviewCountsByFilter(reviewFilterDTO);
         Map<Integer, Integer> ratingCountMap = new HashMap<>();
         int total = 0;
-        for (Tuple tuple : handsomeReviewCounts) {
+        for (Tuple tuple : musinsaReviewCounts) {
             Integer rating = tuple.get(musinsaReview.rate);
             Long count = tuple.get(musinsaReview.count());
             int countValue = (count != null) ? count.intValue() : 0;
@@ -41,10 +41,10 @@ public class MusinsaReviewService {
     }
 
     public Map<String, Object> getMusinsaReviewPageByFilter(ReviewFilterDTO reviewFilterDTO) {
-        ReviewCountDTO reviewCountByStyleId = getReviewCountDTOByFilter(reviewFilterDTO);
+        ReviewCountDTO musinsaReviewCounts = getReviewCountDTOByFilter(reviewFilterDTO);
         Page<MusinsaReviewDTO> musinsaReviewDTOPage = musinsaReviewRepository.findMusinsaReviewPageByFilter(reviewFilterDTO);
         HashMap<String, Object> response = new HashMap<>();
-        response.put("count", reviewCountByStyleId);
+        response.put("count", musinsaReviewCounts);
         response.put("review", musinsaReviewDTOPage);
         return response;
     }

@@ -21,7 +21,7 @@ public class ReviewStyleService {
 
     public Map<LocalDate, Integer> createDateRangeMap(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {
-            return new LinkedHashMap<>(); // Return an empty map
+            return new LinkedHashMap<>();
         }
         Map<LocalDate, Integer> dateRangeMap = new LinkedHashMap<>();
 

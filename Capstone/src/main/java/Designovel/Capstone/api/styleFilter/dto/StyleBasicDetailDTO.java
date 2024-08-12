@@ -13,7 +13,6 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class StyleBasicDetailDTO {
 
     private String styleId;
@@ -28,15 +27,15 @@ public class StyleBasicDetailDTO {
     private Map<String, Object> skuAttribute = new HashMap<>();
     private List<DupeExposureIndex> exposureIndexList = new ArrayList<>();
 
-    public StyleBasicDetailDTO(String brand, int discountedPrice, int fixedPrice, String monetaryUnit, LocalDate crawledDate, StyleId styleId, String styleName) {
+    public StyleBasicDetailDTO(String brand, int discountedPrice, int fixedPrice, String monetaryUnit, LocalDate crawledDate, String styleId, String mallTypeId, String styleName) {
         this.brand = brand;
         this.styleName = styleName;
         this.discountedPrice = discountedPrice;
         this.fixedPrice = fixedPrice;
         this.monetaryUnit = monetaryUnit;
         this.crawledDate = crawledDate;
-        this.styleId = styleId.getStyleId();
-        this.mallTypeId = styleId.getMallTypeId();
+        this.styleId = styleId;
+        this.mallTypeId = mallTypeId;
     }
 
 }

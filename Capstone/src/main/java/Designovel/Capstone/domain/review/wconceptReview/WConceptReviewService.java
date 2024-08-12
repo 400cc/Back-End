@@ -27,10 +27,10 @@ public class WConceptReviewService {
     }
 
     public Map<String, Object> getWConceptReviewPageByFilter(ReviewFilterDTO reviewFilterDTO) {
-        ReviewCountDTO reviewCountByStyleId = getReviewCountDTOByFilter(reviewFilterDTO);
+        ReviewCountDTO wconceptReviewCounts = getReviewCountDTOByFilter(reviewFilterDTO);
         Page<WConceptReviewDTO> wconceptReviewDTOPage = wConceptReviewRepository.findWConceptReviewPageByFilter(reviewFilterDTO);
         HashMap<String, Object> response = new HashMap<>();
-        response.put("count", reviewCountByStyleId);
+        response.put("count", wconceptReviewCounts);
         response.put("review", wconceptReviewDTOPage);
         return response;
     }

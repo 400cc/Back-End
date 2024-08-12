@@ -41,10 +41,10 @@ public class HandsomeReviewService {
 
 
     public Map<String, Object> getHandsomeReviewPageByFilter(ReviewFilterDTO reviewFilterDTO) {
-        ReviewCountDTO reviewCountByStyleId = getReviewCountDTOByFilter(reviewFilterDTO);
+        ReviewCountDTO handsomeReviewCounts = getReviewCountDTOByFilter(reviewFilterDTO);
         Page<HandsomeReviewDTO> handsomeReviewDTOPage = handsomeReviewRepository.findHandsomeReviewPageByFilter(reviewFilterDTO);
         HashMap<String, Object> response = new HashMap<>();
-        response.put("count", reviewCountByStyleId);
+        response.put("count", handsomeReviewCounts);
         response.put("review", handsomeReviewDTOPage);
         return response;
     }

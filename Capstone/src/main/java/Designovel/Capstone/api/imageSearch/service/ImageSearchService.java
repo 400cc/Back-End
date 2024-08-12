@@ -37,13 +37,17 @@ public class ImageSearchService {
             categoryName = categoryService.findNameByCategoryIdList(imageSearchDTO.getCategoryList());
             styleByCategory = imageSearchQueryDSL.findStyleByCategory(imageSearchDTO);
             log.info("styleId: {}", styleByCategory);
-            if (styleByCategory.isEmpty()) {
-                throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.STYLE_IMAGE_DOESNT_EXIST_FOR_CATEGORY);
-            }
+            validateStyleByCategory(styleByCategory);
         }
 
         MultipartBodyBuilder request = buildImageSearchRequestBody(imageSearchDTO, categoryName, styleByCategory);
         return sendImageSearchRequest(request);
+    }
+
+    private void validateStyleByCategory(List<String> styleByCategory) {
+        if (styleByCategory.isEmpty()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.STYLE_IMAGE_DOESNT_EXIST_FOR_CATEGORY);
+        }
     }
 
     private ResponseEntity<String> sendImageSearchRequest(MultipartBodyBuilder bodyBuilder) {
