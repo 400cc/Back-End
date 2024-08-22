@@ -8,4 +8,5 @@
 3. docker run -p 8080:8080 designovel_backend      
 
 
-순서대로 입력 시 Docker로 실행됩니다.
+순서대로 입력 시 Docker로 실행됩니다.      
+추가로 DockerFile에 FAST_API_URL 이 있습니다. 이미지 검색 서버 URL을 환경변수로 빼 놓았습니다 
