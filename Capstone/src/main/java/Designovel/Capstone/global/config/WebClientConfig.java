@@ -1,6 +1,7 @@
 package Designovel.Capstone.global.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -12,7 +13,10 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class WebClientConfig {
 
-    private static final String fastAPIUrl = "http://203.229.61.179:8800";
+    @Value("${fast.api.url}")
+    private String fastAPIUrl;
+
+    //    private static final String fastAPIUrl = "http://203.229.61.179:8800";
     @Bean
     public WebClient webClient(WebClient.Builder webClientBuilder) {
         return webClientBuilder
