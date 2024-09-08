@@ -13,10 +13,8 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class WebClientConfig {
 
-    @Value("${fast.api.url}")
-    private String fastAPIUrl;
+    private static final String fastAPIUrl = "http://115.85.180.192:8000/";
 
-    //    private static final String fastAPIUrl = "http://203.229.61.179:8800";
     @Bean
     public WebClient webClient(WebClient.Builder webClientBuilder) {
         return webClientBuilder
