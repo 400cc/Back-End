@@ -27,5 +27,4 @@ public interface StyleRankingRepository extends JpaRepository<StyleRanking, Inte
             "where p.styleId =:styleId and p.mallTypeId =:mallTypeId " +
             "order by p.crawledDate desc")
     Page<StyleBasicDetailDTO> findPriceInfoByStyle(@Param("styleId") String styleId, @Param("mallTypeId") String mallTypeId, Pageable pageable);
-
 }
