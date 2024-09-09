@@ -28,29 +28,31 @@ public class ClusteringService {
     public ResponseEntity<List<ClusteringDTO>> processClustering(ClusterFilterDTO clusterFilterDTO) {
         Map<String, ClusteringDTO> clusteringDTOMap = clusteringQueryDSL.findStyleInfoByCategory(clusterFilterDTO);
 
-//        Map<String, Object> requestBody = buildClusteringRequestBody(clusteringDTOMap, clusterFilterDTO.getNClusters());
-//        List<Map<String, Object>> response = sendClusteringRequest(requestBody);
-//        updateClusteringDTOList(clusteringDTOMap, response);
+        Map<String, Object> requestBody = buildClusteringRequestBody(clusteringDTOMap, clusterFilterDTO.getNClusters());
+        List<Map<String, Object>> response = sendClusteringRequest(requestBody);
+        updateClusteringDTOList(clusteringDTOMap, response);
         return ResponseEntity.ok(new ArrayList<>(clusteringDTOMap.values()));
     }
 
     private List<Map<String, Object>> sendClusteringRequest(Map<String, Object> requestBody) {
         try {
-            List<Map<String, Object>> response = webClient.post()
+            Map<String, Object> response = webClient.post()
                     .uri("/clustering")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(BodyInserters.fromValue(requestBody))
                     .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                     .block();
-            return response;
+            return (List<Map<String, Object>>) response.get("data_points");
         } catch (WebClientResponseException e) {
+            log.info(e.getMessage());
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FASTAPI_SERVER_ERROR);
         }
     }
 
 
     public void updateClusteringDTOList(Map<String, ClusteringDTO> clusteringDTOMap, List<Map<String, Object>> response) {
+        log.info(String.valueOf(response.size()));
         for (Map<String, Object> dataPoint : response) {
             String styleId = (String) dataPoint.get("style_id");
             float x = ((Number) dataPoint.get("x")).floatValue();
@@ -75,6 +77,7 @@ public class ClusteringService {
         Map<String, Object> requestBody = new HashMap<>();
         List<String> styleIdList = clusteringDTOList.values().stream().map(ClusteringDTO::getStyleId).toList();
         requestBody.put("style_id_list", styleIdList);
+        log.info(styleIdList.toString());
         requestBody.put("n_clusters", nClusters);
         return requestBody;
     }
