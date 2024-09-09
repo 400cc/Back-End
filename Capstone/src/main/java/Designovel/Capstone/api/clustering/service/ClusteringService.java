@@ -17,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -31,23 +32,30 @@ public class ClusteringService {
         Map<String, Object> requestBody = buildClusteringRequestBody(clusteringDTOMap, clusterFilterDTO.getNClusters());
         List<Map<String, Object>> response = sendClusteringRequest(requestBody);
         updateClusteringDTOList(clusteringDTOMap, response);
-        return ResponseEntity.ok(new ArrayList<>(clusteringDTOMap.values()));
+        // 값이 있는 것만 필터링
+        List<ClusteringDTO> filteredDTOList = clusteringDTOMap.values().stream()
+                .filter(clusteringDTO -> clusteringDTO.getX() != 0 && clusteringDTO.getY() != 0)
+                .toList();
+
+        return ResponseEntity.ok(filteredDTOList);
     }
 
     private List<Map<String, Object>> sendClusteringRequest(Map<String, Object> requestBody) {
-        try {
-            Map<String, Object> response = webClient.post()
-                    .uri("/clustering")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(requestBody))
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                    .block();
-            return (List<Map<String, Object>>) response.get("data_points");
-        } catch (WebClientResponseException e) {
-            log.info(e.getMessage());
-            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FASTAPI_SERVER_ERROR);
-        }
+
+        return webClient.post()
+                .uri("/clustering")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
+                })
+                .map(response -> (List<Map<String, Object>>) response.get("data_points"))
+                .onErrorMap(WebClientResponseException.class, e -> {
+                    log.info(e.getMessage());
+                    return new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FASTAPI_SERVER_ERROR);
+                })
+                .block();
+
     }
 
 
@@ -59,7 +67,6 @@ public class ClusteringService {
             float y = ((Number) dataPoint.get("y")).floatValue();
             String url = dataPoint.get("url").toString();
             int cluster = (int) dataPoint.get("cluster");
-
             ClusteringDTO dto = clusteringDTOMap.get(styleId);
             if (dto != null) {
                 dto.setX(x);
@@ -71,14 +78,12 @@ public class ClusteringService {
     }
 
 
-
-
     private Map<String, Object> buildClusteringRequestBody(Map<String, ClusteringDTO> clusteringDTOList, int nClusters) {
         Map<String, Object> requestBody = new HashMap<>();
         List<String> styleIdList = clusteringDTOList.values().stream().map(ClusteringDTO::getStyleId).toList();
         requestBody.put("style_id_list", styleIdList);
-        log.info(styleIdList.toString());
         requestBody.put("n_clusters", nClusters);
+        log.info(styleIdList.toString());
         return requestBody;
     }
 
