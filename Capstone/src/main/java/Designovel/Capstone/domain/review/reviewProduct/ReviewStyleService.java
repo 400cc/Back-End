@@ -43,9 +43,8 @@ public class ReviewStyleService {
             Integer reviewCount = (longReviewCount != null) ? longReviewCount.intValue() : 0;
             dateRangeMap.put(crawledDate, reviewCount);
         }
-        List<ReviewTrendDTO> ReviewTrendDTOList = convertToReviewTrendDTO(dateRangeMap);
 
-        return ReviewTrendDTOList;
+        return convertToReviewTrendDTO(dateRangeMap);
     }
 
     public List<ReviewTrendDTO> convertToReviewTrendDTO(Map<LocalDate, Integer> dateRangeMap) {
@@ -55,7 +54,7 @@ public class ReviewStyleService {
     }
 
 
-    public static ReviewCountDTO createReviewCountDTO(Map<Integer, Integer> ratingCountMap, int total) {
+    public ReviewCountDTO createReviewCountDTO(Map<Integer, Integer> ratingCountMap, int total) {
         ReviewCountDTO reviewCountDTO = new ReviewCountDTO();
         reviewCountDTO.setRate1(ratingCountMap.getOrDefault(1, 0));
         reviewCountDTO.setRate2(ratingCountMap.getOrDefault(2, 0));

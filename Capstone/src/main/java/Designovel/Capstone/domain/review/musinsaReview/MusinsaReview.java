@@ -33,18 +33,13 @@ public class MusinsaReview {
 
     @Column(name = "rate")
     private Integer rate;
+
     @Column(name = "review_type")
     private String reviewType;
-    @Column(name = "user_info")
-    private String userInfo;
-    @Column(name = "meta_data")
-    private String metaData;
+
     @Column(name = "body")
     private String body;
-    @Column(name = "helpful")
-    private Integer helpful;
-    @Column(name = "good_style")
-    private Integer goodStyle;
+
 
 }
 
