@@ -19,21 +19,21 @@ public class MusinsaReviewDTO {
 
     private Integer rate;
 
-    private String reviewType;
+    private Integer likes;
 
     private String body;
 
 
 
     public MusinsaReviewDTO(Integer reviewId, String styleId, String orgReviewId, Integer rate, LocalDate writtenDate,
-                            String reviewType, String body) {
+                            String body, int likes) {
         this.reviewId = reviewId;
         this.styleId = styleId;
         this.orgReviewId = orgReviewId;
         this.rate = rate;
         this.writtenDate = writtenDate;
-        this.reviewType = reviewType;
         this.body = body;
+        this.likes = likes;
     }
 
 

@@ -34,8 +34,8 @@ public class MusinsaReview {
     @Column(name = "rate")
     private Integer rate;
 
-    @Column(name = "review_type")
-    private String reviewType;
+    @Column(name = "likes")
+    private Integer likes;
 
     @Column(name = "body")
     private String body;
