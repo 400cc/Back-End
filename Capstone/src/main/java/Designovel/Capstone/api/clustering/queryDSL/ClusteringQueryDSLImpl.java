@@ -5,6 +5,7 @@ import Designovel.Capstone.api.clustering.dto.ClusteringDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,20 +30,21 @@ public class ClusteringQueryDSLImpl implements ClusteringQueryDSL {
 
     @Override
     public Map<String, ClusteringDTO> findStyleInfoByCategory(ClusterFilterDTO filterDTO) {
-        List<ClusteringDTO> clusteringDTOList = jpaQueryFactory
+        JPAQuery<ClusteringDTO> query = jpaQueryFactory
                 .select(Projections.constructor(
                         ClusteringDTO.class,
                         styleRanking.styleId,
                         styleRanking.styleName,
-                        category.mallType,
+                        mallType,
                         styleRanking.brand
                 ))
                 .from(styleRanking)
-                .join(category).on(styleRanking.categoryId.eq(category.categoryId))
-                .join(categoryClosure).on(categoryClosure.id.descendantId.eq(category.categoryId))
-                .where(categoryClosure.id.ancestorId.in(filterDTO.getCategoryList()))
-                .distinct()
-                .fetch();
+                .join(mallType)
+                .on(styleRanking.mallTypeId.eq(mallType.mallTypeId))
+                .distinct();
+
+        applyClusteringFilter(query, filterDTO);
+        List<ClusteringDTO> clusteringDTOList = query.fetch();
 
         return clusteringDTOList.stream()
                 .collect(Collectors.toMap(
@@ -52,5 +54,16 @@ public class ClusteringQueryDSLImpl implements ClusteringQueryDSL {
                 ));
     }
 
+    private void applyClusteringFilter(JPAQuery<ClusteringDTO> query, ClusterFilterDTO filterDTO) {
+
+        if (filterDTO.getCategoryList() != null && !filterDTO.getCategoryList().isEmpty()) {
+            query
+                    .join(category).on(styleRanking.categoryId.eq(category.categoryId))
+                    .join(categoryClosure).on(categoryClosure.id.descendantId.eq(category.categoryId))
+                    .where(categoryClosure.id.ancestorId.in(filterDTO.getCategoryList()));
+        } else if (filterDTO.getMallTypeId() != null && !filterDTO.getMallTypeId().isEmpty()) {
+            query.where(styleRanking.mallTypeId.eq(filterDTO.getMallTypeId()));
+        }
+    }
 
 }
