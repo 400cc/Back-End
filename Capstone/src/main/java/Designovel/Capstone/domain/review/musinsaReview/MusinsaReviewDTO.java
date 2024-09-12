@@ -19,6 +19,8 @@ public class MusinsaReviewDTO {
 
     private Integer rate;
 
+    private String userInfo;
+
     private Integer likes;
 
     private String body;
@@ -26,7 +28,7 @@ public class MusinsaReviewDTO {
 
 
     public MusinsaReviewDTO(Integer reviewId, String styleId, String orgReviewId, Integer rate, LocalDate writtenDate,
-                            String body, int likes) {
+                            String body, int likes, String userInfo) {
         this.reviewId = reviewId;
         this.styleId = styleId;
         this.orgReviewId = orgReviewId;
@@ -34,6 +36,7 @@ public class MusinsaReviewDTO {
         this.writtenDate = writtenDate;
         this.body = body;
         this.likes = likes;
+        this.userInfo = userInfo;
     }
 
 

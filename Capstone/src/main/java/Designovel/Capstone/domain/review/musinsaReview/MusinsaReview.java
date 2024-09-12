@@ -34,6 +34,9 @@ public class MusinsaReview {
     @Column(name = "rate")
     private Integer rate;
 
+    @Column(name = "user_info")
+    private String userInfo;
+
     @Column(name = "likes")
     private Integer likes;
 

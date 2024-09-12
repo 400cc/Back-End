@@ -49,7 +49,8 @@ public class CustomMusinsaReviewRepositoryImpl implements CustomMusinsaReviewRep
                                 musinsaReview.rate,
                                 musinsaReview.writtenDate,
                                 musinsaReview.body,
-                                musinsaReview.likes
+                                musinsaReview.likes,
+                                musinsaReview.userInfo
                         ))
                         .from(musinsaReview)
                         .where(builder)
