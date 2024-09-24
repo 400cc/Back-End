@@ -11,19 +11,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ClusteringDTO {
     private String styleId;
-    private String styleName;
-    private MallType mallType;
-    private String brand;
+    private String mallTypeId;
     private String imageURL;
     private float x;
     private float y;
     private int cluster;
 
-    public ClusteringDTO(String styleId, String styleName, MallType mallType, String brand) {
+    public ClusteringDTO(String styleId, MallType mallType) {
         this.styleId = styleId;
-        this.styleName = styleName;
-        this.mallType = mallType;
-        this.brand = brand;
+        this.mallTypeId = mallType.getMallTypeId();
     }
 
 }

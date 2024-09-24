@@ -26,7 +26,7 @@ public class ClusteringController {
 
     private final ClusteringService clusteringService;
 
-    @PostMapping(value = "/search")
+    @PostMapping("/search")
     public ResponseEntity<List<ClusteringDTO>> getClustering(@RequestBody ClusterFilterDTO clusterFilterDTO) {
         int nClusters = clusterFilterDTO.getNClusters();
         if (nClusters < 3 || nClusters % 2 == 0) {
@@ -34,5 +34,12 @@ public class ClusteringController {
         }
         MallTypeId.checkMallTypeId(clusterFilterDTO.getMallTypeId());
         return clusteringService.processClustering(clusterFilterDTO);
+    }
+
+    @GetMapping("/search/{mallTypeId}/{styleId}")
+    public ResponseEntity<Object> getStyleInfo(@PathVariable("mallTypeId") String mallTypeId,
+                                               @PathVariable("styleId") String styleId) {
+        MallTypeId.checkMallTypeId(mallTypeId);
+        return clusteringService.getStyleInfo(mallTypeId, styleId);
     }
 }

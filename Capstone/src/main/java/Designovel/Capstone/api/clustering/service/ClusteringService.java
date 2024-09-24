@@ -2,7 +2,9 @@ package Designovel.Capstone.api.clustering.service;
 
 import Designovel.Capstone.api.clustering.dto.ClusterFilterDTO;
 import Designovel.Capstone.api.clustering.dto.ClusteringDTO;
+import Designovel.Capstone.api.clustering.dto.ClusteringStyleDTO;
 import Designovel.Capstone.api.clustering.queryDSL.ClusteringQueryDSL;
+import Designovel.Capstone.domain.category.category.CategoryDTO;
 import Designovel.Capstone.global.exception.CustomException;
 import Designovel.Capstone.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -83,9 +85,15 @@ public class ClusteringService {
         List<String> styleIdList = clusteringDTOList.values().stream().map(ClusteringDTO::getStyleId).toList();
         requestBody.put("style_id_list", styleIdList);
         requestBody.put("n_clusters", nClusters);
-        log.info(styleIdList.toString());
         return requestBody;
     }
 
 
+    public ResponseEntity<Object> getStyleInfo(String mallTypeId, String styleId) {
+        ClusteringStyleDTO clusteringStyleDTO = Optional.ofNullable(clusteringQueryDSL.findStyleInfoById(mallTypeId, styleId))
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.STYLE_DETAIL_IS_EMPTY));
+        List<CategoryDTO> categoryListByStyle = clusteringQueryDSL.findCategoryListByStyle(styleId);
+        clusteringStyleDTO.setCategoryList(categoryListByStyle);
+        return ResponseEntity.ok(clusteringStyleDTO);
+    }
 }
