@@ -27,7 +27,7 @@ public class ClusteringController {
     private final ClusteringService clusteringService;
 
     @PostMapping(value = "/search")
-    public ResponseEntity<List<ClusteringDTO>> getClustering(ClusterFilterDTO clusterFilterDTO) {
+    public ResponseEntity<List<ClusteringDTO>> getClustering(@RequestBody ClusterFilterDTO clusterFilterDTO) {
         int nClusters = clusterFilterDTO.getNClusters();
         if (nClusters < 3 || nClusters % 2 == 0) {
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_NCLUSTER_NUMBER);
