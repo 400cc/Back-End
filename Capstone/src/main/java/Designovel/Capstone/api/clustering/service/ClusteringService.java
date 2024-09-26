@@ -19,7 +19,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -29,17 +28,10 @@ public class ClusteringService {
     private final WebClient webClient;
 
     public ResponseEntity<List<ClusteringDTO>> processClustering(ClusterFilterDTO clusterFilterDTO) {
-        Map<String, ClusteringDTO> clusteringDTOMap = clusteringQueryDSL.findStyleInfoByCategory(clusterFilterDTO);
-
-        Map<String, Object> requestBody = buildClusteringRequestBody(clusteringDTOMap, clusterFilterDTO.getNClusters());
+        Map<String, Object> requestBody = buildClusteringRequestBody(clusterFilterDTO);
         List<Map<String, Object>> response = sendClusteringRequest(requestBody);
-        updateClusteringDTOList(clusteringDTOMap, response);
-        // 값이 있는 것만 필터링
-        List<ClusteringDTO> filteredDTOList = clusteringDTOMap.values().stream()
-                .filter(clusteringDTO -> clusteringDTO.getX() != 0 && clusteringDTO.getY() != 0)
-                .toList();
-
-        return ResponseEntity.ok(filteredDTOList);
+        List<ClusteringDTO> clusteringDTOList = buildClusteringDTOResponse(response, clusterFilterDTO.getMallTypeId());
+        return ResponseEntity.ok(clusteringDTOList);
     }
 
     private List<Map<String, Object>> sendClusteringRequest(Map<String, Object> requestBody) {
@@ -61,30 +53,30 @@ public class ClusteringService {
     }
 
 
-    public void updateClusteringDTOList(Map<String, ClusteringDTO> clusteringDTOMap, List<Map<String, Object>> response) {
-        log.info(String.valueOf(response.size()));
-        for (Map<String, Object> dataPoint : response) {
-            String styleId = (String) dataPoint.get("style_id");
-            float x = ((Number) dataPoint.get("x")).floatValue();
-            float y = ((Number) dataPoint.get("y")).floatValue();
-            String url = dataPoint.get("url").toString();
-            int cluster = (int) dataPoint.get("cluster");
-            ClusteringDTO dto = clusteringDTOMap.get(styleId);
-            if (dto != null) {
-                dto.setX(x);
-                dto.setY(y);
-                dto.setImageURL(url);
-                dto.setCluster(cluster);
+    public List<ClusteringDTO> buildClusteringDTOResponse(List<Map<String, Object>> fastAPIResponse, String mallTypeId) {
+        List<ClusteringDTO> response = new ArrayList<>();
+        for (Map<String, Object> dataPoint : fastAPIResponse) {
+            if (((Number) dataPoint.get("x")).floatValue() != 0 && ((Number) dataPoint.get("y")).floatValue() != 0) {
+                ClusteringDTO dto = ClusteringDTO.builder()
+                        .styleId(dataPoint.get("style_id").toString())
+                        .x(((Number) dataPoint.get("x")).floatValue())
+                        .y(((Number) dataPoint.get("y")).floatValue())
+                        .imageURL(dataPoint.get("url").toString())
+                        .cluster((int) dataPoint.get("cluster"))
+                        .mallTypeId(mallTypeId)
+                        .build();
+                response.add(dto);
             }
         }
+        return response;
     }
 
 
-    private Map<String, Object> buildClusteringRequestBody(Map<String, ClusteringDTO> clusteringDTOList, int nClusters) {
+    private Map<String, Object> buildClusteringRequestBody(ClusterFilterDTO clusterFilterDTO) {
         Map<String, Object> requestBody = new HashMap<>();
-        List<String> styleIdList = clusteringDTOList.values().stream().map(ClusteringDTO::getStyleId).toList();
-        requestBody.put("style_id_list", styleIdList);
-        requestBody.put("n_clusters", nClusters);
+        requestBody.put("mall_type_id", clusterFilterDTO.getMallTypeId());
+        requestBody.put("category_list", clusterFilterDTO.getCategoryList());
+        requestBody.put("n_clusters", clusterFilterDTO.getNClusters());
         return requestBody;
     }
 
