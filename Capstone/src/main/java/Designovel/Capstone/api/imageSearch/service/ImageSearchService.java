@@ -29,6 +29,7 @@ public class ImageSearchService {
         }
 
         log.info("ImageSearchCategoryName: {}", categoryName);
+        log.info("ImageSearchCategoryList: {}", imageSearchDTO.getCategoryList());
 
         MultipartBodyBuilder request = buildImageSearchRequestBody(imageSearchDTO, categoryName);
         return sendImageSearchRequest(request);
