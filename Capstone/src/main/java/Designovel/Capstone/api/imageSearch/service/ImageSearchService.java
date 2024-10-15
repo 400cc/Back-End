@@ -1,7 +1,6 @@
 package Designovel.Capstone.api.imageSearch.service;
 
 import Designovel.Capstone.api.imageSearch.dto.ImageSearchDTO;
-import Designovel.Capstone.domain.category.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

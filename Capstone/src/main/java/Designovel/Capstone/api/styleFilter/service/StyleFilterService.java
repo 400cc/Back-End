@@ -8,11 +8,9 @@ import Designovel.Capstone.domain.category.category.CategoryDTO;
 import Designovel.Capstone.domain.category.category.QCategory;
 import Designovel.Capstone.domain.image.ImageDTO;
 import Designovel.Capstone.domain.image.QImage;
-import Designovel.Capstone.domain.mallType.MallType;
 import Designovel.Capstone.domain.style.style.StyleId;
 import Designovel.Capstone.domain.style.styleRanking.StyleRankingDTO;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +94,6 @@ public class StyleFilterService {
         for (Tuple tuple : priceQueryResult) {
             String styleId = tuple.get(styleRanking.styleId);
             String mallTypeId = tuple.get(category).getMallType().getMallTypeId();
-            log.info("styleId, mallTypeId: {} {}", styleId, mallTypeId);
             String styleKey = generateStyleKey(styleId, mallTypeId);
             StyleRankingDTO styleRankingDTO = styleRankingDTOMap.get(styleKey);
 

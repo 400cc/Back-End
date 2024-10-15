@@ -1,7 +1,7 @@
 package Designovel.Capstone.api.home.service;
 
-import Designovel.Capstone.api.home.dto.TopBrandDTO;
 import Designovel.Capstone.api.home.dto.HomeFilterDTO;
+import Designovel.Capstone.api.home.dto.TopBrandDTO;
 import Designovel.Capstone.api.home.queryDSL.HomeQueryDSL;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Designovel.Capstone.domain.category.categoryStyle.QCategoryStyle.categoryStyle;
 import static Designovel.Capstone.domain.style.styleRanking.QStyleRanking.styleRanking;
 
 @Service
