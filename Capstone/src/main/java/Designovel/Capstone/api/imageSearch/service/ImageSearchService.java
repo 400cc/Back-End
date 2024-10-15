@@ -18,15 +18,14 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @RequiredArgsConstructor
 public class ImageSearchService {
 
-    private final WebClient webClient;
-    private final CategoryService categoryService;
     private static final String DEFAULT_CATEGORY_NAME = "apparel";
+    private final WebClient webClient;
 
     public ResponseEntity<String> processImageSearch(ImageSearchDTO imageSearchDTO) {
         String categoryName = DEFAULT_CATEGORY_NAME;
 
-        if (!imageSearchDTO.getCategoryList().isEmpty()) {
-            categoryName = categoryService.findNameByCategoryIdList(imageSearchDTO.getCategoryList());
+        if (!imageSearchDTO.getCategoryNameList().isEmpty()) {
+            categoryName = imageSearchDTO.getCategoryNameList();
         }
 
         MultipartBodyBuilder request = buildImageSearchRequestBody(imageSearchDTO, categoryName);

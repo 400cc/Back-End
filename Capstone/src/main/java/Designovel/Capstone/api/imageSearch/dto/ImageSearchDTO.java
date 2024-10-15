@@ -17,14 +17,16 @@ public class ImageSearchDTO {
 
     private MultipartFile image;
     private List<Integer> categoryList;
+    private String categoryNameList;
     private String mallTypeId;
     private int offset;
 
-    public ImageSearchDTO(MultipartFile image, String categoryListStr, String mallTypeId, int offset) {
+    public ImageSearchDTO(MultipartFile image, String categoryListStr, String mallTypeId, int offset, String categoryNameListStr) {
         this.image = image;
         this.mallTypeId = mallTypeId;
         this.offset = offset;
         this.categoryList = convertCategoryList(categoryListStr);
+        this.categoryNameList = convertCategoryNameList(categoryNameListStr);
     }
 
     public List<Integer> convertCategoryList(String categoryListStr) {
@@ -36,4 +38,12 @@ public class ImageSearchDTO {
                 .collect(Collectors.toList());
     }
 
+    public String convertCategoryNameList(String categoryNameListStr) {
+        if (categoryNameListStr == null || categoryNameListStr.trim().isEmpty()) {
+            return "";
+        }
+        return Arrays.stream(categoryNameListStr.replace("[", "").replace("]", "").split(","))
+                .map(String::trim)
+                .collect(Collectors.joining(", "));
+    }
 }
