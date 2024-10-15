@@ -27,6 +27,7 @@ public class ImageSearchService {
         if (!imageSearchDTO.getCategoryNameList().isEmpty()) {
             categoryName = imageSearchDTO.getCategoryNameList();
         }
+
         log.info("ImageSearchCategoryName: {}", categoryName);
 
         MultipartBodyBuilder request = buildImageSearchRequestBody(imageSearchDTO, categoryName);
