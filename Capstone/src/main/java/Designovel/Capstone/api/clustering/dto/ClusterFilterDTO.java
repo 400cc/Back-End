@@ -1,15 +1,17 @@
 package Designovel.Capstone.api.clustering.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClusterFilterDTO {
     private String mallTypeId;
     private List<Integer> categoryList;
-    private Integer nClusters;
+
+    @JsonProperty("nClusters")
+    private Integer nClusters = 3;
 }
