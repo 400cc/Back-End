@@ -11,5 +11,5 @@ import java.util.List;
 public class ClusterFilterDTO {
     private String mallTypeId;
     private List<Integer> categoryList;
-    private Integer nClusters = 3;
+    private Integer nClusters;
 }
