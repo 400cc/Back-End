@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class WebClientConfig {
 
+    //GPU 서버 URL 설정(DockerFile에 존재)
     @Value("${FAST_API_URL}")
     private String fastAPIUrl;
 

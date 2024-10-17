@@ -16,6 +16,11 @@ public class StyleRankingService {
 
     private final StyleRankingRepository styleRankingRepository;
 
+    /**
+     * 쇼핑몰에 따른 브랜드 조회 메서드(중복 제거)
+     * @param mallTypeId
+     * @return 브랜드를 리스트로 반환
+     */
     public List<String> getBrandsByMallTypeId(String mallTypeId) {
         return styleRankingRepository.findDistinctBrand(mallTypeId);
     }

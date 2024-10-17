@@ -13,6 +13,11 @@ import java.util.List;
 public interface MusinsaReviewRepository extends JpaRepository<MusinsaReview, Integer>, CustomMusinsaReviewRepository {
     Page<MusinsaReview> findByStyleId(String styleId, Pageable pageable);
 
+    /**
+     * 무신사 Review Trend DB 조회 메서드
+     * @param styleId
+     * @return 작성일, 해당 작성일의 리뷰 수 반환
+     */
     @Query("select r.writtenDate, count(r) from MusinsaReview r " +
             "where r.styleId = :styleId " +
             "group by r.writtenDate " +

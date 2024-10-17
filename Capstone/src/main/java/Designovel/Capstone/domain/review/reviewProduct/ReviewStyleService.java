@@ -19,7 +19,40 @@ import java.util.stream.Collectors;
 public class ReviewStyleService {
 
 
+    /**
+     * 작성일 별 리뷰 수 처리 메서드
+     * 1. 작성일을 Key로 하고 리뷰 수를 Value로 하는 Map 생성
+     * 2. Map에 값 할당
+     * 3. ReviewTrendDTO로 변환
+     * @param queryResult
+     * @return 변환된 ReviwTrendDTO 반환
+     */
+    public List<ReviewTrendDTO> processReviewTrendQueryResult(List<Object[]> queryResult) {
+        LocalDate startDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(0)[0];
+        LocalDate endDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(queryResult.size() - 1)[0];
+        //날짜 별 Map 생성
+        Map<LocalDate, Integer> dateRangeMap = createDateRangeMap(startDate, endDate);
+        for (Object[] object : queryResult) {
+            LocalDate writtenDate = (LocalDate) object[0];
+            Long longReviewCount = (Long) object[1];
+            Integer reviewCount = (longReviewCount != null) ? longReviewCount.intValue() : 0;
+            dateRangeMap.put(writtenDate, reviewCount);
+        }
+
+        return convertToReviewTrendDTO(dateRangeMap);
+    }
+
+
+    /**
+     * 날짜 별 Map 생성 메서드
+     * - 각 쇼핑몰 별 DB 조회 한 날짜를 Key로 하여 Map 생성
+     * - 값은 0으로 초기 설정
+     * @param startDate
+     * @param endDate
+     * @return 생성된 Map 반환
+     */
     public Map<LocalDate, Integer> createDateRangeMap(LocalDate startDate, LocalDate endDate) {
+        //값이 없으면 빈 Map 반환
         if (startDate == null || endDate == null) {
             return new LinkedHashMap<>();
         }
@@ -33,20 +66,12 @@ public class ReviewStyleService {
         return dateRangeMap;
     }
 
-    public List<ReviewTrendDTO> processReviewTrendQueryResult(List<Object[]> queryResult) {
-        LocalDate startDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(0)[0];
-        LocalDate endDate = queryResult.isEmpty() ? null : (LocalDate) queryResult.get(queryResult.size() - 1)[0];
-        Map<LocalDate, Integer> dateRangeMap = createDateRangeMap(startDate, endDate);
-        for (Object[] object : queryResult) {
-            LocalDate crawledDate = (LocalDate) object[0];
-            Long longReviewCount = (Long) object[1];
-            Integer reviewCount = (longReviewCount != null) ? longReviewCount.intValue() : 0;
-            dateRangeMap.put(crawledDate, reviewCount);
-        }
 
-        return convertToReviewTrendDTO(dateRangeMap);
-    }
-
+    /**
+     * Map을 ReviewTrendDTO로 변환하는 메서드
+     * @param dateRangeMap
+     * @return 변환된 ReviewTrendDTO 반환
+     */
     public List<ReviewTrendDTO> convertToReviewTrendDTO(Map<LocalDate, Integer> dateRangeMap) {
         return dateRangeMap.entrySet().stream()
                 .map(entry -> new ReviewTrendDTO(entry.getKey(), entry.getValue()))
@@ -54,6 +79,13 @@ public class ReviewStyleService {
     }
 
 
+    /**
+     * ReviewCountDTO 생성 메서드
+     * - Map을 ReviewCountDTO로 변환
+     * @param ratingCountMap
+     * @param total
+     * @return 변환된 ReviewCountDTO 반환
+     */
     public ReviewCountDTO createReviewCountDTO(Map<Integer, Integer> ratingCountMap, int total) {
         ReviewCountDTO reviewCountDTO = new ReviewCountDTO();
         reviewCountDTO.setRate1(ratingCountMap.getOrDefault(1, 0));

@@ -19,6 +19,11 @@ public enum MallTypeId {
         this.type = type;
     }
 
+    /**
+     * 요청 시 Enum에 정의된 쇼핑몰 value가 아니면 Error 발생 메서드
+     * - 일치하지 않을 시 400번 에러로 클라이언트에게 응답
+     * @param type
+     */
     public static void checkMallTypeId(String type) {
         for (MallTypeId mallTypeId : values()) {
             if (mallTypeId.getType().equals(type)) {
