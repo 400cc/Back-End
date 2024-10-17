@@ -21,6 +21,13 @@ public class TopBrandService {
 
     private final HomeQueryDSL homeQueryDSL;
 
+    /**
+     * 쇼핑몰에 따른 Top 10 브랜드 처리 메서드
+     * 1. 쇼핑몰에 따라 Top 10 브랜드를 노출 지수 순으로 조회
+     * 2. 데이터 가공 후 반환
+     * @param filter
+     * @return List 형태로 반환
+     */
     public List<TopBrandDTO> getTop10BrandsByMallTypeId(HomeFilterDTO filter) {
         Pageable pageable = PageRequest.of(0, 10);
         BooleanBuilder builder = homeQueryDSL.buildTopBrandFilter(filter);

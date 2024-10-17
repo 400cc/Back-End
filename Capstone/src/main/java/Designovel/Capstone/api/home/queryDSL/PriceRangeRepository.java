@@ -19,6 +19,11 @@ public class PriceRangeRepository {
     private final EntityManager entityManager;
 
 
+    /**
+     * 동적 필터 기반 가격대 별 상품 수 조회 메서드
+     * @param filterDTO
+     * @return
+     */
     public List<Integer> findDiscountedPriceByFilter(HomeFilterDTO filterDTO) {
         StringBuilder sql = new StringBuilder();
         sql.append("WITH latest AS ( ")
@@ -48,7 +53,12 @@ public class PriceRangeRepository {
     }
 
 
-
+    /**
+     * 가격대 별 상품 수 필터 생성 메서드
+     * @param filterDTO
+     * @param params
+     * @return
+     */
     public String buildPriceRangeFilter(HomeFilterDTO filterDTO, Map<String, Object> params) {
         StringBuilder filterSql = new StringBuilder();
 

@@ -21,7 +21,9 @@ import static Designovel.Capstone.domain.style.styleRanking.QStyleRanking.styleR
 @Repository
 @RequiredArgsConstructor
 public class HomeQueryDSLImpl implements HomeQueryDSL {
+
     private final JPAQueryFactory jpaQueryFactory;
+
     @Override
     public List<Tuple> getTop10BrandOrderByExposureIndex(BooleanBuilder builder, Pageable pageable) {
         return jpaQueryFactory.select(
