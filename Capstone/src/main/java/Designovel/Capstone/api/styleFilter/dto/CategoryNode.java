@@ -10,6 +10,6 @@ import java.util.List;
 public class CategoryNode {
     private Integer categoryId;
     private String name;
+    //트리 구조를 위해 자기 자신을 리스트로 가짐
     private List<CategoryNode> children;
-
 }
