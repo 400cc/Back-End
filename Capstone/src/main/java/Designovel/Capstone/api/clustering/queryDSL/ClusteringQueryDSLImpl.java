@@ -25,6 +25,7 @@ public class ClusteringQueryDSLImpl implements ClusteringQueryDSL {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+
     @Override
     public ClusteringStyleDTO findStyleInfoById(String mallTypeId, String styleId) {
         JPQLQuery<LocalDate> latestCrawledDateSubQuery = createLatestCrawledDateSubQuery(styleId);
