@@ -29,6 +29,12 @@ public class ImageSearchDTO {
         this.categoryNameList = convertCategoryNameList(categoryNameListStr);
     }
 
+    /**
+     * CategoryList(Integer) 리스트 변환 메서드
+     * - 클라이언트에서 Multipart로 데이터를 보내므로 이를 ArrayList로 변환
+     * @param categoryListStr
+     * @return 값이 없을 경우 빈 리스트, 있을 경우 리스트로 변환하여 반환
+     */
     public List<Integer> convertCategoryList(String categoryListStr) {
         if (categoryListStr == null || categoryListStr.trim().isEmpty()) {
             return Collections.emptyList();
@@ -38,6 +44,13 @@ public class ImageSearchDTO {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * CategoryNameList(String) Join 메서드
+     * - 이미지 검색 누끼를 따기 위한 프롬프트로 CategoryName이 필요함
+     * - 클라이언트에서 리스트 형태로 카테고리 이름 리스트가 오면 이를 ", "로 Join 시켜 하나의 String으로 만듦
+     * @param categoryNameListStr
+     * @return 값이 없으면 빈 String, 있으면 ", "로 Join 시켜 반환
+     */
     public String convertCategoryNameList(String categoryNameListStr) {
         if (categoryNameListStr == null || categoryNameListStr.trim().isEmpty()) {
             return "";
