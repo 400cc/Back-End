@@ -49,7 +49,7 @@ public class ImageSearchDTO {
      * - 이미지 검색 누끼를 따기 위한 프롬프트로 CategoryName이 필요함
      * - 클라이언트에서 리스트 형태로 카테고리 이름 리스트가 오면 이를 ", "로 Join 시켜 하나의 String으로 만듦
      * @param categoryNameListStr
-     * @return 값이 없으면 빈 String, 있으면 ", "로 Join 시켜 반환
+     * @return 값이 없으면 빈 String, 있으면 ","로 Join 시켜 반환
      */
     public String convertCategoryNameList(String categoryNameListStr) {
         if (categoryNameListStr == null || categoryNameListStr.trim().isEmpty()) {
@@ -57,6 +57,6 @@ public class ImageSearchDTO {
         }
         return Arrays.stream(categoryNameListStr.replace("[", "").replace("]", "").split(","))
                 .map(String::trim)
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining(","));
     }
 }
