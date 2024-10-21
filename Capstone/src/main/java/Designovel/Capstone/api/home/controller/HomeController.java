@@ -2,6 +2,7 @@ package Designovel.Capstone.api.home.controller;
 
 import Designovel.Capstone.api.home.dto.HomeFilterDTO;
 import Designovel.Capstone.api.home.dto.TopBrandDTO;
+import Designovel.Capstone.api.home.service.NewPriceRangeService;
 import Designovel.Capstone.api.home.service.PriceRangeService;
 import Designovel.Capstone.api.home.service.TopBrandService;
 import Designovel.Capstone.domain.mallType.enumType.MallTypeId;
@@ -30,6 +31,7 @@ import java.util.Map;
 public class HomeController {
     private final TopBrandService topBrandService;
     private final PriceRangeService priceRangeService;
+    private final NewPriceRangeService newPriceRangeService;
 
     @Operation(summary = "쇼핑몰 별 Top 10 브랜드 조회", description = "노출 지수 기준으로 Top 10 브랜드 반환",
             responses = {
@@ -48,7 +50,7 @@ public class HomeController {
     @GetMapping("/price")
     public ResponseEntity<Map<String, Integer>> getPriceRangesCountList(@ModelAttribute HomeFilterDTO filterDTO) {
         MallTypeId.checkMallTypeId(filterDTO.getMallTypeId());
-        Map<String, Integer> styleByPriceRange = priceRangeService.getPriceRangesCountList(filterDTO);
+        Map<String, Integer> styleByPriceRange = newPriceRangeService.getPriceRangesCountList(filterDTO);
         return ResponseEntity.ok(styleByPriceRange);
     }
 

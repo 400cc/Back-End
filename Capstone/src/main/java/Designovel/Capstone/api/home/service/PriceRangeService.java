@@ -11,6 +11,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+//이전 10개의 구간에서 가격대별 상품을 찾는 클래스
 public class PriceRangeService {
 
     private final PriceRangeRepository priceRangeQueryDSL;
