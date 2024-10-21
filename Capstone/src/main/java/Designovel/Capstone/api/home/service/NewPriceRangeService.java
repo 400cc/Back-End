@@ -50,6 +50,8 @@ public class NewPriceRangeService {
             String rangeKey = createPriceRangeKey(i);
             priceRangeMap.put(rangeKey, 0);
         }
+        //마지막 범위(10000000+)
+        priceRangeMap.put((PRICE_BOUNDARIES[PRICE_BOUNDARIES.length - 1] + 1) + "+", 0);
         return priceRangeMap;
     }
 
