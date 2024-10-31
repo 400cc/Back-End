@@ -42,7 +42,7 @@ public class ClusteringQueryDSLImpl implements ClusteringQueryDSL {
                 .where(styleRanking.styleId.eq(styleId)
                         .and(styleRanking.mallTypeId.eq(mallTypeId))
                         .and(styleRanking.crawledDate.eq(latestCrawledDateSubQuery)))
-                .fetchOne();
+                .fetchFirst();
     }
 
     @Override
