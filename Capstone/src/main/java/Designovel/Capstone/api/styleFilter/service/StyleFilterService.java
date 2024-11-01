@@ -20,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +66,7 @@ public class StyleFilterService {
         //가격에 대한 값 할당
         updateStylePrices(styleRankingMap, priceQueryResult);
 
-        List<StyleRankingDTO> resultList = new ArrayList<>(styleRankingMap.values());
+        List<StyleRankingDTO> resultList = (List<StyleRankingDTO>) styleRankingMap.values();
         return new PageImpl<>(resultList, pageable, total);
     }
 

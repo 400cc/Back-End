@@ -18,7 +18,10 @@ public interface StyleRankingRepository extends JpaRepository<StyleRanking, Inte
      * @param mallTypeId
      * @return
      */
-    @Query("select distinct p.brand from StyleRanking p where p.categoryStyle.style.id.mallTypeId = :mallTypeId order by p.brand asc")
+    @Query("select distinct brand " +
+            "from StyleRanking " +
+            "where mallTypeId = :mallTypeId " +
+            "order by brand asc")
     List<String> findDistinctBrand(@Param("mallTypeId") String mallTypeId);
 
     /**
